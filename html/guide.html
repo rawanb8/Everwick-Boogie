@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide Page</title>
+</head>
+
+<body>
+    <!-- nav bar from home page not implemented yet -->
+
+    <!-- Header -->
+    <section class="page-header">
+        <div class="container">
+            <h1>Scents Library & Quiz</h1>
+            <p>Discover your perfect fragrance through our curated collection and personalized recommendations.</p>
+        </div>
+    </section>
+
+    <!-- Guiding Tabs -->
+    <section class="tabs-section">
+        <div class="container">
+            <div class="tabs">
+                <button class="tab-btn">Scents Library</button>
+                <button class="tab-btn">Take Quiz</button>
+                <button class="tab-btn" id="result-tab">Your Results</button>
+            </div>
+        </div>
+    </section>
+
+
+
+    <div id="library-tab" class="tab-content">
+        <!-- Filtering Section -->
+        <section class="filters-section">
+            <div class="container">
+                <div class="filters">
+                    <h3>Filter Scents</h3>
+                    <div class="filter-grid">
+                        <!-- Category Filtering -->
+                        <div class="filter-group">
+                            <label for="category-filter">Category</label>
+                            <select name="category-filter" class="form-select">
+                                <option value="" selected="selected">All categories</option>
+                                <option value="floral">Floral</option>
+                                <option value="fruity">Fruity</option>
+                                <option value="sweet">Sweet</option>
+                                <option value="fresh">Fresh</option>
+                                <option value="earthy">Earthy</option>
+                                <option value="spicy">Spicy</option>
+                                <option value="gourmand">Gourmand</option>
+                            </select>
+                        </div>
+                        <!-- Mood Filtering -->
+                        <div class="filter-group">
+                            <label for="mood-filter">Mood</label>
+                            <select name="mood-filter" class="form-select">
+                                <option value="" selected="selected">All Moods</option>
+                                <option value="cozy">Cozy</option>
+                                <option value="romantic">Romantic</option>
+                                <option value="energizing">Energizing</option>
+                                <option value="relaxing">Relaxing</option>
+                                <option value="uplifting">Uplifting</option>
+                                <option value="grounding">Grounding</option>
+                                <option value="comforting">Comforting</option>
+                            </select>
+                        </div>
+
+                        <!-- Seasons Filtering -->
+                        <div class="filter-group">
+                            <label for="season-filter">Season</label>
+                            <select name="season-filter" class="form-select">
+                                <option value="" selected="selected">Seasons</option>
+                                <option value="spring">Spring</option>
+                                <option value="summer">Summer</option>
+                                <option value="fall">Fall</option>
+                                <option value="winter">Winter</option>
+                                <option value="all-year">All year</option>
+                            </select>
+                        </div>
+
+                        <!-- Strength Filtering -->
+                        <div class="filter-group">
+                            <label for="strength-filter">Mood</label>
+                            <select name="strength-filter" class="form-select">
+                                <option value="">All Strengths</option>
+                                <option value="1-3">Subtle(1-3)</option>
+                                <option value="4-6">Medium(4-6)</option>
+                                <option value="7-10">Strong(7-10)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button class="clearAll-btn">Clear All</button>
+                </div>
+            </div>
+        </section>
+        <!-- Scents Grid -->
+        <section class="section">
+            <div class="container">
+                <div class="scents-grid grid grid-3" id="scents-grid">
+                    <!-- Scents will be loaded here -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Quiz Tab -->
+    <div id="quiz-tab" class="tab-content">
+        <section class="section">
+            <div class="container">
+                <div class="quiz-container">
+                    <div class="quiz-header">
+                        <h2>Find Your Perfect Scent</h2>
+                        <p>Answer a few questions and we'll recommend scents that match your preferences.</p>
+                        <div class="quiz-progress">
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="progress-fill"></div>
+                            </div>
+                            <span class="progress-text" id="progress-text">Question 1 of 4</span>
+                        </div>
+                    </div>
+
+                    <div class="quiz-questions" id="quiz-questions">
+                        <!-- Quiz questions will be loaded here -->
+                    </div>
+
+                    <div class="quiz-navigation">
+                        <button class="btn-secondary">Previous</button>
+                        <button class="btn-primary">Next</button>
+                        <button class="btn-primary">Get Results</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- Results Tab -->
+    <div id="results-tab-content" class="tab-content">
+        <section class="section">
+            <div class="container">
+                <div class="quiz-results" id="quiz-results">
+                    <!-- Quiz Results Will be loaded here -->
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+    
+</body>
+
+</html>
