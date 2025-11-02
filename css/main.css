@@ -1,10 +1,20 @@
 /*======Start of navigation bar styling======*/
 :root{
-    --bg: #efe8df;
-    --deep: #2E2A23;
-    --muted: #C9BFAF;
-    --warm: #E1A95F;
-    --nav-glass: rgba(255,255,255,0.06);
-    --transition: 300ms cubic-bezier(.2,.9,.3,1);
-    --max-width: 1200px;
+  /*logo colors*/
+  --brand-dark: #3e3238;    
+  --brand-green: #cfd9cc;   
+  --brand-yellow: #f0db83;  
+  --brand-ivory: #f9faf9;  
+
+
+  --deep: #382f32;          /* slightly warmer than brand-dark for text */
+  --muted: #9aa193;         /* muted green-grey for secondary text */
+  --warm: #f0db83;          /* use as CTA highlight (same as pastel yellow) */
+  --accent: #bfb29d;        /* warm neutral for subtle accents */
+  --bg: linear-gradient(180deg, #fbf9f6, var(--brand-ivory)); /* subtle warm background */
+
+  --nav-glass: rgba(255,255,255,0.06);
+  --transition: 300ms cubic-bezier(.2,.9,.3,1);
+  --max-width: 1200px;
 }
+
