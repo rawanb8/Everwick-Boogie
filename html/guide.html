@@ -16,7 +16,7 @@
     <section class="page-header">
         <div class="container">
             <h1>Scents Library & Quiz</h1>
-            <p>Discover your perfect fragrance through our curated collection and personalized recommendations.</p>
+            <p class="quote">Discover your perfect fragrance through our curated collection and personalized recommendations.</p>
         </div>
     </section>
 
@@ -24,9 +24,9 @@
     <section class="tabs-section">
         <div class="container">
             <div class="tabs">
-                <button class="tab-btn active">Scents Library</button>
-                <button class="tab-btn">Take Quiz</button>
-                <button class="tab-btn" id="result-tab">Your Results</button>
+                <button class="tab-btn active" onclick="showTab('library')" >Scents Library</button>
+                <button class="tab-btn"  onclick="showTab('quiz')">Take Quiz</button>
+                <button class="tab-btn" id="result-tab" onclick="showTab('results')">Your Results</button>
             </div>
         </div>
     </section>
@@ -43,7 +43,7 @@
                         <!-- Category Filtering -->
                         <div class="filter-group">
                             <label for="category-filter">Category</label>
-                            <select name="category-filter" class="form-select">
+                            <select id="category-filter" class="form-select">
                                 <option value="" selected="selected">All categories</option>
                                 <option value="floral">Floral</option>
                                 <option value="fruity">Fruity</option>
@@ -57,7 +57,7 @@
                         <!-- Mood Filtering -->
                         <div class="filter-group">
                             <label for="mood-filter">Mood</label>
-                            <select name="mood-filter" class="form-select">
+                            <select id="mood-filter" class="form-select">
                                 <option value="" selected="selected">All Moods</option>
                                 <option value="cozy">Cozy</option>
                                 <option value="romantic">Romantic</option>
@@ -72,7 +72,7 @@
                         <!-- Seasons Filtering -->
                         <div class="filter-group">
                             <label for="season-filter">Season</label>
-                            <select name="season-filter" class="form-select">
+                            <select id="season-filter" class="form-select">
                                 <option value="" selected="selected">Seasons</option>
                                 <option value="spring">Spring</option>
                                 <option value="summer">Summer</option>
@@ -85,7 +85,7 @@
                         <!-- Strength Filtering -->
                         <div class="filter-group">
                             <label for="strength-filter">Mood</label>
-                            <select name="strength-filter" class="form-select">
+                            <select id="strength-filter" class="form-select">
                                 <option value="">All Strengths</option>
                                 <option value="1-3">Subtle(1-3)</option>
                                 <option value="4-6">Medium(4-6)</option>
@@ -93,7 +93,7 @@
                             </select>
                         </div>
                     </div>
-                    <button class="btn btn-secondary">Clear All</button>
+                    <button class="btn btn-secondary" onclick="clearFilters()">Clear All</button>
                 </div>
             </div>
         </section>
@@ -128,9 +128,9 @@
                     </div>
 
                     <div class="quiz-navigation">
-                        <button class=" btn btn-secondary" id="prev-btn">Previous</button>
-                        <button class="btn btn-primary" id="next-btn">Next</button>
-                        <button class="btn btn-primary" id="submit-btn">Get Results</button>
+                        <button class=" btn btn-secondary" id="prev-btn" onclick="previousQuestion()" disabled>Previous</button>
+                        <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()">Next</button>
+                        <button class="btn btn-primary" id="submit-btn" onclick="submitQuiz()">Get Results</button>
                     </div>
                 </div>
             </div>
@@ -177,7 +177,7 @@
                     <strong>Total: <span id="cart-total">$0.00</span></strong>
                 </div>
                 <div class="cart-actions">
-                    <button class="btn btn-secondary">Continue Shopping</button>
+                    <button class="btn btn-secondary" onclick="app.closeModal()">Continue Shopping</button>
                     <a href="checkout.html" class="btn btn-primary">Checkout</a>
                 </div>
             </div>
