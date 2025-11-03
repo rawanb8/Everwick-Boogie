@@ -4,6 +4,8 @@
       text-align: center;
     }
 
+
+    
     .tabs-section {
       background: var(--white);
       border-bottom: 1px solid var(--gray-light);
@@ -133,7 +135,7 @@
       color: var(--text-light);
     }
 
-    .quiz-question {
+    .quiz-questions {
       display: none;
       padding: var(--space-xl) 0;
     }

@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guide Page</title>
     <link rel="stylesheet" href="/css/guide.css">
+    <link rel="stylesheet" href="/css/main.css">
 </head>
 
 <body>
@@ -23,7 +24,7 @@
     <section class="tabs-section">
         <div class="container">
             <div class="tabs">
-                <button class="tab-btn">Scents Library</button>
+                <button class="tab-btn active">Scents Library</button>
                 <button class="tab-btn">Take Quiz</button>
                 <button class="tab-btn" id="result-tab">Your Results</button>
             </div>
@@ -32,7 +33,7 @@
 
 
 
-    <div id="library-tab" class="tab-content">
+    <div id="library-tab" class="tab-content active">
         <!-- Filtering Section -->
         <section class="filters-section">
             <div class="container">
@@ -92,7 +93,7 @@
                             </select>
                         </div>
                     </div>
-                    <button class="clearAll-btn">Clear All</button>
+                    <button class="btn btn-secondary">Clear All</button>
                 </div>
             </div>
         </section>
@@ -111,7 +112,7 @@
         <section class="section">
             <div class="container">
                 <div class="quiz-container">
-                    <div class="quiz-header">
+                    <div class="quiz-header text-center">
                         <h2>Find Your Perfect Scent</h2>
                         <p>Answer a few questions and we'll recommend scents that match your preferences.</p>
                         <div class="quiz-progress">
@@ -127,9 +128,9 @@
                     </div>
 
                     <div class="quiz-navigation">
-                        <button class="btn-secondary">Previous</button>
-                        <button class="btn-primary">Next</button>
-                        <button class="btn-primary">Get Results</button>
+                        <button class=" btn btn-secondary" id="prev-btn">Previous</button>
+                        <button class="btn btn-primary" id="next-btn">Next</button>
+                        <button class="btn btn-primary" id="submit-btn">Get Results</button>
                     </div>
                 </div>
             </div>
