@@ -1,0 +1,57 @@
+<nav class="site-nav">
+  <div class="nav-inner-container container">
+    <a class="brand" href="index.html" title="Everwick home">
+      <img src="media/icons/logo.svg" alt="Everwick Boogie Logo" class="brand-logo">
+      <span class="brand-text">Everwick Boogie</span>
+    </a>
+  </div>
+
+  <ul class="nav-links" id="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="customize.html">Customize</a></li>
+    <li><a href="guide.html">Guide</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="cart.html">Cart</a></li>
+  </ul>
+
+  <div class="nav-actions">
+    <button id="search-btn" class="search-btn" type="button">🔍</button>
+
+    <a class="cart-btn" href="cart.html">
+      <span class="cart-icon">🧺</span>
+      <span id="cart-count" class="cart-count">0</span>
+    </a>
+
+    <!-- hamburger as a button (keyboard friendly) -->
+    <button id="hamburger-btn" class="hamburger" type="button" title="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- modal for hamburger menu -->
+  <div class="mobile-menu" id="mobile-menu" data-open="false">
+    <div class="mobile-menu-inner">
+      <button id="mobile-close" class="mobile-close" type="button">✕</button>
+
+      <nav class="mobile-nav">
+        <ul>
+          <li><a href="index.html">Home</a></li>
+          <li><a href="shop.html">Shop</a></li>
+          <li><a href="customize.html">Customize</a></li>
+          <li><a href="guide.html">Guide</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="cart.html">Cart</a></li>
+        </ul>
+      </nav>
+
+      <div class="mobile-actions">
+        <a href="cart.html" class="btn">Cart (<span id="mobile-cart-count">0</span>)</a>
+        <a href="customize.html" class="btn btn-ghost">Customize</a>
+      </div>
+    </div>
+
+    <!-- backdrop that closes the modal when clicked -->
+    <div class="mobile-backdrop" id="mobile-backdrop" role="presentation"></div>
+  </div>
+</nav>
