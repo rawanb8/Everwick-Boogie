@@ -1,5 +1,5 @@
 let currentQuizQuestion = 0;
-let quizAnswer = [];
+let quizAnswers = [];
 let filteredScents = [];
 
 //we check that the document is fully loaded before running js
@@ -224,15 +224,16 @@ function loadQuizQuestions() {
 
 
 function nextQuestion() {
-    const currentAnswer = getCurrentAnswer();
+    const currentAnswer = getCurrentAnswer(); //checks current question input & returns value or null
     if (!currentAnswer) {
         app.showNotification('Please select an answer', 'warning');
         return;
     }
 
-    quizAnswer[currentQuizQuestion] = currentAnswer;
+    quizAnswer[currentQuizQuestion] = currentAnswer; //stores it in the array at current index
 
-    if (currentQuizQuestion < app.data.quiz_question, length - 1) {
+    //hides current question, increments the index, shows the next question and updates the UI
+    if (currentQuizQuestion < app.data.quiz_question.length - 1) {
         document.getElementById(`question-${currentQuizQuestion}`).classList.remove('active');
         currentQuizQuestion++;
         document.getElementById(`question-${currentQuizQuestion}`).classList.add('active');
@@ -242,7 +243,7 @@ function nextQuestion() {
     }
 }
 
-
+//this does the opposite of nextQuestion 
 function previousQuestion() {
     if (currentQuizQuestion > 0) {
         document.getElementById(`question-${currentQuizQuestion}`).classList.remove('active');
@@ -253,3 +254,137 @@ function previousQuestion() {
         updateQuizButtons();
     }
 }
+
+//single choice returns selected radio value or null
+//scale returns input.value which is a (string)
+function getCurrentAnswer(){
+    const question = app.data.quiz_question[currentQuizQuestion];
+
+    if(question.type === 'single_choice') {
+        const selected = document.querySelector(`input[name="question-${currentQuizQuestion}"]:checked`);
+        return selected ? selected.value : null;
+    }else if(question.type === 'scale') {
+        const scaleInput = document.querySelector(`input[name="question-${currentQuizQuestion}"]`);
+    }
+
+    return null;
+}
+
+//updates the progress bar width & textual progress
+function updateQuizProgress() {
+      const progress = ((currentQuizQuestion + 1) / app.data.quiz_question.length) * 100;
+      document.getElementById('progress-fill').style.width = `${progress}%`;
+      document.getElementById('progress-text').textContent = `Question ${currentQuizQuestion + 1} of ${app.data.quiz_question.length}`;
+    }
+
+
+    //disables the prevbtn on first question & hides nextbtn + shows submitbtn on last question
+function updateQuizButtons(){
+   const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+      const submitBtn = document.getElementById('submit-btn');
+
+      prevBtn.disabled = currentQuizQuestion === 0;
+
+      if(currentQuizQuestion === app.data.quiz_question.length -1){
+        nextBtn.style.display = 'none';
+        submitBtn.style.display = 'inline-flex';
+      } else {
+        nextBtn.style.display = 'inline-flex';
+        submitBtn.style.display = 'none';
+      }
+}
+
+//make sure all quiz questions are answered
+//call app.... to transform the answers to recommended scents
+// it renders recommendations via thr displayQuiz..() + opens results tab
+function submitQuiz() {
+      const currentAnswer = getCurrentAnswer();
+      if (!currentAnswer) {
+        app.showNotification('Please select an answer', 'warning');
+        return;
+      }
+      
+      quizAnswers[currentQuizQuestion] = currentAnswer;
+      
+      // Calculate results
+      const recommendations = app.calculateQuizResults(quizAnswers);
+      displayQuizResults(recommendations);
+      
+      // Show results tab
+      document.getElementById('results-tab').style.display = 'inline-block';
+      showTab('results');
+    }
+
+     function displayQuizResults(recommendations) {
+      const container = document.getElementById('quiz-results');
+      
+      container.innerHTML = `
+        <div class="quiz-results-header text-center">
+          <h2>Your Perfect Scents</h2>
+          <p>Based on your preferences, here are our top recommendations:</p>
+        </div>
+        
+        <div class="recommendations grid grid-3">
+          ${recommendations.map((scent, index) => `
+            <div class="recommendation-card card">
+              <div class="recommendation-rank">#${index + 1}</div>
+              //img will be assigned later
+              <img src="" alt="${scent.name}" class="card-image">
+              <div class="card-content">
+                <h3 class="card-title">${scent.name}</h3>
+                <p class="card-description">${scent.description}</p>
+                <div class="scent-match">
+                  <strong>Perfect for:</strong> ${scent.mood} moods
+                </div>
+                <div class="recommendation-actions">
+                  <button class="btn btn-outline btn-small" onclick="showScentDetails(${scent.id})">
+                    View Details
+                  </button>
+                  <a href="customize.html?scent=${scent.id}" class="btn btn-primary btn-small">
+                    Create Candle
+                  </a>
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+        
+        <div class="quiz-actions text-center">
+          <button class="btn btn-secondary" onclick="retakeQuiz()">Retake Quiz</button>
+          <a href="customize.html" class="btn btn-primary">Start Customizing</a>
+        </div>
+      `;
+    }
+
+    function retakeQuiz() {
+      currentQuizQuestion = 0;
+      quizAnswers = [];
+      
+      // Reset quiz UI
+      document.querySelectorAll('.quiz-question').forEach((q, index) => {
+        q.classList.remove('active');
+        if (index === 0) q.classList.add('active');
+      });
+      
+      // Clear form inputs
+      document.querySelectorAll('input[type="radio"]').forEach(input => {
+        input.checked = false;
+      });
+      
+      //set all range input back to 5
+      document.querySelectorAll('input[type="range"]').forEach(input => {
+        input.value = 5;
+      });
+      
+      updateQuizProgress();
+      updateQuizButtons();
+      showTab('quiz');
+    }
+
+    function openCartModal() {
+
+      // implementation similar to home page
+      app.openModal('cart-modal');
+    }
+
