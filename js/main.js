@@ -2,13 +2,14 @@
   // Run when DOM is ready
   document.addEventListener('DOMContentLoaded', () => {
     initNavbar();
-    updateCartCount();
-    // keep cart count in sync across tabs
+    updateCartCount(); // keep cart count in sync across tabs
+    initNewsletterForm(); //initialize footer newsletter
     window.addEventListener('storage', (e) => {
       if (e.key === 'cart') updateCartCount();
     });
   });
 
+  /*================== NAVBAR ==================*/
   function initNavbar() {
     let siteNav = document.querySelector('.site-nav');
     let hamburger = document.getElementById('hamburger-btn');
@@ -64,7 +65,7 @@
       else siteNav.classList.remove('scrolled');
     });
   }
-
+/*================== CART COUNT ==================*/
   // update cart count from localStorage
   function updateCartCount() {
     try {
@@ -93,6 +94,97 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 });
+
+// fetch() loads footer.html and inserts it into the page
+fetch('footer.html')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Footer not found');
+    }
+    return response.text();
+  })
+  .then(data => {
+    document.getElementById('footer-container').innerHTML = data;
+  })
+  .catch(error => {
+    console.error('Error loading footer:', error);
+  });
+
+
+/*================== NEWSLETTER in footer ==================*/
+function initNewsletterForm() {
+  let form = document.getElementById('newsletter-form');
+  if (!form) return;
+
+  let input = document.getElementById('newsletter-email');
+  let submitBtn = document.getElementById('newsletter-submit');
+  let msgRegion = document.getElementById('newsletter-msg-region'); // aria-live region for feedback messages
+
+  // Create aria-live region if not in DOM
+  if (!msgRegion) {
+    msgRegion = document.createElement('div');
+    msgRegion.id = 'newsletter-msg-region';
+    msgRegion.setAttribute('aria-live', 'polite');
+    msgRegion.setAttribute('aria-atomic', 'true');
+    msgRegion.style.marginTop = '0.5rem';
+    form.parentNode.insertBefore(msgRegion, form.nextSibling);
+  }
+
+  // Helper to show success or error messages
+  function showMessage(type, text) {
+    msgRegion.innerHTML = '';
+    let d = document.createElement('div');
+    d.className = `newsletter-msg newsletter-msg--${type}`; // use backticks for template literal
+    d.textContent = text;
+    msgRegion.appendChild(d);
+
+    if (type === 'error') {
+      setTimeout(() => {
+        if (msgRegion.contains(d)) msgRegion.removeChild(d);
+      }, 4000);
+    }
+  }
+
+  // Email validation
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  // Handle form submission
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!input) return;
+
+    let email = (input.value || '').trim();
+    if (!email) {
+      showMessage('error', 'Please enter your email address.');
+      input.focus();
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      showMessage('error', 'Please enter a valid email address.');
+      input.focus();
+      return;
+    }
+
+    // Simulate sending
+    submitBtn.disabled = true;
+    submitBtn.setAttribute('aria-disabled', 'true');
+    let prevText = submitBtn.textContent;
+    submitBtn.textContent = 'Sending...';
+
+    // Short simulated delay
+    setTimeout(() => {
+      showMessage('success', 'Thank you for subscribing to our newsletter!');
+      submitBtn.textContent = prevText; // restore button text
+      submitBtn.disabled = false;
+      submitBtn.removeAttribute('aria-disabled');
+      input.value = '';
+      input.focus(); // ready for next entry
+    }, 800);
+  });
+}
 
 class CandlesWeb {
 
