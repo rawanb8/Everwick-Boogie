@@ -1,4 +1,5 @@
-/*--------Fonts--------*/
+/* =================== FONTS =================== */
+
 /*Brand name and products font*/
 @font-face {
     font-family: "TAN Meringue";
@@ -26,51 +27,42 @@
     font-display: swap;
 }
 
-/*--------Color Palette--------*/
+
+/* =================== COLOR PALETTE =================== */
 
 :root {
-    /*logo colors*/
-    --brand-dark: #3e3238;
-    --brand-green: #cfd9cc;
-    --brand-yellow: #f0db83;
-    --brand-ivory: #f9faf9;
-
-
-    --deep: #382f32;
-    /* slightly warmer than brand-dark for text */
-    --muted: #9aa193;
-    /* muted green-grey for secondary text */
-
-
-    --warm: #f0db83;
-    /* use as CTA highlight (same as pastel yellow) */
-
-    --accent: #bfb29d;
-    /* warm neutral for subtle accents */
-    --bg: linear-gradient(180deg, #fbf9f6, var(--brand-ivory));
-    /* subtle warm background */
-
-    --nav-glass: rgba(255, 255, 255, 0.06);
-    --transition: 300ms cubic-bezier(.2, .9, .3, 1);
-    --max-width: 1200px;
+    /* Primary Palette */
 
     --primary-color: #d4a574;
     --primary-dark: #b8935f;
     --secondary-color: #f4f0e8;
     --accent-color: #8b4513;
+    --brand-green: #cfd9cc;
+    --accent: #bfb29d;
+
     --text-dark: #2c1810;
+    --deep: #382f32;
     --text-light: #6b5b47;
+    --muted: #9aa193;
+
     --background-light: #fdfcfa;
     --white: #ffffff;
+
     --gray-light: #f5f5f5;
     --gray-medium: #cccccc;
     --gray-dark: #666666;
-    --error-color: #e74c3c;
-    --success-color: #27ae60;
+    --nav-glass: rgba(255, 255, 255, 0.06);
+
+    /* Alerts */
+    --error-color: #e74c3c;  /*forms alerts*/
+    --success-color: #27ae60; /*forms alerts*/
+    --warm: #f0db83; /*Highlight / cart badge / CTA*/
 
     /* Typography */
     --font-primary: 'Georgia', serif;
     --font-secondary: 'Helvetica Neue', Arial, sans-serif;
+
+    /* Font Sizes */
     --font-size-xs: 0.75rem;
     --font-size-sm: 0.875rem;
     --font-size-base: 1rem;
@@ -104,9 +96,18 @@
     --transition-fast: 0.15s ease-in-out;
     --transition-normal: 0.3s ease-in-out;
     --transition-slow: 0.5s ease-in-out;
+
+    /* Layout */
+     --max-width: 1200px;
+
+    /* Background Gradient */
+     --bg: linear-gradient(180deg, #fbf9f6, var(--secondary-color)); 
+
+
 }
 
-/*--------RESET--------*/
+/* =================== RESET =================== */
+
 * {
     box-sizing: border-box;
     margin: 0;
@@ -120,20 +121,19 @@ body {
 
 body {
     margin: 0;
-    /* font-family: "TAN Meringue", "Lora", "Georgia", "serif", var(--font-secondary); */
     font-family: var(--font-secondary);
     font-size: var(--font-size-base);
-    color: var(--deep);
-    background: var(--bg);
+    color: var(--text-dark);
+    background: var(--background-light);
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     /*makes text look smoother*/
     -moz-osx-font-smoothing: grayscale;
     /*same but if u are using macOS or Firefox to open the website*/
-    line-height: 1.5;
     -webkit-text-size-adjust: 100%;
 }
 
-/* Typography */
+/* =================== TYPOGRAPHY =================== */
 h1,
 h2,
 h3,
@@ -184,6 +184,8 @@ a {
 a:hover {
     color: var(--primary-dark);
 }
+
+/* =================== LAYOUT UTILITIES =================== */
 
 .container {
     max-width: var(--max-width);
@@ -243,69 +245,26 @@ a:hover {
     z-index: 100;
 }
 
-/* Forms */
-.form-group {
-    margin-bottom: var(--space-lg);
-}
-
-.form-label {
-    display: block;
-    margin-bottom: var(--space-sm);
-    font-weight: 600;
-    color: var(--deep);
-}
-
-.form-input,
-.form-select,
-.form-textarea {
-    width: 100%;
-    padding: var(--space-sm) var(--space-md);
-    border: 1px solid var(--gray-medium);
-    border-radius: var(--radius-md);
-    background-color: var(--white);
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
-    font-size: var(--font-size-base);
-    transition: border-color var(--transition-fast);
-}
-
-.form-input:focus,
-.form-select:focus,
-.form-textarea:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
-}
-
-.form-textarea {
-    resize: vertical;
-    min-height: 100px;
-}
-
-.form-error {
-    color: var(--error-color);
-    font-size: var(--font-size-sm);
-    margin-top: var(--space-xs);
-}
 
 
-/* Buttons */
+/* =================== BUTTONS =================== */
 .btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: var(--space-sm) var(--space-lg);
-    border: none;
     border-radius: var(--radius-md);
     font-size: var(--font-size-base);
     font-weight: 500;
     text-decoration: none;
     cursor: pointer;
-    font-family: "Lora", serif;
+    font-family: var(--font-secondary);
     letter-spacing: 0.02em;
     transition: all var(--transition-fast);
     gap: var(--space-sm);
 }
 
+/* Variants */
 .btn-primary {
     background: var(--primary-color);
     color: var(--white);
@@ -313,7 +272,7 @@ a:hover {
 
 .btn-primary:hover {
     background: var(--primary-dark);
-    color: var(--white);
+    /* color: var(--white); */
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
 }
@@ -351,7 +310,54 @@ a:hover {
     font-size: var(--font-size-sm);
 }
 
-/* Utility Classes */
+/* =================== FORMS =================== */
+.form-group {
+    margin-bottom: var(--space-lg);
+}
+
+.form-label {
+    display: block;
+    margin-bottom: var(--space-sm);
+    font-weight: 600;
+    color: var(--deep);
+}
+
+.form-input,
+.form-select,
+.form-textarea {
+    width: 100%;
+    padding: var(--space-sm) var(--space-md);
+    border: 1px solid var(--gray-medium);
+    border-radius: var(--radius-md);
+    background-color: var(--white);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    font-size: var(--font-size-base);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
+}
+
+.form-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-error {
+    color: var(--error-color);
+    font-size: var(--font-size-sm);
+    margin-top: var(--space-xs);
+}
+
+/* =================== UTILITY CLASSES =================== */
+
+
+/* Text alignment */
 .text-center {
     text-align: center;
 }
@@ -364,6 +370,8 @@ a:hover {
     text-align: right;
 }
 
+
+/* Visibility */
 .hidden {
     display: none;
 }
@@ -372,6 +380,8 @@ a:hover {
     display: block;
 }
 
+
+/* Margin helpers */
 .mt-md {
     margin-top: var(--space-md);
 }
@@ -384,8 +394,8 @@ a:hover {
     padding: var(--space-lg);
 }
 
+/* =================== MODAL =================== */
 
-/* Modal */
 .modal {
     position: fixed;
     top: 0;
@@ -403,7 +413,7 @@ a:hover {
 }
 
 body.modal-open {
-  overflow: hidden;
+    overflow: hidden;
 }
 
 
@@ -443,16 +453,33 @@ body.modal-open {
     color: var(--gray-dark);
 }
 
+/* Tablet & Mobile adjustments */
 
 @media (max-width: 768px) {
-  .grid-3 { grid-template-columns: 1fr 1fr; }
-  .grid-4 { grid-template-columns: 1fr 1fr; }
+    .grid-3 {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .grid-4 {
+        grid-template-columns: 1fr 1fr;
+    }
 }
 
 @media (max-width: 480px) {
-  .grid-3, .grid-4, .grid-2 { grid-template-columns: 1fr; }
-  .btn { width: 100%; }
-  .modal-content { padding: var(--space-md); }
+
+    .grid-3,
+    .grid-4,
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
+
+    .btn {
+        width: 100%;
+    }
+
+    .modal-content {
+        padding: var(--space-md);
+    }
 }
 
 
@@ -491,7 +518,7 @@ h2, h3, h4 { font-family: "Lora", Georgia, serif; margin: 0 0 .5rem 0; }
     margin: 0;
     backdrop-filter: blur(10px);
     border-radius: 0 0 12px 12px;
-    transition: background var(--transition), box-shadow var(--transition), transform var(--transition);
+    transition: background var(--transition), box-shadow var(--transition), transform var(--transition), color var(--transition);
     background: var(--nav-glass);
     max-width: var(--max-width);
     flex-wrap: wrap;
@@ -518,8 +545,6 @@ h2, h3, h4 { font-family: "Lora", Georgia, serif; margin: 0 0 .5rem 0; }
 .brand-logo {
     width: 36px;
     height: 36px;
-    /* display: block; */
-    /* object-fit: contain; */
     margin: 0;
     padding: 0;
 }
@@ -529,6 +554,12 @@ h2, h3, h4 { font-family: "Lora", Georgia, serif; margin: 0 0 .5rem 0; }
     font-size: 1.05rem;
     color: var(--brand-dark);
 }
+
+.brand-text:hover {
+    color: var(--primary-color);
+    transition: color 0.3s ease;
+}
+
 
 /* links full screen desktop */
 .nav-links {
@@ -596,6 +627,13 @@ h2, h3, h4 { font-family: "Lora", Georgia, serif; margin: 0 0 .5rem 0; }
     font-size: .8rem;
 }
 
+.cart-btn:hover {
+    background: var(--primary-color);
+    color: var(--white);
+    transform: translateY(-2px);
+}
+
+
 /* Hamburger */
 .hamburger,
 #hamburger-btn {
@@ -630,6 +668,7 @@ h2, h3, h4 { font-family: "Lora", Georgia, serif; margin: 0 0 .5rem 0; }
 }
 
 /* sliding panel */
+
 .mobile-menu-inner {
     position: fixed;
     left: 0;
@@ -702,15 +741,6 @@ h2, h3, h4 { font-family: "Lora", Georgia, serif; margin: 0 0 .5rem 0; }
     flex-direction: column;
 }
 
-.btn {
-    display: inline-block;
-    padding: .6rem .9rem;
-    border-radius: 10px;
-    background: var(--deep);
-    color: #fff;
-    text-decoration: none;
-    text-align: center;
-}
 
 .btn-ghost {
     background: transparent;
@@ -747,3 +777,171 @@ h2, h3, h4 { font-family: "Lora", Georgia, serif; margin: 0 0 .5rem 0; }
 .page-spacer {
     height: 72px;
 }
+
+/*=================== FOOTER =======================*/
+
+/* ----- Footer Base ----- */
+.footer {
+    background-color: var(--secondary-color);
+    color: var(--text-dark);
+    font-family: "Lora", serif;
+    padding: 3rem 2rem;
+    text-align: center;
+}
+
+.footer a {
+    color: var(--text-dark);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer a:hover {
+    color: var(--primary-dark);
+}
+
+/* ----- Newsletter Section ----- */
+.footer-promo {
+    margin-bottom: 3rem;
+}
+
+.footer-promo-title {
+    font-family: "TAN Meringue", serif;
+    font-size: 1.8rem;
+    color: var(--text-dark);
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+}
+
+.footer-newsletter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.footer-newsletter-input {
+    padding: 0.8rem 1rem;
+    border: 1px solid var(--gray-medium);
+    border-radius: 25px;
+    width: 280px;
+    background-color: var(--white);
+    font-family: "Lora", serif;
+    color: var(--text-dark);
+}
+
+.footer-newsletter-input:focus {
+    outline: 2px solid var(--primary-color);
+}
+
+.footer-newsletter-btn {
+    padding: 0.8rem 1.5rem;
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: 25px;
+    color: var(--white);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.footer-newsletter-btn:hover {
+    background-color: var(--primary-dark);
+}
+
+.footer-promo-sub {
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+/* ----- Divider ----- */
+.footer-divider {
+    border: none;
+    height: 1px;
+    background-color: var(--gray-medium);
+    margin: 2rem auto;
+    width: 80%;
+}
+
+/* ----- Main Columns ----- */
+.footer-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 2rem;
+    text-align: left;
+    justify-items: center;
+}
+
+.footer-col-title {
+    font-family: "TAN Meringue", serif;
+    font-size: 1.3rem;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+}
+
+.footer-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.footer-item,
+.footer-social-item {
+    margin: 0.2rem 0;
+}
+
+/* ----- Contact Info ----- */
+.footer-contact a {
+    display: inline-block;
+    margin-top: 0.3rem;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+}
+
+.footer-license {
+    margin-top: 0.8rem;
+    font-size: 0.85rem;
+    color: var(--text-light);
+}
+
+/* ----- Socials ----- */
+.footer-social-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.footer-social-link {
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.footer-social-link:hover {
+    color: var(--primary-dark);
+}
+
+.footer-copyright {
+    margin-top: 1.5rem;
+    font-size: 0.85rem;
+    color: var(--text-light);
+    text-align: center;
+}
+
+/* ----- Responsive ----- */
+@media (max-width: 768px) {
+    .footer {
+        text-align: center;
+    }
+
+    .footer-columns {
+        text-align: center;
+    }
+
+    .footer-newsletter {
+        flex-direction: column;
+    }
+}
+
+/*=================== END OF FOOTER STYLING=======================*/
