@@ -1,0 +1,46 @@
+{
+    "quiz_question": [
+    {
+      "id": 1,
+      "question": "What mood are you looking to create?",
+      "type": "single_choice",
+      "options": [
+        { "value": "relaxing", "label": "Relaxing & Calm" },
+        { "value": "energizing", "label": "Energizing & Fresh" },
+        { "value": "romantic", "label": "Romantic & Intimate" },
+        { "value": "cozy", "label": "Cozy & Warm" }
+      ]
+    },
+    {
+      "id": 2,
+      "question": "Which scent family appeals to you most?",
+      "type": "single_choice",
+      "options": [
+        { "value": "floral", "label": "Floral (Rose, Lavender)" },
+        { "value": "fresh", "label": "Fresh (Ocean, Citrus)" },
+        { "value": "sweet", "label": "Sweet (Vanilla, Chocolate)" },
+        { "value": "woody", "label": "Woody (Pine, Cedar)" },
+        { "value": "spicy", "label": "Spicy (Cinnamon, Clove)" }
+      ]
+    },
+    {
+      "id": 3,
+      "question": "How strong do you like your scents?",
+      "type": "scale",
+      "min": 1,
+      "max": 10,
+      "labels": { "1": "Very Subtle", "10": "Very Strong" }
+    },
+    {
+      "id": 4,
+      "question": "What's your favorite season?",
+      "type": "single_choice",
+      "options": [
+        { "value": "spring", "label": "Spring" },
+        { "value": "summer", "label": "Summer" },
+        { "value": "fall", "label": "Fall" },
+        { "value": "winter", "label": "Winter" }
+      ]
+    }
+  ]
+}
