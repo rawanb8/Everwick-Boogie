@@ -93,6 +93,22 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.error('Error loading navbar:', error);
     }
   }
+
+  const footerContainer = document.getElementById('footer');
+
+  if (footerContainer) {
+    try {
+      const response = await fetch('footer.html'); // path to your footer HTML
+      const footerHTML = await response.text();
+      footerContainer.innerHTML = footerHTML;
+
+      // Optional: initialize footer JS (newsletter form)
+      initNewsletterForm();
+
+    } catch (error) {
+      console.error('Error loading footer:', error);
+    }
+  }
 });
 
 /*================== NEWSLETTER in footer ==================*/
