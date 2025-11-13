@@ -111,6 +111,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
+// fetch() loads footer.html and inserts it into the page
+fetch('footer.html')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Footer not found');
+    }
+    return response.text();
+  })
+  .then(data => {
+    document.getElementById('footer-container').innerHTML = data;
+  })
+  .catch(error => {
+    console.error('Error loading footer:', error);
+  });
+
+
 /*================== NEWSLETTER in footer ==================*/
 function initNewsletterForm() {
   let form = document.getElementById('newsletter-form');
