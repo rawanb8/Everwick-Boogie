@@ -1,51 +1,57 @@
 <!doctype html>
 <html lang="en">
+
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Everwick Boogie— Home</title>
-  <link rel="stylesheet" href="/css/main.css">
-  <link rel="stylesheet" href="/css/home.css">
-  <script src="/js/main.js"defer></script>
-  <script src="script.js" defer></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Everwick Boogie— Home</title>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/home.css">
+    <script src="/js/main.js" defer></script>
+    <script src="script.js" defer></script>
 </head>
+
 <body>
-  <main class="home-page">
 
-    <!-- ====== Hero ====== -->
-    <section class="hero" id="hero">
-      <div class="hero-media">
-        <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="../media/images/hero-poster.jpg">
-          <source src="../media/videos/hero.mp4" type="video/mp4">
-          <!-- fallback image will show via poster -->
-        </video>
-      </div>
+    <!-- Navbar added dynamically -->
+    <div id="navbar"></div>
+    <main class="home-page">
 
-      <div class="hero-content container">
-        <h1 class="hero-title brand-slogan">Where Every Flame Tells A Story</h1>
-        <p class="hero-sub">Hand-poured candles inspired by forest, folklore, and cozy evenings.</p>
+        <!-- ====== Hero ====== -->
+        <section class="hero" id="hero">
+            <div class="hero-media">
+                <video class="hero-video" autoplay muted loop playsinline preload="auto"
+                    poster="../media/images/hero-poster.jpg">
+                    <source src="../media/videos/hero.mp4" type="video/mp4">
+                    <!-- fallback image will show via poster -->
+                </video>
+            </div>
 
-        <div class="hero-ctas">
-          <a class="btn btn-primary" href="../html/shop.html">Shop Now</a>
-          <a class="btn btn-ghost" href="../html/customize.html">Customize Candle</a>
-        </div>
+            <div class="hero-content container">
+                <h1 class="hero-title brand-slogan">Where Every Flame Tells A Story</h1>
+                <p class="hero-sub">Hand-poured candles inspired by forest, folklore, and cozy evenings.</p>
 
-        <!-- small visual cue to scroll -->
-        <a class="hero-scroll" href="#featured" aria-label="Scroll to featured">↓</a>
-      </div>
-    </section>
+                <div class="hero-ctas">
+                    <a class="btn btn-primary" href="../html/shop.html">Shop Now</a>
+                    <a class="btn btn-ghost" href="../html/customize.html">Customize Candle</a>
+                </div>
 
-    <!-- ====== Promo Banner ====== -->
-    <aside class="promo-banner container" role="region" aria-label="Promotion">
-      <p>Free shipping on orders over $50 — Use code: WARMGLOW</p>
-    </aside>
+                <!-- small visual cue to scroll -->
+                <a class="hero-scroll" href="#featured" aria-label="Scroll to featured">↓</a>
+            </div>
+        </section>
 
-    <!-- ====== Featured Products ====== -->
-    <section id="featured" class="featured container" aria-labelledby="featured-title">
-      <h2 id="featured-title" class="section-title">Featured Candles</h2>
-      <div id="featured-grid" class="featured-grid">
-        <!-- JS will inject product cards here -->
-        <!-- Example card structure expected by JS:
+        <!-- ====== Promo Banner ====== -->
+        <aside class="promo-banner container" role="region" aria-label="Promotion">
+            <p>Free shipping on orders over $50 — Use code: WARMGLOW</p>
+        </aside>
+
+        <!-- ====== Featured Products ====== -->
+        <section id="featured" class="featured container" aria-labelledby="featured-title">
+            <h2 id="featured-title" class="section-title">Featured Candles</h2>
+            <div id="featured-grid" class="featured-grid">
+                <!-- JS will inject product cards here -->
+                <!-- Example card structure expected by JS:
         <article class="product-card" data-product-id="123">
           <img src="..." alt="">
           <h3 class="product-title">Name</h3>
@@ -53,34 +59,67 @@
           <a class="btn" href="product.html?slug=...">View</a>
         </article>
         -->
-      </div>
-      <div class="more-link">
-        <a href="../html/shop.html" class="btn btn-outline">View all products</a>
-      </div>
-    </section>
+            </div>
+            <div class="more-link">
+                <a href="../html/shop.html" class="btn btn-outline">View all products</a>
+            </div>
+        </section>
 
-    <!-- ====== About (video) ====== -->
-    <section id="about" class="about container" aria-labelledby="about-title">
-      <div class="about-media">
-        <video controls muted playsinline preload="metadata" width="640" height="360" poster="../media/images/about-poster.jpg">
-          <source src="../media/videos/about-lighting.mp4" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
-      </div>
-      <div class="about-content">
-        <h2 id="about-title" class="section-title">Hand-poured, small batches</h2>
-        <p>We blend natural waxes and thoughtfully selected fragrances to craft candles that feel like a warm memory. Each candle is poured by hand and packaged with care.</p>
-        <a class="btn btn-ghost" href="/html/about.html">Learn more</a>
-      </div>
-    </section>
+        <!-- ====== About (video) ====== -->
+        <section id="about" class="about container" aria-labelledby="about-title">
+            <div class="about-media">
+                <video controls muted playsinline preload="metadata" width="640" height="360"
+                    poster="../media/images/about-poster.jpg">
+                    <source src="../media/videos/about-lighting.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
+            <div class="about-content">
+                <h2 id="about-title" class="section-title">Hand-poured, small batches</h2>
+                <p>We blend natural waxes and thoughtfully selected fragrances to craft candles that feel like a warm
+                    memory. Each candle is poured by hand and packaged with care.</p>
+                <a class="btn btn-ghost" href="/html/about.html">Learn more</a>
+            </div>
+        </section>
 
-    <!-- ====== Shop by Category ====== -->
-    <section id="categories" class="categories container" aria-labelledby="categories-title">
-      <h2 id="categories-title" class="section-title">Shop by Category</h2>
-      <div id="category-list" class="category-list"></div>
-    </section>
+        <!-- ====== Shop by Category ====== -->
+        <section id="categories" class="categories container" aria-labelledby="categories-title">
+            <h2 id="categories-title" class="section-title">Shop by Category</h2>
+            <div id="category-list" class="category-list"></div>
+        </section>
 
-  </main>
+        <!-- ====== Reviews / Testimonials ====== -->
+        <section id="reviews" class="reviews container" aria-labelledby="reviews-title">
+            <h2 id="reviews-title" class="section-title">What Our Customers Say</h2>
+            <div class="reviews-grid">
+                <!-- Example testimonial card -->
+                <article class="review-card">
+                    <p class="review-text">"I absolutely love my forest-inspired candle! The scent is magical and lasts
+                        all evening."</p>
+                    <p class="review-author">— Emma W.</p>
+                </article>
+                <article class="review-card">
+                    <p class="review-text">"Perfect cozy vibes for my reading nook. Hand-poured quality really shows."
+                    </p>
+                    <p class="review-author">— Lucas M.</p>
+                </article>
+                <article class="review-card">
+                    <p class="review-text">"Unique scents and beautiful packaging. A wonderful gift for friends."</p>
+                    <p class="review-author">— Sophia R.</p>
+                </article>
+            </div>
+        </section>
 
+        <!-- ====== Personalized Quiz CTA ====== -->
+        <section id="quiz-cta" class="quiz-cta container" aria-labelledby="quiz-cta-title">
+            <h2 id="quiz-cta-title" class="section-title">Find Your Perfect Scent</h2>
+            <p>Not sure which candle matches your mood, style, or preferences? Take our personalized quiz to discover
+                the candle that’s perfect for you!</p>
+            <a href="../html/guide.html#quiz" class="btn btn-primary">Take the Quiz</a>
+        </section>
+
+    </main>
+    <div id="footer"></div>
 </body>
+
 </html>
