@@ -1,4 +1,292 @@
 {
+  "scent": [
+    {
+      "id": 1,
+      "name": "Fireside Glow",
+      "price": 12,
+      "aggressiveness": 3,
+      "category": "sweet",
+      "description": "Warm and comforting vanilla with hints of cream",
+      "notes": ["vanilla", "cream", "sugar"],
+      "popularity": 9,
+      "mood": "relaxing",
+      "season": "all-year"
+    },
+    {
+      "id": 2,
+      "name": "Ocean Breeze",
+      "price": 15,
+      "aggressiveness": 5,
+      "category": "fresh",
+      "description": "Fresh marine scent with sea salt and crisp air",
+      "notes": ["sea salt", "marine", "ozone"],
+      "popularity": 8,
+      "mood": "energizing",
+      "season": "summer"
+    },
+    {
+      "id": 3,
+      "name": "Lavender Fields",
+      "price": 14,
+      "aggressiveness": 2,
+      "category": "floral",
+      "description": "Calming lavender with herbs and soft florals",
+      "notes": ["lavender", "herbs", "soft florals"],
+      "popularity": 10,
+      "mood": "calming",
+      "season": "spring"
+    },
+    {
+      "id": 4,
+      "name": "Cinnamon Spice",
+      "price": 13,
+      "aggressiveness": 7,
+      "category": "spicy",
+      "description": "Warm cinnamon with cloves and nutmeg",
+      "notes": ["cinnamon", "cloves", "nutmeg"],
+      "popularity": 7,
+      "mood": "cozy",
+      "season": "winter"
+    },
+    {
+      "id": 5,
+      "name": "Citrus Burst",
+      "price": 11,
+      "aggressiveness": 8,
+      "category": "citrus",
+      "description": "Energizing blend of orange, lemon, and grapefruit",
+      "notes": ["orange", "lemon", "grapefruit"],
+      "popularity": 8,
+      "mood": "uplifting",
+      "season": "summer"
+    },
+    {
+      "id": 6,
+      "name": "Forest Pine",
+      "price": 16,
+      "aggressiveness": 6,
+      "category": "woody",
+      "description": "Fresh pine needles with cedar and earthy moss",
+      "notes": ["pine", "cedar", "moss"],
+      "popularity": 6,
+      "mood": "grounding",
+      "season": "winter"
+    },
+    {
+      "id": 7,
+      "name": "Rose Garden",
+      "price": 18,
+      "aggressiveness": 4,
+      "category": "floral",
+      "description": "Romantic rose petals with soft jasmine",
+      "notes": ["rose", "jasmine", "petals"],
+      "popularity": 7,
+      "mood": "romantic",
+      "season": "spring"
+    },
+    {
+      "id": 8,
+      "name": "Coffee House",
+      "price": 14,
+      "aggressiveness": 5,
+      "category": "gourmand",
+      "description": "Rich espresso with dark chocolate notes",
+      "notes": ["espresso", "dark chocolate", "roasted beans"],
+      "popularity": 9,
+      "mood": "energizing",
+      "season": "all-year"
+    }
+  ],
+  "color": [
+    {
+      "id": 1,
+      "name": "Pure White",
+      "hex": "#FFFFFF",
+      "category": "neutral",
+      "price_modifier": 0,
+      "popularity": 10
+    },
+    {
+      "id": 2,
+      "name": "Cream",
+      "hex": "#F5F5DC",
+      "category": "neutral",
+      "price_modifier": 0,
+      "popularity": 9
+    },
+    {
+      "id": 3,
+      "name": "Soft Pink",
+      "hex": "#FFB6C1",
+      "category": "pastel",
+      "price_modifier": 2,
+      "popularity": 8
+    },
+    {
+      "id": 4,
+      "name": "Lavender",
+      "hex": "#E6E6FA",
+      "category": "pastel",
+      "price_modifier": 2,
+      "popularity": 7
+    },
+    {
+      "id": 5,
+      "name": "Ocean Blue",
+      "hex": "#4682B4",
+      "category": "vibrant",
+      "price_modifier": 3,
+      "popularity": 8
+    },
+    {
+      "id": 6,
+      "name": "Forest Green",
+      "hex": "#228B22",
+      "category": "vibrant",
+      "price_modifier": 3,
+      "popularity": 6
+    },
+    {
+      "id": 7,
+      "name": "Sunset Orange",
+      "hex": "#FF6347",
+      "category": "vibrant",
+      "price_modifier": 3,
+      "popularity": 7
+    },
+    {
+      "id": 8,
+      "name": "Deep Purple",
+      "hex": "#4B0082",
+      "category": "deep",
+      "price_modifier": 4,
+      "popularity": 5
+    },
+    {
+      "id": 9,
+      "name": "Charcoal Black",
+      "hex": "#36454F",
+      "category": "deep",
+      "price_modifier": 4,
+      "popularity": 6
+    },
+    {
+      "id": 10,
+      "name": "Golden Yellow",
+      "hex": "#FFD700",
+      "category": "metallic",
+      "price_modifier": 5,
+      "popularity": 7
+    }
+  ],
+  "size": [
+    {
+      "id": 1,
+      "name": "Small",
+      "volume": "6 oz",
+      "burn_time": "25-30 hours",
+      "price": 15,
+      "popularity": 7
+    },
+    {
+      "id": 2,
+      "name": "Medium",
+      "volume": "10 oz",
+      "burn_time": "45-50 hours",
+      "price": 25,
+      "popularity": 10
+    },
+    {
+      "id": 3,
+      "name": "Large",
+      "volume": "16 oz",
+      "burn_time": "70-80 hours",
+      "price": 35,
+      "popularity": 8
+    },
+    {
+      "id": 4,
+      "name": "Extra Large",
+      "volume": "24 oz",
+      "burn_time": "100-120 hours",
+      "price": 50,
+      "popularity": 5
+    }
+  ],
+  "container": [
+    {
+      "id": 1,
+      "name": "Classic Glass Jar",
+      "material": "glass",
+      "style": "classic",
+      "price_modifier": 0,
+      "description": "Traditional clear glass jar with metal lid",
+      "popularity": 10
+    },
+    {
+      "id": 2,
+      "name": "Frosted Glass",
+      "material": "glass",
+      "style": "modern",
+      "price_modifier": 3,
+      "description": "Elegant frosted glass with wooden lid",
+      "popularity": 8
+    },
+    {
+      "id": 3,
+      "name": "Ceramic Vessel",
+      "material": "ceramic",
+      "style": "rustic",
+      "price_modifier": 5,
+      "description": "Handcrafted ceramic container, reusable",
+      "popularity": 7
+    },
+    {
+      "id": 4,
+      "name": "Tin Container",
+      "material": "metal",
+      "style": "vintage",
+      "price_modifier": -2,
+      "description": "Vintage-style metal tin with lid",
+      "popularity": 6
+    },
+    {
+      "id": 5,
+      "name": "Concrete Pot",
+      "material": "concrete",
+      "style": "industrial",
+      "price_modifier": 8,
+      "description": "Modern concrete vessel with minimalist design",
+      "popularity": 5
+    }
+  ],
+  "wick": [
+    {
+      "id": 1,
+      "name": "Cotton Wick",
+      "material": "cotton",
+      "burn_quality": "clean",
+      "price_modifier": 0,
+      "description": "Natural cotton wick for even burning"
+    },
+    {
+      "id": 2,
+      "name": "Wood Wick",
+      "material": "wood",
+      "burn_quality": "crackling",
+      "price_modifier": 4,
+      "description": "Natural wood wick with crackling sound"
+    },
+    {
+      "id": 3,
+      "name": "Hemp Wick",
+      "material": "hemp",
+      "burn_quality": "eco-friendly",
+      "price_modifier": 2,
+      "description": "Sustainable hemp wick, longer burn time"
+    }
+  ],
+
   "products": [
     {
       "id": "p001",
