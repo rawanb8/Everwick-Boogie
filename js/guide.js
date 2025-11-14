@@ -26,12 +26,51 @@ document.addEventListener('DOMContentLoaded', async () => {
   // initialize all filters
   setupFilters();
 
-  // this checks if the page URL contains a hash like "#quiz"
-  // if yes automatically switch to the quiz tab when page loads
-  if (window.location.hash === '#quiz') {
-    showTab('quiz');
+    // update progress/buttons initial state
+    updateQuizProgress();
+    updateQuizButtons();
+
+    // automatically switch to the quiz tab when page loads if hash is present
+    if (window.location.hash && document.getElementById(`${window.location.hash.slice(1)}-tab`)) {
+      showTab(window.location.hash.slice(1));
+    } else if (window.location.hash === '#quiz') {
+      showTab('quiz');
+    }
+  } catch (err) {
+    console.error(err);
+    app.showNotification?.('Failed to load data. Please try again.', 'error');
   }
-})
+
+  try {
+    // fetch the JSON file
+    const response = await fetch('../json/products.json'); // adjust path if needed
+    const data = await response.json();
+    
+    // assign the scents array to your class
+    app.scents = data.scents.map(s => ({
+      ...s,
+      aggressiveness: s.aggressiveness || 2 // default if missing
+    }));
+
+    console.log('Loaded scents:', app.scents); // check in console
+  } catch (err) {
+    console.error('Failed to load scents:', err);
+  }
+});
+
+function initTabs() {
+  // allow both data-tab and existing onclick handlers
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    const attr = btn.dataset.tab;
+    const tabName = attr || (btn.getAttribute('onclick') || '').match(/showTab\('([^']+)'/)?.[1];
+    if (tabName) {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        showTab(tabName);
+      });
+    }
+  });
+}
 
 function showTab(tabName) {
   // hide all the tabs
