@@ -4,6 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="EverwickBoogee - About & Contact">
+    <meta property="og:description"
+        content="Learn about CandlesWeb, our handcrafted eco-friendly candles, mission, and values.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="images/og-image.jpg">
+    <link rel="icon" href="/media/icons/logo.svg" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+
     <title>About Page</title>
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/about.css">
@@ -13,6 +23,7 @@
     <!-- Navbar added dynamically -->
     <div id="navbar"></div>
 
+    <main>
     <!-- Page Header  -->
     <section class="section">
         <div class="container">
@@ -34,27 +45,28 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="contact-first-name" class="form-label">First Name *</label>
-                                <input type="text" id="contact-first-name" class="form-input" required>
+                                <input type="text" id="contact-first-name" class="form-input" name="first_name"
+                                    required>
                             </div>
 
                             <div class="form-group">
                                 <label for="contact-last-name" class="form-label">Last Name *</label>
-                                <input type="text" id="contact-last-name" class="form-input" required>
+                                <input type="text" id="contact-last-name" name="last_name" class="form-input" required>
                             </div>
                         </div>
 
                         <div class="form-group">
                             <label for="contact-email" class="form-label">Email Address *</label>
-                            <input type="email" id="contact-email" class="form-input" required>
+                            <input type="email" id="contact-email" class="form-input" name="email" required>
                         </div>
 
                         <div class="form-group">
                             <label for="contact-phone" class="form-label">Phone Number *</label>
-                            <input type="tel" id="contact-phone" class="form-input" required>
+                            <input type="tel" id="contact-phone" name="phone" class="form-input" required>
                         </div>
 
                         <div class="form-group">
-                            <label for="contact-subject" class="from-label">Subject *</label>
+                            <label for="contact-subject" class="form-label">Subject *</label>
                             <select name="contact-subject" class="form-select" required>
                                 <option value="" selected="selected">Select a subject</option>
                                 <option value="general">General Inquiry</option>
@@ -70,12 +82,12 @@
                         <div class="form-group">
                             <label for="contact-message" class="form-label">Message *</label>
                             <textarea id="contact-message" class="form-textarea" rows="6"
-                                placeholder="Tell us how can we help you" required></textarea>
+                                placeholder="Tell us how can we help you" name="message" required></textarea>
                         </div>
 
                         <div class="form-group">
-                            <label for="contact-phone" class="form-label">
-                                <input type="checkbox" id="newsletter-signup">
+                            <label for="newsletter-signup" class="form-label">
+                                <input type="checkbox" id="newsletter-signup" name="newsletter_signup">
                                 <span>Subscribe to our newsletter for updates and special offers!!</span>
                             </label>
                         </div>
@@ -90,7 +102,7 @@
 
                         <div class="contact-methods">
                             <div class="contact-method">
-                                <div class="contact-icon">📧</div>
+                                <div class="contact-icon"><i class="fas fa-envelope"></i></div>
                                 <div class="contact-details">
                                     <h4>Email</h4>
                                     <p>EverwickBoogee@gmail.com</p>
@@ -99,7 +111,7 @@
                             </div>
 
                             <div class="contact-method">
-                                <div class="contact-icon">📞</div>
+                                <div class="contact-icon"><i class="fas fa-phone"></i></div>
                                 <div class="contact-details">
                                     <h4>Phone</h4>
                                     <p>+1 (555) 123-4567</p>
@@ -108,7 +120,7 @@
                             </div>
 
                             <div class="contact-method">
-                                <div class="contact-icon">📍</div>
+                                <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
                                 <div class="contact-details">
                                     <h4>Address</h4>
                                     <p>123 Candle Street<br>Fragrance City, FC 12345</p>
@@ -120,10 +132,15 @@
                         <div class="social-section">
                             <h4>Follow Us</h4>
                             <div class="social-links">
-                                <a href="#" class="social-link" aria-label="Instagram">📷 Instagram</a>
-                                <a href="#" class="social-link" aria-label="Facebook">📘 Facebook</a>
-                                <a href="#" class="social-link" aria-label="Twitter">🐦 Twitter</a>
-                                <a href="#" class="social-link" aria-label="Pinterest">📌 Pinterest</a>
+                                <a href="https://instagram.com" target="_blank" rel="noopener noreferrer"
+                                    class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i> Instagram</a>
+                                <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
+                                    class="social-link" aria-label="Facebook"><i class="fab fa-facebook"></i> Facebook</a>
+                                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer"
+                                    class="social-link" aria-label="Twitter"><i class="fab fa-twitter"></i> Twitter</a>
+                                <a href="https://pinterest.com" target="_blank" rel="noopener noreferrer"
+                                    class="social-link" aria-label="Pinterest"><i class="fab fa-pinterest"></i> Pinterest</a>
+
                             </div>
                         </div>
                     </div>
@@ -133,15 +150,15 @@
                         <div class="hours-list">
                             <div class="hours-item">
                                 <span class="day">Monday - Friday</span>
-                                <span class="time">9:00 AM - 6:00 PM</span>
+                                <time class="time">9:00 AM - 6:00 PM</time>
                             </div>
                             <div class="hours-item">
                                 <span class="day">Saturday</span>
-                                <span class="time">10:00 AM - 4:00 PM</span>
+                                <time class="time">10:00 AM - 4:00 PM</time>
                             </div>
                             <div class="hours-item">
                                 <span class="day">Sunday</span>
-                                <span class="time">Closed</span>
+                                <time class="time">Closed</time>
                             </div>
                         </div>
                     </div>
@@ -176,8 +193,7 @@
                 </div>
 
                 <div class="mission-image">
-                    <img src="https://images.unsplash.com/photo-1583149577728-ca9bdbbdeac5?w=500&h=400&fit=crop"
-                        alt="Candle making process" class="mission-img">
+                    <img src="" alt="Candle making process" class="mission-img">
                 </div>
             </div>
         </div>
@@ -190,7 +206,7 @@
 
             <div class="values-grid grid grid-2">
                 <div class="value-card">
-                    <div class="value-icon">🌱</div>
+                    <div class="value-icon"><i class="fas fa-seedling"></i> </div>
                     <h3>Sustainability</h3>
                     <p>
                         We use only eco-friendly wax, recycled packaging, and sustainable sourcing practices.
@@ -205,7 +221,7 @@
                 </div>
 
                 <div class="value-card">
-                    <div class="value-icon">✨</div>
+                    <div class="value-icon"><i class="fas fa-gem"></i></div>
                     <h3>Quality Craftsmanship</h3>
                     <p>
                         Every candle is hand-poured with attention to detail, ensuring consistent quality and
@@ -220,7 +236,7 @@
                 </div>
 
                 <div class="value-card">
-                    <div class="value-icon">💝</div>
+                    <div class="value-icon"><i class="fas fa-heart"></i></div>
                     <h3>Customer Satisfaction</h3>
                     <p>
                         Your happiness is our priority. We stand behind every product and offer personalized
@@ -235,7 +251,7 @@
                 </div>
 
                 <div class="value-card">
-                    <div class="value-icon">🤝</div>
+                    <div class="value-icon"><i class="fas fa-handshake"></i></div>
                     <h3>Community Impact</h3>
                     <p>
                         We believe in giving back to our community and supporting local artisans and
@@ -259,7 +275,7 @@
 
             <div class="goals-timeline">
                 <div class="timeline-item completed">
-                    <div class="timeline-marker">✅</div>
+                    <div class="timeline-marker"><i class="fas fa-check-circle"></i></div>
                     <div class="timeline-content">
                         <h3>2020-2021: Foundation</h3>
                         <p>Established 100% soy wax formulation and recyclable packaging</p>
@@ -271,7 +287,7 @@
                 </div>
 
                 <div class="timeline-item completed">
-                    <div class="timeline-marker">✅</div>
+                    <div class="timeline-marker"><i class="fas fa-check-circle"></i></div>
                     <div class="timeline-content">
                         <h3>2022-2023: Expansion</h3>
                         <p>Launched refillable container program and carbon-neutral shipping</p>
@@ -283,7 +299,7 @@
                 </div>
 
                 <div class="timeline-item current">
-                    <div class="timeline-marker">🎯</div>
+                    <div class="timeline-marker"><i class="fas fa-bullseye"></i></div>
                     <div class="timeline-content">
                         <h3>2024: Current Goals</h3>
                         <p>Achieve 50% reduction in packaging waste and expand local sourcing</p>
@@ -295,7 +311,7 @@
                 </div>
 
                 <div class="timeline-item future">
-                    <div class="timeline-marker">🚀</div>
+                    <div class="timeline-marker"><i class="fas fa-rocket"></i></div>
                     <div class="timeline-content">
                         <h3>2025: Future Vision</h3>
                         <p>Become completely carbon-neutral and launch zero-waste production</p>
@@ -338,7 +354,7 @@
 
             <div class="faq-list">
                 <div class="faq-item">
-                    <div class="faq-question" onclick="toggleFAQ(this)">
+                    <div class="faq-question" tabindex="0" role="button" aria-expanded="false" onclick="toggleFAQ(this)">
                         <h3>How long do your candles burn?</h3>
                         <span class="faq-toggle">+</span>
                     </div>
@@ -397,8 +413,10 @@
             </div>
         </div>
     </section>
-    <div id="footer-container"></div>
-    <script src="/js/main.js"></script>   
+</main>
+    <div id="footer"></div>
+    <script src="/js/app.js"></script>
+    <script src="/js/main.js"></script>
     <script src="/js/about.js"></script>
 </body>
 

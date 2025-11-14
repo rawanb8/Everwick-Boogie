@@ -1,37 +1,34 @@
 // Contact page functionality
-document.addEventListener('DOMContentLoaded', async () => {
+$(document).ready(async function () {
     await app.loadData();
     setupContactForm();
     animateStats();
 });
 
-
 function setupContactForm() {
-    const form = document.getElementById('contact-form');
-
-    form.addEventListener('submit', (e) => {
-
-        //By default, submitting a form refreshes the page or sends data to a new URL.
-        // this stops that behavior — it prevents the page reload
+    $('#contact-form').on('submit', function (e) {
         e.preventDefault();
-
-        preventDefault()
-        handleContactSubmission();  //collect form data
+        handleContactSubmission();  // collect form data
     });
 }
 
 function handleContactSubmission() {
-    // Validate form
-    const requiredFields = ['contact-first-name', 'contact-last-name', 'contact-email', 'contact-subject', 'contact-message'];
+    const requiredFields = [
+        'contact-first-name',
+        'contact-last-name',
+        'contact-email',
+        'contact-subject',
+        'contact-message'
+    ];
     let isValid = true;
 
-    requiredFields.forEach(fieldId => {
-        const field = document.getElementById(fieldId);
-        if (!field.value.trim()) {
-            field.classList.add('error');
+    requiredFields.forEach(function (fieldId) {
+        const $field = $('#' + fieldId);
+        if (!$field.val().trim()) {
+            $field.addClass('error');
             isValid = false;
         } else {
-            field.classList.remove('error');
+            $field.removeClass('error');
         }
     });
 
@@ -40,36 +37,30 @@ function handleContactSubmission() {
         return;
     }
 
-    // Collect form data
     const formData = {
-        firstName: document.getElementById('contact-first-name').value,
-        lastName: document.getElementById('contact-last-name').value,
-        email: document.getElementById('contact-email').value,
-        phone: document.getElementById('contact-phone').value,
-        subject: document.getElementById('contact-subject').value,
-        message: document.getElementById('contact-message').value,
-        newsletter: document.getElementById('newsletter-signup').checked,
+        firstName: $('#contact-first-name').val(),
+        lastName: $('#contact-last-name').val(),
+        email: $('#contact-email').val(),
+        phone: $('#contact-phone').val(),
+        subject: $('#contact-subject').val(),
+        message: $('#contact-message').val(),
+        newsletter: $('#newsletter-signup').is(':checked'),
         timestamp: new Date().toISOString()
     };
 
-    // Simulate form submission
     app.showNotification('Sending message...', 'info');
 
-    setTimeout(() => {
-        // Save to local storage (simulate backend)
-        const messages = app.getFromStorage('contact-messages') || [];
+    setTimeout(function () {
+        let messages = app.getFromStorage('contact-messages') || [];
         messages.push(formData);
         app.saveToStorage('contact-messages', messages);
 
-        // Show success message
         app.showNotification('Thank you! Your message has been sent. We\'ll get back to you within 24 hours.', 'success');
 
-        // Reset form
-        document.getElementById('contact-form').reset();
+        $('#contact-form')[0].reset();
 
-        // Handle newsletter signup
         if (formData.newsletter) {
-            setTimeout(() => {
+            setTimeout(function () {
                 app.showNotification('You\'ve been subscribed to our newsletter!', 'success');
             }, 1000);
         }
@@ -77,47 +68,50 @@ function handleContactSubmission() {
 }
 
 function toggleFAQ(questionElement) {
-    const faqItem = questionElement.parentElement;
-    const answer = faqItem.querySelector('.faq-answer');
-    const toggle = questionElement.querySelector('.faq-toggle');
+    const $faqItem = $(questionElement).parent();
+    const $answer = $faqItem.find('.faq-answer');
+    const $toggle = $faqItem.find('.faq-toggle');
 
     // Close other open FAQ items
-    document.querySelectorAll('.faq-item').forEach(item => {
-        if (item !== faqItem && item.classList.contains('active')) {
-            item.classList.remove('active');
-            item.querySelector('.faq-answer').style.maxHeight = '0';
-            item.querySelector('.faq-toggle').textContent = '+';
+    $('.faq-item').not($faqItem).each(function () {
+        const $item = $(this);
+        if ($item.hasClass('active')) {
+            $item.removeClass('active');
+            $item.find('.faq-answer').css('max-height', '0');
+            $item.find('.faq-toggle').text('+');
         }
     });
 
     // Toggle current FAQ item
-    if (faqItem.classList.contains('active')) {
-        faqItem.classList.remove('active');
-        answer.style.maxHeight = '0';
-        toggle.textContent = '+';
+    if ($faqItem.hasClass('active')) {
+        $faqItem.removeClass('active');
+        $answer.css('max-height', '0');
+        $toggle.text('+');
     } else {
-        faqItem.classList.add('active');
-        answer.style.maxHeight = answer.scrollHeight + 'px';
-        toggle.textContent = '−';
+        $faqItem.addClass('active');
+        $answer.css('max-height', $answer[0].scrollHeight + 'px');
+        $toggle.text('−');
     }
 }
 
 function animateStats() {
-    const stats = document.querySelectorAll('.stat-number');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
+    const $stats = $('.stat-number');
+    const observer = new IntersectionObserver(function (entries, obs) {
+        entries.forEach(function (entry) {
             if (entry.isIntersecting) {
-                animateNumber(entry.target);
-                observer.unobserve(entry.target);
+                animateNumber($(entry.target));
+                obs.unobserve(entry.target);
             }
         });
     });
 
-    stats.forEach(stat => observer.observe(stat));
+    $stats.each(function () {
+        observer.observe(this);
+    });
 }
 
-function animateNumber(element) {
-    const text = element.textContent;
+function animateNumber($element) {
+    const text = $element.text();
     const isPercentage = text.includes('%');
     const number = parseInt(text.replace(/[^0-9]/g, ''));
     const duration = 2000;
@@ -125,19 +119,18 @@ function animateNumber(element) {
     const increment = number / steps;
     let current = 0;
 
-    const timer = setInterval(() => {
+    const timer = setInterval(function () {
         current += increment;
         if (current >= number) {
             current = number;
             clearInterval(timer);
         }
-
-        element.textContent = Math.floor(current) + (isPercentage ? '%' : text.includes('+') ? '+' : '');
+        $element.text(Math.floor(current) + (isPercentage ? '%' : text.includes('+') ? '+' : ''));
     }, duration / steps);
 }
 
 function scrollToFAQ() {
-    document.querySelector('.faq-section').scrollIntoView({ behavior: 'smooth' });
+    $('html, body').animate({ scrollTop: $('.faq-section').offset().top }, 600);
 }
 
 function openCartModal() {
