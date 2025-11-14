@@ -93,7 +93,39 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.error('Error loading navbar:', error);
     }
   }
+
+  const footerContainer = document.getElementById('footer');
+
+  if (footerContainer) {
+    try {
+      const response = await fetch('footer.html'); // path to your footer HTML
+      const footerHTML = await response.text();
+      footerContainer.innerHTML = footerHTML;
+
+      // Optional: initialize footer JS (newsletter form)
+      initNewsletterForm();
+
+    } catch (error) {
+      console.error('Error loading footer:', error);
+    }
+  }
 });
+
+// fetch() loads footer.html and inserts it into the page
+fetch('footer.html')
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Footer not found');
+    }
+    return response.text();
+  })
+  .then(data => {
+    document.getElementById('footer-container').innerHTML = data;
+  })
+  .catch(error => {
+    console.error('Error loading footer:', error);
+  });
+
 
 /*================== NEWSLETTER in footer ==================*/
 function initNewsletterForm() {
