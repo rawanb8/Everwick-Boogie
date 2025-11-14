@@ -162,9 +162,13 @@
 }
 
 .mission-img {
-    width: 100%;
-    border-radius: var(--radius-lg);
+    width: 350px;
+    height: 350px;
+    object-fit: cover;
+    border-radius: 12px;
+     margin-left: 200px;
 }
+
 
 /* =================== VALUES SECTION =================== */
 /* Container for Values Section */
