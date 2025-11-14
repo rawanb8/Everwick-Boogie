@@ -41,6 +41,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error(err);
     app.showNotification?.('Failed to load data. Please try again.', 'error');
   }
+
+  try {
+    // fetch the JSON file
+    const response = await fetch('../json/products.json'); // adjust path if needed
+    const data = await response.json();
+    
+    // assign the scents array to your class
+    app.scents = data.scents.map(s => ({
+      ...s,
+      aggressiveness: s.aggressiveness || 2 // default if missing
+    }));
+
+    console.log('Loaded scents:', app.scents); // check in console
+  } catch (err) {
+    console.error('Failed to load scents:', err);
+  }
 });
 
 function initTabs() {

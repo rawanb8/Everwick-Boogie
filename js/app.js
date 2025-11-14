@@ -1,43 +1,50 @@
 const app = {
   data: {},
+  scents: [],
 
-  // returns the scents array (placeholder for now)
-  getScents: function() { 
-    return this.scents || []; 
+  getScents() { return this.scents; },
+  getScentById(id) { return this.scents.find(s => s.id === id) || null; },
+  formatPrice(price) { return `$${Number(price).toFixed(2)}`; },
+
+  async loadData() {
+    // Fetch scents or quiz data here if needed
+    this.scents = [];
   },
 
-  // returns a single scent by id (placeholder)
-  getScentById: function(id) { 
-    return (this.scents || []).find(s => s.id === id) || null; 
-  },
+  calculateQuizResults(answers) {
+  const scents = this.getScents();
+  const scores = scents.map(scent => ({ scent: scent, score: 0 }));
 
-  // formats the price
-  formatPrice: function(price) { 
-    return `$${price.toFixed(2)}`; 
-  },
+  answers.forEach((answer, questionIndex) => {
+    scores.forEach(item => {
+      const scent = item.scent;
+      switch (questionIndex) {
+        case 0: // Mood question
+          if (scent.mood === answer) item.score += 3;
+          break;
+        case 1: // Scent family / category
+          if (scent.category === answer) item.score += 3;
+          break;
+        case 2: // Strength question
+          const strengthDiff = Math.abs(scent.aggressiveness - parseInt(answer));
+          item.score += Math.max(3 - strengthDiff, 0);
+          break;
+        case 3: // Season question
+          if (scent.season === answer || scent.season === 'all-year') {
+            item.score += scent.season === answer ? 2 : 1;
+          }
+          break;
+      }
+    });
+  });
 
-  // async initialization (placeholder)
-  loadData: async function() { 
-    // just create an empty array for now so code doesn’t crash
-    this.scents = []; 
-  },
+  return scores
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
+    .map(item => item.scent);
+},
 
-  // placeholder for quiz result calculation
-  calculateQuizResults: function(answers) { 
-    // return empty array for now
-    return []; 
-  },
-
-  // modal controls
-  openModal: function(modalId) { 
-    document.getElementById(modalId).style.display = 'block'; 
-  },
-  closeModal: function(modalId) { 
-    document.getElementById(modalId).style.display = 'none'; 
-  },
-
-  // simple notification placeholder
-  showNotification: function(message, type) { 
-    alert(message); 
-  }
+  openModal(id) { document.getElementById(id).style.display = 'block'; },
+  closeModal(id) { document.getElementById(id).style.display = 'none'; },
+  showNotification(msg, type) { alert(msg); }
 };
