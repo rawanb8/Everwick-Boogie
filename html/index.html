@@ -1,12 +1,86 @@
-<!-- home page -->
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Everwick Boogie— Home</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/home.css">
+  <script src="/js/main.js"defer></script>
+  <script src="script.js" defer></script>
 </head>
 <body>
-    
+  <main class="home-page">
+
+    <!-- ====== Hero ====== -->
+    <section class="hero" id="hero">
+      <div class="hero-media">
+        <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="../media/images/hero-poster.jpg">
+          <source src="../media/videos/hero.mp4" type="video/mp4">
+          <!-- fallback image will show via poster -->
+        </video>
+      </div>
+
+      <div class="hero-content container">
+        <h1 class="hero-title brand-slogan">Where Every Flame Tells A Story</h1>
+        <p class="hero-sub">Hand-poured candles inspired by forest, folklore, and cozy evenings.</p>
+
+        <div class="hero-ctas">
+          <a class="btn btn-primary" href="../html/shop.html">Shop Now</a>
+          <a class="btn btn-ghost" href="../html/customize.html">Customize Candle</a>
+        </div>
+
+        <!-- small visual cue to scroll -->
+        <a class="hero-scroll" href="#featured" aria-label="Scroll to featured">↓</a>
+      </div>
+    </section>
+
+    <!-- ====== Promo Banner ====== -->
+    <aside class="promo-banner container" role="region" aria-label="Promotion">
+      <p>Free shipping on orders over $50 — Use code: WARMGLOW</p>
+    </aside>
+
+    <!-- ====== Featured Products ====== -->
+    <section id="featured" class="featured container" aria-labelledby="featured-title">
+      <h2 id="featured-title" class="section-title">Featured Candles</h2>
+      <div id="featured-grid" class="featured-grid">
+        <!-- JS will inject product cards here -->
+        <!-- Example card structure expected by JS:
+        <article class="product-card" data-product-id="123">
+          <img src="..." alt="">
+          <h3 class="product-title">Name</h3>
+          <p class="product-price">$25</p>
+          <a class="btn" href="product.html?slug=...">View</a>
+        </article>
+        -->
+      </div>
+      <div class="more-link">
+        <a href="../html/shop.html" class="btn btn-outline">View all products</a>
+      </div>
+    </section>
+
+    <!-- ====== About (video) ====== -->
+    <section id="about" class="about container" aria-labelledby="about-title">
+      <div class="about-media">
+        <video controls muted playsinline preload="metadata" width="640" height="360" poster="../media/images/about-poster.jpg">
+          <source src="../media/videos/about-lighting.mp4" type="video/mp4">
+          Your browser does not support the video tag.
+        </video>
+      </div>
+      <div class="about-content">
+        <h2 id="about-title" class="section-title">Hand-poured, small batches</h2>
+        <p>We blend natural waxes and thoughtfully selected fragrances to craft candles that feel like a warm memory. Each candle is poured by hand and packaged with care.</p>
+        <a class="btn btn-ghost" href="/html/about.html">Learn more</a>
+      </div>
+    </section>
+
+    <!-- ====== Shop by Category ====== -->
+    <section id="categories" class="categories container" aria-labelledby="categories-title">
+      <h2 id="categories-title" class="section-title">Shop by Category</h2>
+      <div id="category-list" class="category-list"></div>
+    </section>
+
+  </main>
+
 </body>
 </html>
