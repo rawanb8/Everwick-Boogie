@@ -111,6 +111,8 @@
     /* Background Gradient */
      --bg: linear-gradient(180deg, #fbf9f6, var(--secondary-color)); 
 
+    --nav-height: 72px;
+
 
 }
 
@@ -491,29 +493,16 @@ body.modal-open {
 }
 
 
-
-/*--------------will add later-------------*/
-/*.brand-text, .site-title, .product-title {
-  font-family: "TAN Meringue", "Amsterdam Two", serif;
-  letter-spacing: 0.01em;
-
-  .slogan, .hero-quote {
-  font-family: "Amsterdam Two", "TAN Meringue", serif;
-  color: var(--brand-dark);
-}
-h1, .hero-title { font-family: "TAN Meringue", "Amsterdam Two", serif; margin:0; }
-h2, h3, h4 { font-family: "Lora", Georgia, serif; margin: 0 0 .5rem 0; }
-
-.btn { font-family: "Lora", serif; font-weight:700; }
-.btn-ghost { background: transparent; border:1px solid rgba(0,0,0,0.06); }
-}*/
-
 /*====================NAVBAR STYLING====================*/
 
 .site-nav {
     position: fixed;
+    top:0;
+    left:0;
+    right:0;
+    height: var(--nav-height);
     inset: 0 0 auto 0;
-    z-index: 1000;
+    z-index: 1200;
     width: 100%;
 }
 
