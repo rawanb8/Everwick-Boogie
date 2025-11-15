@@ -264,19 +264,9 @@
 
     
   <!-- Include footer -->
-  <div id="footer-placeholder"></div>
+  <div id="footer"></div>
 
-  <!-- Script to include nav/footer -->
-  <script>
-    function includeHTML(id, file) {
-      fetch(file)
-        .then(response => response.text())
-        .then(data => document.getElementById(id).innerHTML = data);
-    }
-
-    includeHTML("nav-placeholder", "nav.html");
-    includeHTML("footer-placeholder", "footer.html");
-  </script>
+  
  <script src="../js/main.js"></script>
  <script src="../js/cart.js"></script>
 </body>
