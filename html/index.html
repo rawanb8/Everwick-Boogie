@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en">
 
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -12,6 +13,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
         integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
+
 
 <body>
 
@@ -33,6 +35,9 @@
             <div class="hero-content container">
                 <h1 class="hero-title brand-slogan">Where Every Flame Tells A Story</h1>
                 <p class="hero-sub">Hand-poured candles inspired by forest, folklore, and cozy evenings.</p>
+            <div class="hero-content container">
+                <h1 class="hero-title brand-slogan">Where Every Flame Tells A Story</h1>
+                <p class="hero-sub">Hand-poured candles inspired by forest, folklore, and cozy evenings.</p>
 
                 <div class="hero-ctas">
                     <a class="btn btn-primary" href="#">Shop Now</a>
@@ -43,12 +48,26 @@
                 <a class="hero-scroll" href="#featured" aria-label="Scroll to featured">↓</a>
             </div>
         </section>
+                <!-- small visual cue to scroll -->
+                <a class="hero-scroll" href="#featured" aria-label="Scroll to featured">↓</a>
+            </div>
+        </section>
 
         <!-- ====== Promo Banner ====== -->
         <aside class="promo-banner container" role="region" aria-label="Promotion">
             <p>Free shipping on orders over $50 — Use code: WARMGLOW</p>
         </aside>
+        <!-- ====== Promo Banner ====== -->
+        <aside class="promo-banner container" role="region" aria-label="Promotion">
+            <p>Free shipping on orders over $50 — Use code: WARMGLOW</p>
+        </aside>
 
+        <!-- ====== Featured Products ====== -->
+        <section id="featured" class="featured container" aria-labelledby="featured-title">
+            <h2 id="featured-title" class="section-title">Featured Candles</h2>
+            <div id="featured-grid" class="featured-grid">
+                <!-- JS will inject product cards here -->
+                <!-- Example card structure expected by JS:
         <!-- ====== Featured Products ====== -->
         <section id="featured" class="featured container" aria-labelledby="featured-title">
             <h2 id="featured-title" class="section-title">Featured Candles</h2>
@@ -130,6 +149,11 @@
             <h2 id="categories-title" class="section-title">Shop by Category</h2>
             <div id="category-list" class="category-list"></div>
         </section>
+        <!-- ====== Shop by Category ====== -->
+        <section id="categories" class="categories container" aria-labelledby="categories-title">
+            <h2 id="categories-title" class="section-title">Shop by Category</h2>
+            <div id="category-list" class="category-list"></div>
+        </section>
 
         <!-- ====== Reviews / Testimonials ====== -->
         <section id="reviews" class="reviews container" aria-labelledby="reviews-title">
@@ -169,5 +193,6 @@
     </main>
     <div id="footer"></div>
 </body>
+
 
 </html>
