@@ -153,19 +153,61 @@
     margin-bottom: var(--space-xl);
 }
 
+
 .founding-story h3 {
     margin-bottom: var(--space-md);
 }
 
 .mission-img {
-    width: 100%;
-    border-radius: var(--radius-lg);
+    width: 350px;
+    height: 350px;
+    object-fit: cover;
+    border-radius: 12px;
+     margin-left: 200px;
 }
 
-/* Values Section */
+
+/* =================== VALUES SECTION =================== */
+/* Container for Values Section */
 .values-section {
     background: var(--white);
+    margin: 0 auto;
+    padding: var(--space-2xl);
+    max-width: 1600px; /* ensures enough space for 4 cards */
 }
+
+/* Grid for cards */
+.values-grid {
+    display: grid;
+    gap: var(--space-2xl);
+    grid-template-columns: repeat(4, 1fr); /* always 4 columns */
+    justify-items: stretch; /* make cards fill column width */
+}
+
+/* Optional: make cards a little bigger on very wide screens */
+@media (min-width: 1600px) {
+    .values-grid {
+        grid-template-columns: repeat(4, 1fr);
+        max-width: 1400px; /* limit container so cards stay nice */
+        margin: 0 auto;
+    }
+}
+
+/* Responsive for smaller screens */
+@media (max-width: 1200px) {
+    .values-grid {
+        grid-template-columns: repeat(2, 1fr); /* 2 by 2 */
+    }
+}
+
+@media (max-width: 768px) {
+    .values-grid {
+        grid-template-columns: 1fr; /* 1 card per row */
+    }
+}
+
+
+
 
 .value-card {
     background: var(--background-light);
@@ -213,7 +255,9 @@
 .value-icon i {
     font-size: 3rem;
     color: var(--primary-color);
+    /* icon color */
     border: 3px solid var(--primary-color);
+    /* circular border */
     border-radius: 50%;
     padding: 10px;
     transition: transform 0.3s, color 0.3s, border-color 0.3s, background 0.3s;
@@ -222,9 +266,14 @@
 .value-icon i:hover {
     transform: scale(1.2);
     background: var(--accent-color);
+    /* hover fill */
     color: var(--white);
+    /* icon color on hover */
     border-color: var(--accent-color);
 }
+
+
+
 
 /* =================== GOALS / TIMELINE SECTION =================== */
 .goals-section {
@@ -270,12 +319,37 @@
     border-color: var(--success-color);
     background: var(--success-color);
     color: var(--white);
+    animation: pulse 0.8s ease-in-out;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.15);
+    }
 }
 
 .timeline-item.current .timeline-marker {
     border-color: var(--primary-color);
     background: var(--primary-color);
     color: var(--white);
+}
+
+.timeline-item.future .timeline-marker {
+    border-color: var(--secondary-color);
+    background: var(--secondary-color);
+    color: var(--white);
+}
+
+.timeline-item:hover .timeline-marker {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .timeline-content {
@@ -329,8 +403,20 @@
     box-shadow: var(--shadow-sm);
 }
 
+.impact-stats h3 {
+    margin-bottom: var(--space-xl);
+}
+
+.stats-grid {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: var(--space-xl);
+    padding: 0 var(--space-md);
+}
+
 .stat-item {
-    text-align: center;
     flex: 0 0 auto;
 }
 
@@ -467,7 +553,6 @@ select:focus {
 
     .stats-grid {
         flex-wrap: wrap;
-        grid-template-columns: repeat(2, 1fr);
     }
 
     .social-links {
