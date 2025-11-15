@@ -4,46 +4,85 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Everwick Boogee | Shop Candles</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/shop.css">
 </head>
 <body>
 
   <!-- Include header/nav -->
   <div id="nav-placeholder"></div>
 
-  <!-- filter section -->
-  <section class="filters">
-    <h2>Shop Our Candles</h2>
-    <div class="filter-options">
-      <select>
-        <option>Sort by</option>
-        <option>Price: Low to High</option>
-        <option>Price: High to Low</option>
-        <option>Newest</option>
-        <option>Best Sellers</option>
-      </select>
+  <div class="container section">
 
-      <select>
-        <option>Filter by Scent</option>
-        <option>Lavender</option>
-        <option>Vanilla</option>
-        <option>Cinnamon</option>
-        <option>Rose</option>
-      </select>
+    <!-- Top Bar (Filters + Sort) -->
+    <div class="flex flex-between flex-wrap mb-md">
+        <button class="btn btn-secondary btn-small">☰ Filters</button>
+        <span class="product-count text-right" id="product-count">0 products</span>
 
-      <select>
-        <option>Filter by Collection</option>
-        <option>Fall Collection</option>
-        <option>Holiday Collection</option>
-        <option>Everyday Candles</option>
-      </select>
+        <div class="flex flex-between" style="gap: .5rem;">
+            <label for="sort-by">Sort by:</label>
+            <select id="sort-by" class="form-select" style="width: 160px;">
+                <option value="featured">Featured</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="rating">Rating</option>
+            </select>
+        </div>
     </div>
-  </section>
 
-  <!-- product grid (dynamic) -->
-  <section class="product-grid" id="product-grid">
-    <!-- Products will be inserted here by JS -->
-  </section>
+    <div class="catalog-layout">
+
+       <aside class="catalog-filters">
+    <div class="flex flex-between mb-md">
+        <h4>Filters</h4>
+        <button class="btn btn-ghost btn-small" id="clear-filters">Clear All</button>
+    </div>
+
+    <!-- CATEGORY -->
+    <div class="filter-block">
+        <h5>Category</h5>
+        <label><input type="radio" name="cat" value="all" checked> All Products</label>
+        <label><input type="radio" name="cat" value="signature"> Signature Collection</label>
+        <label><input type="radio" name="cat" value="seasonal"> Seasonal Scents</label>
+        <label><input type="radio" name="cat" value="luxury"> Luxury Line</label>
+        <label><input type="radio" name="cat" value="gifts"> Gift Sets</label>
+    </div>
+
+    <!-- SCENT FAMILY -->
+    <div class="filter-block">
+        <h5>Scent Family</h5>
+        <label><input type="radio" name="scent" value="all" checked> All Scents</label>
+        <label><input type="radio" name="scent" value="floral"> Floral</label>
+        <label><input type="radio" name="scent" value="woody"> Woody</label>
+        <label><input type="radio" name="scent" value="citrus"> Citrus</label>
+        <label><input type="radio" name="scent" value="spicy"> Spicy</label>
+        <label><input type="radio" name="scent" value="fresh"> Fresh</label>
+        <label><input type="radio" name="scent" value="sweet"> Sweet</label>
+    </div>
+
+    <!-- PRICE RANGE -->
+    <div class="filter-block">
+        <h5>Price Range</h5>
+        <label><input type="radio" name="price" value="all" checked> All Prices</label>
+        <label><input type="radio" name="price" value="under30"> Under $30</label>
+        <label><input type="radio" name="price" value="30to50">$30 - $50</label>
+        <label><input type="radio" name="price" value="50to75">$50 - $75</label>
+        <label><input type="radio" name="price" value="75plus">$75 & Above</label>
+    </div>
+
+</aside>
+
+
+        <!-- ================================
+             EMPTY PRODUCT GRID (DYNAMIC)
+             ================================ -->
+        <main class="catalog-grid" id="product-grid">
+            <!-- JS will insert product cards here -->
+        </main>
+
+    </div>
+</div>
+
 
   <!-- Include footer -->
   <div id="footer-placeholder"></div>

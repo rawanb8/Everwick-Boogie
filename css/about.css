@@ -114,10 +114,6 @@
     transition: transform 0.3s;
 }
 
-.social-link:hover i {
-    transform: scale(1.2) rotate(10deg);
-}
-
 /* Hours */
 .hours-list {
     margin-top: var(--space-lg);
@@ -156,6 +152,7 @@
     color: var(--primary-color);
     margin-bottom: var(--space-xl);
 }
+
 
 .founding-story h3 {
     margin-bottom: var(--space-md);
@@ -421,7 +418,6 @@
 
 .stat-item {
     flex: 0 0 auto;
-    text-align: center;
 }
 
 .stat-number {
@@ -507,7 +503,6 @@
 }
 
 @media (max-width: 360px) {
-
     .form-input,
     .form-textarea,
     .form-select,
@@ -567,7 +562,6 @@ select:focus {
 }
 
 @media (max-width: 480px) {
-
     .footer-newsletter-input,
     .footer-newsletter-btn {
         width: 100%;

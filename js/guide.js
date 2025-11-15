@@ -32,15 +32,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateQuizButtons();
 
     // automatically switch to the quiz tab when page loads if hash is present
-    if (window.location.hash && document.getElementById(`${window.location.hash.slice(1)}-tab`)) {
-      showTab(window.location.hash.slice(1));
-    } else if (window.location.hash === '#quiz') {
-      showTab('quiz');
+    const hashTab = window.location.hash.slice(1);
+    if (hashTab && document.getElementById(`${hashTab}-tab`)) {
+      showTab(hashTab);
     }
   } catch (err) {
     console.error(err);
     app.showNotification?.('Failed to load data. Please try again.', 'error');
   }
+
 });
 
 function initTabs() {
@@ -74,25 +74,21 @@ function showTab(tabName) {
 
   // add active to the associated button (data-tab preferred)
   const btn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`) ||
-              document.querySelector(`[onclick="showTab('${tabName}')"]`);
+    document.querySelector(`[onclick="showTab('${tabName}')"]`);
   if (btn) btn.classList.add('active');
 
   // set hash without scrolling (history API to avoid page jump)
-  if (window.history && window.history.replaceState) {
-    window.history.replaceState(null, '', `#${tabName}`);
-  } else {
-    window.location.hash = tabName;
-  }
+  if (window.history?.replaceState) window.history.replaceState(null, '', `#${tabName}`);
+  else window.location.hash = tabName;
 }
 
 function loadScentsLibrary() {
   const scents = app.getScents() || []; // returns the full scents array
   // normalize data for consistent filtering (lowercase keys used by filters)
   scents.forEach(s => {
-    if (s.season && typeof s.season === 'string') s.season = s.season.toLowerCase();
-    if (s.mood && typeof s.mood === 'string') s.mood = s.mood.toLowerCase();
-    if (s.category && typeof s.category === 'string') s.category = s.category.toLowerCase();
-    // ensure aggressiveness is numeric
+    s.season = s.season?.toLowerCase() || '';
+    s.mood = s.mood?.toLowerCase() || '';
+    s.category = s.category?.toLowerCase() || '';
     s.aggressiveness = Number(s.aggressiveness) || 0;
   });
 
@@ -100,38 +96,38 @@ function loadScentsLibrary() {
   displayScents(filteredScents);  // display them
 }
 
+function getScentImage(scentId) {
+  // Main.js already has product images handling; just ensure fallback here
+  const product = app.products?.find(p => p.scentId === scentId);
+  return product ? product.images[0] : '/media/products/placeholder.png';
+}
+
+
 function displayScents(scents) {
   const container = document.getElementById('scents-grid');
   if (!container) return;
 
   container.innerHTML = scents.map(scent => {
-    // choose a display category: prefer category; fallback to season
     const displayCategory = scent.category || scent.season || '';
-    const moodText = scent.mood || '';
-    const strengthDots = '●'.repeat(Math.min(10, Math.max(0, scent.aggressiveness))) +
-                         '○'.repeat(Math.max(0, 10 - Math.min(10, scent.aggressiveness)));
-    const priceHtml = app.formatPrice ? app.formatPrice(scent.price) : `$${scent.price}`;
-
+    const strengthDots = '●'.repeat(Math.min(10, scent.aggressiveness)) + '○'.repeat(10 - Math.min(10, scent.aggressiveness));
+    const priceHtml = app.formatPrice?.(scent.price) || `$${scent.price}`;
     return `
       <div class="scent-card card" role="button" tabindex="0" onclick="showScentDetails(${scent.id})"
            onkeydown="if(event.key==='Enter') showScentDetails(${scent.id})">
         <div class="scent-image">
-          <img src="" alt="${escapeHtml(scent.name)}" class="card-image">
+          <img src="${getScentImage(scent.id)}" alt="${escapeHtml(scent.name)}" class="card-image">
           <div class="scent-category">${escapeHtml(displayCategory)}</div>
         </div>
-
         <div class="card-content">
           <h3 class="card-title">${escapeHtml(scent.name)}</h3>
           <p class="card-description">${escapeHtml(scent.description || '')}</p>
           <div class="scent-details">
-            <div class="scent-mood">Mood: ${escapeHtml(moodText)}</div>
-            <div class="scent-strength">
-              Strength: <span class="strength-bar">${strengthDots}</span>
-            </div>
+            <div class="scent-mood">Mood: ${escapeHtml(scent.mood)}</div>
+            <div class="scent-strength">Strength: <span class="strength-bar">${strengthDots}</span></div>
             <div class="scent-price">${priceHtml}</div>
           </div>
           <div class="scent-notes">
-            ${Array.isArray(scent.notes) ? scent.notes.map(note => `<span class="note-tag">${escapeHtml(note)}</span>`).join('') : ''}
+            ${(Array.isArray(scent.notes) ? scent.notes.map(n => `<span class="note-tag">${escapeHtml(n)}</span>`).join('') : '')}
           </div>
         </div>
       </div>
@@ -142,7 +138,7 @@ function displayScents(scents) {
 // basic escape to avoid template injection if unexpected data appears
 function escapeHtml(str) {
   if (typeof str !== 'string') return '';
-  return str.replace(/[&<>"']/g, (m) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[m]));
+  return str.replace(/[&<>"']/g, (m) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": "&#39;" }[m]));
 }
 
 // when the user changes a filter the applyFilters() runs
@@ -157,46 +153,28 @@ function setupFilters() {
 
 function applyFilters() {
   // get all elements + use const since they're not reassigned
-  const categoryEl = document.getElementById('category-filter');
-  const moodEl = document.getElementById('mood-filter');
-  const seasonEl = document.getElementById('season-filter');
-  const strengthEl = document.getElementById('strength-filter');
-
-  const category = categoryEl ? (categoryEl.value || '').toLowerCase() : '';
-  const mood = moodEl ? (moodEl.value || '').toLowerCase() : '';
-  const season = seasonEl ? (seasonEl.value || '').toLowerCase() : '';
-  const strength = strengthEl ? (strengthEl.value || '') : '';
+  const category = document.getElementById('category-filter')?.value.toLowerCase() || '';
+  const mood = document.getElementById('mood-filter')?.value.toLowerCase() || '';
+  const season = document.getElementById('season-filter')?.value.toLowerCase() || '';
+  const strength = document.getElementById('strength-filter')?.value || '';
 
   let filtered = app.getScents() || [];
 
   // normalize scents before filtering (ensure lowercase for comparisons)
   filtered.forEach(s => {
-    if (s.season && typeof s.season === 'string') s.season = s.season.toLowerCase();
-    if (s.mood && typeof s.mood === 'string') s.mood = s.mood.toLowerCase();
-    if (s.category && typeof s.category === 'string') s.category = s.category.toLowerCase();
+    s.category = s.category.toLowerCase();
+    s.mood = s.mood.toLowerCase();
+    s.season = s.season.toLowerCase();
     s.aggressiveness = Number(s.aggressiveness) || 0;
   });
 
   // apply filters if the values do exist
-  if (category) {
-    filtered = filtered.filter(scent => (scent.category || '').toLowerCase() === category);
-  }
-
-  if (mood) {
-    filtered = filtered.filter(scent => (scent.mood || '').toLowerCase() === mood);
-  }
-
-  if (season) {
-    filtered = filtered.filter(scent => (scent.season || '').toLowerCase() === season);
-  }
-
+  if (category) filtered = filtered.filter(s => s.category === category);
+  if (mood) filtered = filtered.filter(s => s.mood === mood);
+  if (season) filtered = filtered.filter(s => s.season === season);
   if (strength) {
-    // if strength = "2-8" split() converts it into an array of 2 strings ["2","8"]
-    // take these 2 numbers and .map() to convert into actual numbers [2,8]
-    const [min, max] = strength.split('-').map(Number);
-    if (!isNaN(min) && !isNaN(max)) {
-      filtered = filtered.filter(scent => scent.aggressiveness >= min && scent.aggressiveness <= max);
-    }
+    const [min,max] = strength.split('-').map(Number);
+    if (!isNaN(min) && !isNaN(max)) filtered = filtered.filter(s => s.aggressiveness >= min && s.aggressiveness <= max);
   }
 
   // update and re-render
@@ -205,7 +183,7 @@ function applyFilters() {
 }
 
 function clearFilters() {
-  const ids = ['category-filter','mood-filter','season-filter','strength-filter'];
+  const ids = ['category-filter', 'mood-filter', 'season-filter', 'strength-filter'];
   ids.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
@@ -217,7 +195,6 @@ function showScentDetails(scentId) {
   const scent = app.getScentById ? app.getScentById(scentId) : (app.getScents() || []).find(s => s.id === scentId);
   if (!scent) return;
 
-  // prepare display values safely
   const scentName = escapeHtml(scent.name || '');
   const scentDescription = escapeHtml(scent.description || '');
   const displayCategory = escapeHtml(scent.category || scent.season || '');
@@ -261,11 +238,10 @@ function showScentDetails(scentId) {
 }
 
 function loadQuizQuestions() {
-  const questions = app.data.quiz_question || []; // provides quiz question
+  const questions = app.data.quiz_question || [];
   const container = document.getElementById('quiz-questions');
   if (!container) return;
 
-  // first question is active to show it first
   container.innerHTML = questions.map((question, index) => {
     if (question.type === 'single_choice') {
       const optionsHtml = (question.options || []).map((option) => `
@@ -281,7 +257,6 @@ function loadQuizQuestions() {
         </div>
       `;
     } else if (question.type === 'scale') {
-      // default value set to midpoint or provided default
       const defaultValue = (question.default && Number(question.default)) || Math.round(((question.min || 1) + (question.max || 10)) / 2);
       return `
         <div class="quiz-question ${index === 0 ? 'active' : ''}" id="question-${index}">
@@ -322,15 +297,14 @@ function loadQuizQuestions() {
 }
 
 function nextQuestion() {
-  const currentAnswer = getCurrentAnswer(); // checks current question input & returns value or null
-  if (!currentAnswer && currentAnswer !== '0') {
+  const currentAnswer = getCurrentAnswer();
+  if (!currentAnswer && currentAnswer !== 0 && currentAnswer !== '0') {
     app.showNotification?.('Please select an answer', 'warning');
     return;
   }
 
-  quizAnswers[currentQuizQuestion] = currentAnswer; // stores it in the array at current index
+  quizAnswers[currentQuizQuestion] = currentAnswer;
 
-  // hides current question, increments the index, shows the next question and updates the UI
   if (currentQuizQuestion < (app.data.quiz_question.length - 1)) {
     document.getElementById(`question-${currentQuizQuestion}`).classList.remove('active');
     currentQuizQuestion++;
@@ -338,10 +312,12 @@ function nextQuestion() {
 
     updateQuizProgress();
     updateQuizButtons();
+
+    // scroll into view for better UX
+    document.getElementById(`question-${currentQuizQuestion}`).scrollIntoView({ behavior: 'smooth' });
   }
 }
 
-// this does the opposite of nextQuestion 
 function previousQuestion() {
   if (currentQuizQuestion > 0) {
     document.getElementById(`question-${currentQuizQuestion}`).classList.remove('active');
@@ -350,14 +326,13 @@ function previousQuestion() {
 
     updateQuizProgress();
     updateQuizButtons();
+
+    document.getElementById(`question-${currentQuizQuestion}`).scrollIntoView({ behavior: 'smooth' });
   }
 }
 
-// single choice returns selected radio value or null
-// scale returns input.value which is a string (we convert to number where necessary)
 function getCurrentAnswer() {
   const question = app.data.quiz_question[currentQuizQuestion];
-
   if (!question) return null;
 
   if (question.type === 'single_choice') {
@@ -365,7 +340,7 @@ function getCurrentAnswer() {
     return selected ? selected.value : null;
   } else if (question.type === 'scale') {
     const scaleInput = document.querySelector(`input[name="question-${currentQuizQuestion}"]`);
-    return scaleInput ? scaleInput.value : null;
+    return scaleInput ? Number(scaleInput.value) : null; // FIXED: convert to number immediately
   }
 
   return null;
@@ -401,18 +376,15 @@ function updateQuizButtons() {
 }
 
 // make sure all quiz questions are answered
-// call app.... to transform the answers to recommended scents
-// it renders recommendations via displayQuizResults() + opens results tab
 function submitQuiz() {
   const currentAnswer = getCurrentAnswer();
-  if (!currentAnswer && currentAnswer !== '0') {
+  if (!currentAnswer && currentAnswer !== 0 && currentAnswer !== '0') {
     app.showNotification?.('Please select an answer', 'warning');
     return;
   }
 
   quizAnswers[currentQuizQuestion] = currentAnswer;
 
-  // Calculate results - ensure calculateQuizResults exists
   if (typeof app.calculateQuizResults !== 'function') {
     console.error('app.calculateQuizResults is missing');
     app.showNotification?.('Quiz engine unavailable', 'error');
@@ -435,73 +407,59 @@ function displayQuizResults(recommendations) {
   container.innerHTML = `
     <div class="quiz-results-header text-center">
       <h2>Your Perfect Scents</h2>
-      <p>Based on your preferences, here are our top recommendations:</p>
-    </div>
-    
-    <div class="recommendations grid grid-3">
-      ${Array.isArray(recommendations) && recommendations.length ? recommendations.map((scent, index) => `
-        <div class="recommendation-card card">
-          <div class="recommendation-rank">#${index + 1}</div>
-          <img src="" alt="${escapeHtml(scent.name || '')}" class="card-image">
-          <div class="card-content">
-            <h3 class="card-title">${escapeHtml(scent.name || '')}</h3>
-            <p class="card-description">${escapeHtml(scent.description || '')}</p>
-            <div class="scent-match">
-              <strong>Perfect for:</strong> ${escapeHtml(scent.mood || '')} moods
-            </div>
-            <div class="recommendation-actions">
-              <button class="btn btn-outline btn-small" onclick="showScentDetails(${scent.id})">
-                View Details
-              </button>
-              <a href="customize.html?scent=${scent.id}" class="btn btn-primary btn-small">
-                Create Candle
-              </a>
-            </div>
-          </div>
-        </div>
-      `).join('') : `<p class="text-center">No recommendations found — try widening your preferences.</p>`}
-    </div>
-    
-    <div class="quiz-actions text-center">
-      <button class="btn btn-secondary" onclick="retakeQuiz()">Retake Quiz</button>
-      <a href="customize.html" class="btn btn-primary">Start Customizing</a>
+      <p>Based on your preferences, here are our recommendations:</p>
     </div>
   `;
+
+  const productGrid = document.createElement('div');
+  productGrid.className = 'recommendations grid grid-3';
+
+  recommendations.forEach(scent => {
+    const matchingProducts = app.products.filter(p => p.scentId === scent.id);
+    matchingProducts.forEach(product => {
+      const card = document.createElement('div');
+      card.className = 'recommendation-card card';
+      card.innerHTML = `
+        <div class="recommendation-rank">#${scent.id}</div>
+        <img src="${product.images[0]}" alt="${product.name}" class="card-image">
+        <div class="card-content">
+          <h3 class="card-title">${product.name}</h3>
+          <p class="card-description">${product.shortDescription}</p>
+          <div class="scent-match">
+            <strong>Mood:</strong> ${scent.mood}
+          </div>
+          <div class="recommendation-actions">
+            <button class="btn btn-outline btn-small" onclick="showScentDetails(${scent.id})">
+              View Details
+            </button>
+            <a href="customize.html?scent=${scent.id}" class="btn btn-primary btn-small">
+              Create Candle
+            </a>
+          </div>
+        </div>
+      `;
+      productGrid.appendChild(card);
+    });
+  });
+
+  container.appendChild(productGrid);
 }
 
 function retakeQuiz() {
   currentQuizQuestion = 0;
   quizAnswers = [];
+  document.querySelectorAll('.quiz-question').forEach((el, index) => el.classList.toggle('active', index === 0));
+  updateQuizProgress();
+  updateQuizButtons();
 
-  // Reset quiz UI
-  document.querySelectorAll('.quiz-question').forEach((q, index) => {
-    q.classList.remove('active');
-    if (index === 0) q.classList.add('active');
-  });
-
-  // Clear form inputs
-  document.querySelectorAll('input[type="radio"]').forEach(input => {
-    input.checked = false;
-  });
-
-  // set all range input back to midpoint (or 5)
+  // reset scale inputs to midpoint
   document.querySelectorAll('input[type="range"]').forEach(input => {
     const min = Number(input.min) || 1;
     const max = Number(input.max) || 10;
     input.value = Math.round((min + max) / 2);
-    // update any displayed value element if present
-    const idx = input.name?.match(/question-(\d+)/)?.[1];
-    if (idx) {
-      const display = document.getElementById(`scale-value-${idx}`);
-      if (display) display.textContent = input.value;
-    }
+    const valueDisplay = document.getElementById(`scale-value-${input.name.split('-')[1]}`);
+    if (valueDisplay) valueDisplay.textContent = input.value;
   });
 
-  updateQuizProgress();
-  updateQuizButtons();
   showTab('quiz');
-}
-
-function openCartModal() {
-  app.openModal && app.openModal('cart-modal');
 }
