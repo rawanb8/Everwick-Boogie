@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Everwick Boogee | Shop Candles</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/cart.css">
+</head>
+<body>
+
+  <!-- Include header/nav -->
+  <div id="nav-placeholder"></div>
+
+
+  <!-- Page Header -->
+  <section class="page-header">
+    <div class="container">
+      <h1>Checkout</h1>
+      <p>Complete your order and get ready to illuminate your world.</p>
+    </div>
+  </section>
+
+  <!-- Checkout Progress -->
+  <section class="checkout-progress">
+    <div class="container">
+      <div class="progress-steps">
+        <div class="step active" id="step-cart">
+          <div class="step-number">1</div>
+          <span>Cart Review</span>
+        </div>
+        <div class="step" id="step-shipping">
+          <div class="step-number">2</div>
+          <span>Shipping</span>
+        </div>
+        <div class="step" id="step-payment">
+          <div class="step-number">3</div>
+          <span>Payment</span>
+        </div>
+        <div class="step" id="step-confirmation">
+          <div class="step-number">4</div>
+          <span>Confirmation</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Checkout Content -->
+  <section class="section">
+    <div class="container">
+      <div class="checkout-layout">
+        
+        <!-- Main Checkout Form -->
+        <div class="checkout-main">
+          
+          <!-- Step 1: Cart Review -->
+          <div class="checkout-step active" id="checkout-step-cart">
+            <div class="step-header">
+              <h2>Review Your Order</h2>
+              <p>Please review the items in your cart before proceeding.</p>
+            </div>
+            
+            <div class="cart-review" id="cart-review">
+              <!-- Cart items will be loaded here -->
+            </div>
+            
+            <div class="step-actions">
+              <a href="shop.html" class="btn btn-outline">Continue Shopping</a>
+              <button class="btn btn-primary" onclick="nextCheckoutStep()" id="proceed-to-shipping">
+                Proceed to Shipping
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 2: Shipping Information -->
+          <div class="checkout-step" id="checkout-step-shipping">
+            <div class="step-header">
+              <h2>Shipping Information</h2>
+              <p>Where should we send your candles?</p>
+            </div>
+            
+            <form class="shipping-form" id="shipping-form">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="first-name" class="form-label">First Name *</label>
+                  <input type="text" id="first-name" class="form-input" required>
+                </div>
+                <div class="form-group">
+                  <label for="last-name" class="form-label">Last Name *</label>
+                  <input type="text" id="last-name" class="form-input" required>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="email" class="form-label">Email Address *</label>
+                <input type="email" id="email" class="form-input" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="phone" class="form-label">Phone Number</label>
+                <input type="tel" id="phone" class="form-input">
+              </div>
+              
+              <div class="form-group">
+                <label for="address" class="form-label">Street Address *</label>
+                <input type="text" id="address" class="form-input" required>
+              </div>
+              
+              <div class="form-group">
+                <label for="address2" class="form-label">Apartment, suite, etc.</label>
+                <input type="text" id="address2" class="form-input">
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="city" class="form-label">City *</label>
+                  <input type="text" id="city" class="form-input" required>
+                </div>
+                <div class="form-group">
+                  <label for="state" class="form-label">State *</label>
+                  <select id="state" class="form-select" required>
+                    <option value="">Select State</option>
+                    <option value="AL">Alabama</option>
+                    <option value="CA">California</option>
+                    <option value="FL">Florida</option>
+                    <option value="NY">New York</option>
+                    <option value="TX">Texas</option>
+                    <!-- Add more states as needed -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="zip" class="form-label">ZIP Code *</label>
+                  <input type="text" id="zip" class="form-input" required>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-checkbox">
+                  <input type="checkbox" id="save-address">
+                  <span>Save this address for future orders</span>
+                </label>
+              </div>
+            </form>
+            
+            <div class="shipping-options" id="shipping-options">
+              <h3>Shipping Method</h3>
+              <!-- Shipping options will be loaded here -->
+            </div>
+            
+            <div class="step-actions">
+              <button class="btn btn-outline" onclick="previousCheckoutStep()">Back to Cart</button>
+              <button class="btn btn-primary" onclick="nextCheckoutStep()" id="proceed-to-payment">
+                Proceed to Payment
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 3: Payment Information -->
+          <div class="checkout-step" id="checkout-step-payment">
+            <div class="step-header">
+              <h2>Payment Information</h2>
+              <p>Secure payment processing.</p>
+            </div>
+            
+            <div class="payment-methods">
+              <div class="payment-method active" data-method="card">
+                <input type="radio" name="payment-method" value="card" checked>
+                <label>Credit Card</label>
+                <div class="payment-icons">💳</div>
+              </div>
+              <div class="payment-method" data-method="paypal">
+                <input type="radio" name="payment-method" value="paypal">
+                <label>PayPal</label>
+                <div class="payment-icons">🅿️</div>
+              </div>
+            </div>
+            
+            <form class="payment-form" id="payment-form">
+              <div class="form-group">
+                <label for="card-number" class="form-label">Card Number *</label>
+                <input type="text" id="card-number" class="form-input" placeholder="1234 5678 9012 3456" required>
+              </div>
+              
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="expiry" class="form-label">Expiry Date *</label>
+                  <input type="text" id="expiry" class="form-input" placeholder="MM/YY" required>
+                </div>
+                <div class="form-group">
+                  <label for="cvv" class="form-label">CVV *</label>
+                  <input type="text" id="cvv" class="form-input" placeholder="123" required>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label for="card-name" class="form-label">Name on Card *</label>
+                <input type="text" id="card-name" class="form-input" required>
+              </div>
+              
+              <div class="billing-address">
+                <label class="form-checkbox">
+                  <input type="checkbox" id="same-as-shipping" checked onchange="toggleBillingAddress()">
+                  <span>Billing address same as shipping</span>
+                </label>
+              </div>
+              
+              <div class="billing-form" id="billing-form" style="display: none;">
+                <!-- Billing address form will be here -->
+              </div>
+            </form>
+            
+            <div class="step-actions">
+              <button class="btn btn-outline" onclick="previousCheckoutStep()">Back to Shipping</button>
+              <button class="btn btn-primary" onclick="nextCheckoutStep()" id="complete-order">
+                Complete Order
+              </button>
+            </div>
+          </div>
+
+          <!-- Step 4: Order Confirmation -->
+          <div class="checkout-step" id="checkout-step-confirmation">
+            <div class="confirmation-content text-center">
+              <div class="confirmation-icon">✅</div>
+              <h2>Order Confirmed!</h2>
+              <p>Thank you for your order. We'll send you a confirmation email shortly.</p>
+              
+              <div class="order-details" id="order-confirmation-details">
+                <!-- Order details will be loaded here -->
+              </div>
+              
+              <div class="confirmation-actions">
+                <a href="index.html" class="btn btn-outline">Continue Shopping</a>
+                <button class="btn btn-primary" onclick="printOrder()">Print Receipt</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Summary Sidebar -->
+        <div class="order-summary">
+          <div class="summary-card">
+            <h3>Order Summary</h3>
+            
+            <div class="summary-items" id="summary-items">
+              <!-- Order items will be loaded here -->
+            </div>
+            
+            <div class="summary-totals" id="summary-totals">
+              <!-- Totals will be calculated here -->
+            </div>
+            
+            <div class="security-info">
+              <div class="security-badge">
+                🔒 Secure Checkout
+              </div>
+              <p>Your payment information is encrypted and secure.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+    
+  <!-- Include footer -->
+  <div id="footer-placeholder"></div>
+
+  <!-- Script to include nav/footer -->
+  <script>
+    function includeHTML(id, file) {
+      fetch(file)
+        .then(response => response.text())
+        .then(data => document.getElementById(id).innerHTML = data);
+    }
+
+    includeHTML("nav-placeholder", "nav.html");
+    includeHTML("footer-placeholder", "footer.html");
+  </script>
+ <script src="../js/main.js"></script>
+ <script src="../js/cart.js"></script>
+</body>
+</html>
