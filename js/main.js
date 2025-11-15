@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (footerContainer) {
     try {
-      const response = await fetch('footer.html'); // path to your footer HTML
+      const response = await fetch('footer.html'); 
       const footerHTML = await response.text();
       footerContainer.innerHTML = footerHTML;
 

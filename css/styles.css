@@ -1,0 +1,650 @@
+/* =========================
+   styles.css — Home page specific styles
+   Uses variables declared in main.css (colors, fonts, spacing)
+   ========================= */
+
+/* -------- page baseline -------- */
+.home-page {
+    background: var(--bg);
+    color: var(--text-dark);
+}
+
+.home-page::after {
+    content: "";
+    display:block;
+    height: 2px;
+    background: var(--deep);
+    width: 100%;
+    /* margin: var(--space-lg, 1.5rem) auto; */
+}
+
+/* spacer to prevent fixed navbar covering content */
+.page-spacer {
+    height: var(--nav-height, 72px);
+    /* default 72px if --nav-height not set */
+    pointer-events: none;
+}
+
+/* ================= HERO ================= */
+.hero {
+    position: relative;
+    /* contains .hero-media absolutely */
+    z-index: 1;
+    min-height: clamp(400px, 72vh, 800px);
+    /* tall hero by default */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    /* prevents video overflow covering page */
+    padding: 0;
+}
+
+/* media layer (video) — contained inside .hero */
+.hero-media {
+    position: absolute;
+    inset: 0;
+    /* top:0; right:0; bottom:0; left:0 */
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background: #000;
+    /* fallback background while video loads */
+    /* Reserve approximate aspect ratio so hero doesn't squash page layout */
+    aspect-ratio: 28 / 27;
+}
+
+/* video element: cover container, preserve candle focus */
+.hero-media .hero-video {
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-position: center 40%;
+    display: block;
+    pointer-events: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Fallback for older browsers without aspect-ratio support */
+@supports not (aspect-ratio: 1/1) {
+    .hero-media {
+        height: 60vh;
+    }
+
+    /* ensures reasonable height */
+    .hero-media .hero-video {
+        width: 100%;
+        height: auto;
+        min-height: 100%;
+    }
+}
+
+/* overlay (improves text contrast) */
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(180deg, rgba(12, 10, 8, 0.28), rgba(12, 10, 8, 0.56));
+    pointer-events: none;
+}
+
+/* hero content sits over the video */
+.hero-content {
+    position: relative;
+    z-index: 5;
+    /* above the overlay and video */
+    padding: calc(var(--space-2xl, 3rem)) 1rem;
+    text-align: center;
+    width: 100%;
+    max-width: var(--max-width, 1200px);
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+/* grid layout for larger screens */
+@media (min-width: 900px) {
+    .hero-content.container {
+        display: grid;
+        grid-template-columns: 1fr minmax(320px, 720px) 1fr;
+    }
+
+    .hero-content>* {
+        grid-column: 2;
+    }
+}
+
+/* Hero slogan/title (Amsterdam Two only for this) */
+.brand-slogan {
+    font-family: "Amsterdam Two", "TAN Meringue", serif;
+    font-weight: 400;
+    color: var(--white);
+    line-height: 1;
+    text-shadow: 0 6px 22px rgba(0, 0, 0, 0.55);
+    letter-spacing: 0.01em;
+    display: inline-block;
+    white-space: nowrap;
+    /* prefer single-line */
+    max-width: 96vw;
+    /* never exceed viewport width */
+    overflow: visible;
+    font-size: clamp(1.6rem, 3.6vw, 2.8rem);
+    /* responsive scaling */
+    margin: 0;
+    padding: 0;
+    word-break: keep-all;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* small subtitle under the slogan */
+.hero-sub {
+    margin: .5rem auto 0;
+    max-width: 60ch;
+    color: rgba(255, 255, 255, 0.92);
+    font-family: "Lora", Georgia, serif;
+    font-size: var(--font-size-lg, 1.125rem);
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+
+/* CTA cluster */
+.hero-ctas {
+    display: flex;
+    gap: var(--space-md, 1rem);
+    justify-content: center;
+    align-items: center;
+    margin-top: var(--space-sm, 0.5rem);
+    flex-wrap: wrap;
+}
+
+/* hero button overrides (light on dark) */
+.hero-ctas .btn {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    transition: transform var(--transition-normal, 0.3s), box-shadow var(--transition-normal, 0.3s);
+}
+
+.hero-ctas .btn:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* down arrow scroll cue */
+.hero-scroll {
+    display: inline-block;
+    margin-top: var(--space-md, 1rem);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.5rem;
+    animation: bounce 2200ms ease-in-out infinite;
+}
+
+/* reduce motion respect */
+@media (prefers-reduced-motion: reduce) {
+
+    .brand-slogan,
+    .hero-ctas,
+    .hero-scroll {
+        animation: none;
+        transition: none;
+    }
+}
+
+/* ================================CREATE YOUR PERFECT CANDLE================================ */
+#create-candle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3rem;
+    margin-top: 5rem;
+    margin-bottom: 5rem;
+}
+
+/* Left content */
+.candle-content {
+    flex: 1;
+}
+
+.candle-content .section-title {
+    margin-bottom: 1rem;
+}
+
+.candle-sub {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-bottom: 2rem;
+}
+
+/* 2×2 grid for features */
+.candle-features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+}
+
+.feature-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Icons */
+.feature-item i {
+    font-size: 1.7rem;
+    color: var(--accent, #c28f4a); /* fallback gold tone */
+}
+
+.feature-item h3 {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.feature-item p {
+    font-size: 0.95rem;
+    color: var(--text-light);
+    line-height: 1.5;
+}
+
+/* Right image */
+.candle-media {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.candle-media img {
+    width: 100%;
+    height: auto;
+    max-width: 550px; /* good visual size */
+    aspect-ratio: 3 / 2; /* matches your image proportion */
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+
+/* Tablets */
+@media (max-width: 900px) {
+    #create-candle {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .candle-features {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .candle-media img {
+        max-width: 400px;
+    }
+}
+
+/* Phones */
+@media (max-width: 600px) {
+    .candle-features {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .candle-media img {
+        max-width: 300px;
+    }
+}
+
+/* Feature card hover */
+.feature-item {
+    padding: 1rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+/* Whole card animates */
+.feature-item:hover {
+    background: rgba(194, 143, 74, 0.08); /* soft warm gold tint */
+    transform: translateY(-6px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+}
+
+/* Icon hover animation */
+.feature-item i {
+    transition: all 0.3s ease;
+    transform-origin: center;
+}
+
+/* Icon grows + changes color */
+.feature-item:hover i {
+    transform: scale(1.25);
+    color: var(--accent-dark, #a67633); /* deeper warm tone */
+}
+
+/* Title hover effect */
+.feature-item h3 {
+    transition: color 0.3s ease;
+}
+
+.feature-item:hover h3 {
+    color: var(--accent-dark, #a67633);
+}
+
+
+/* ========== ABOUT (inline video) ========== */
+.about {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: var(--space-lg, 1.5rem);
+    align-items: start;
+    padding: var(--space-2xl, 3rem) 0;
+}
+
+.about-media video {
+    width: 100%;
+    height: auto;
+    max-width: 480px;
+    display: block;
+    object-fit: cover;
+    border-radius: var(--radius-md, 12px);
+    box-shadow: var(--shadow-md, 0 4px 6px rgba(0, 0, 0, 0.1));
+    margin: 0 auto;
+}
+
+.about-content {
+    padding: 0 var(--space-md, 1rem);
+    margin-top: var(--space-md, 1rem);
+}
+
+/* ========== FEATURED PRODUCTS ========== */
+.featured {
+    padding: var(--space-2xl, 3rem) 0;
+}
+
+.section-title {
+    font-family: "Ovo", "TAN Meringue", Georgia, serif;
+    color: var(--text-dark);
+    text-align: left;
+    margin-bottom: var(--space-md, 1rem);
+}
+
+.featured-grid {
+    display: grid;
+    gap: var(--space-lg, 1.5rem);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    margin-top: var(--space-md, 1rem);
+}
+
+.product-card {
+    background: var(--white);
+    border-radius: var(--radius-lg, 12px);
+    padding: var(--space-md, 1rem);
+    box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm, 0.5rem);
+    transition: transform var(--transition-fast, 0.15s), box-shadow var(--transition-fast, 0.15s);
+    min-height: 320px;
+}
+
+.product-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: contain;
+    background: transparent;
+    border-radius: var(--radius-md, 8px);
+}
+
+.product-title {
+    font-family: "TAN Meringue", "Amsterdam Two", serif;
+    font-size: 1.05rem;
+    color: var(--text-dark);
+}
+
+.product-price {
+    color: var(--primary-dark);
+    font-weight: 700;
+}
+
+.product-card .btn {
+    margin-top: auto;
+}
+
+.product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* ========== CATEGORIES ========== */
+.categories {
+    padding: var(--space-2xl, 3rem) 0;
+}
+
+.category-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--space-md, 1rem);
+    margin-top: var(--space-md, 1rem);
+}
+
+.category-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm, .5rem);
+    padding: var(--space-sm, .5rem) var(--space-md, 1rem);
+    background: var(--secondary-color);
+    border-radius: 999px;
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+}
+
+/* ========== REVIEWS ========== */
+.reviews {
+    padding: var(--space-2xl, 3rem) 0;
+}
+
+.reviews-grid {
+    display: grid;
+    gap: var(--space-md, 1rem);
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    margin-top: var(--space-md, 1rem);
+}
+
+.review-card {
+    background: var(--white);
+    padding: var(--space-md, 1rem);
+    border-radius: var(--radius-md, 8px);
+    box-shadow: var(--shadow-sm, 0 1px 3px rgba(0, 0, 0, 0.1));
+}
+
+.review-text {
+    font-style: italic;
+    color: var(--text-light);
+}
+
+.review-author {
+    margin-top: var(--space-sm, .5rem);
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+/* ========== QUIZ CTA ========== */
+.quiz-cta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: var(--space-lg, 2rem);
+    padding: var(--space-2xl, 3rem) 0;
+    background: linear-gradient(90deg, rgba(244, 240, 232, 0.6), rgba(252, 249, 245, 0.25));
+    border-radius: var(--radius-lg, 12px);
+    text-align: center;
+    margin-top: var(--space-lg, 1.5rem);
+    /* margin-bottom: var(--space-3xl, 4rem); */
+    position: relative;
+}
+
+.quiz-cta .quiz-media img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-md, 12px);
+  box-shadow: var(--shadow-md, 0 4px 6px rgba(0,0,0,0.1));
+}
+
+.quiz-cta .btn-primary {
+    margin-top: var(--space-md, 1rem);
+    padding: var(--space-md, 1rem) var(--space-2xl, 3rem);
+}
+
+/* ========== RESPONSIVE ========= */
+@media (max-width: 900px) {
+    .about {
+        grid-template-columns: 1fr;
+        gap: var(--space-md, 1rem);
+    }
+
+    .about-media video {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .about-content {
+        margin-top: var(--space-md, 1rem);
+        text-align: center;
+    }
+
+    .hero-content.container {
+        padding: var(--space-lg, 1rem) 0;
+    }
+
+    .brand-slogan {
+        white-space: normal;
+        /* allow wrapping on medium/smaller screens */
+        font-size: clamp(1.3rem, 6vw, 2rem);
+    }
+
+    .hero {
+        min-height: 56vh;
+    }
+
+    .product-card {
+        min-height: 280px;
+    }
+
+    .hero-ctas {
+        flex-direction: column;
+        gap: var(--space-sm, 0.5rem);
+    }
+
+    .hero-scroll {
+        display: none;
+    }
+
+    .quiz-cta .quiz-media{
+        margin-top: var(--space-md,1rem);
+    }
+}
+
+/* mobile: hide heavy video and use poster background */
+@media (max-width: 520px) {
+    .hero-media .hero-video {
+        display: none;
+    }
+
+    .hero-media {
+        background-image: url("/media/images/hero-poster.jpg");
+        background-size: cover;
+        background-position: center 40%;
+    }
+}
+
+/* ========== ANIMATIONS ========== */
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+        opacity: .9;
+    }
+
+    50% {
+        transform: translateY(8px);
+        opacity: 1;
+    }
+}
+
+/* ========== Utilities ========== */
+.text-center {
+    text-align: center;
+}
+
+.page-spacer {
+    height: var(--nav-height);
+    pointer-events: none;
+}
+
+/* ---------- HERO container ---------- */
+/* ensure hero is the containing block for the absolute media */
+.hero {
+    position: relative;
+    z-index: 1;
+    min-height: 72vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    padding-top: 0;
+}
+
+/* hero-media fills only the hero */
+.hero-media {
+    position: absolute;
+    inset: 0;
+    /* top:0; right:0; bottom:0; left:0; */
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    /* behind hero content */
+    pointer-events: none;
+}
+
+/* video sizing: cover hero without distortion */
+.hero-media .hero-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+    /* tweak vertical focus if needed */
+    display: block;
+    pointer-events: none;
+}
+
+/* hero content above video */
+.hero-content {
+    position: relative;
+    z-index: 5;
+    /* sits above the video and above the nav if necessary */
+    text-align: center;
+    padding: 2rem 1rem;
+}
+
+/* ensure hero title doesn't get hidden under nav on wide screens */
+.hero-content.container {
+    margin-top: 0;
+}
+
+/* If the navbar should visually be above the hero content, reduce this z-index accordingly.
+   If you want hero content to appear above navbar (rare), set .site-nav z-index lower. */
+
+/* ---------- Prevent overlap / squeezing in long pages ---------- */
+
+
+/* ---------- Small-screen safety: shrink hero headline rather than overlap nav ---------- */
+@media (max-width: 900px) {
+    .hero {
+        min-height: 56vh;
+    }
+
+    .brand-slogan {
+        font-size: clamp(1.2rem, 6vw, 2rem);
+        white-space: normal;
+    }
+}
