@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (footerContainer) {
     try {
-      const response = await fetch('footer.html'); // path to your footer HTML
+      const response = await fetch('footer.html'); 
       const footerHTML = await response.text();
       footerContainer.innerHTML = footerHTML;
 
@@ -185,65 +185,3 @@ function initNewsletterForm() {
     }, 800);
   });
 }
-
-/*================== CANDLES APP ==================*/
-class CandlesWeb {
-
-  constructor() {
-    this.scents = []; // populate with your actual scents data or fetch from JSON
-  }
-
-   getScents() {
-    return this.scents;
-  }
-
-  getScentById(id) {
-    return this.getScents().find(s => s.id === id);
-  }
-
-  formatPrice(price) {
-    return `$${Number(price).toFixed(2)}`;
-  }
-
-  // Quiz functionality
-  calculateQuizResults(answers) {
-    const scents = this.getScents();
-    const scores = scents.map(scent => ({
-      scent: scent,
-      score: 0
-    }));
-
-    // Score each scent based on quiz answers
-    answers.forEach((answer, questionIndex) => {
-      scores.forEach(item => {
-        const scent = item.scent;
-        
-        switch (questionIndex) {
-          case 0: // Mood question
-            if (scent.mood === answer) item.score += 3;
-            break;
-          case 1: // Scent family question
-            if (scent.category === answer) item.score += 3;
-            break;
-          case 2: // Strength question
-            const strengthDiff = Math.abs(scent.aggressiveness - parseInt(answer));
-            item.score += Math.max(3 - strengthDiff, 0);
-            break;
-          case 3: // Season question
-            if (scent.season === answer || scent.season === 'all-year') {
-              item.score += scent.season === answer ? 2 : 1;
-            }
-            break;
-        }
-      });
-    });
-
-    // Sort by score and return top recommendations
-    return scores
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 3)
-      .map(item => item.scent);
-  }
-}
-
-
