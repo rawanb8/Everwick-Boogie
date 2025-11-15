@@ -85,7 +85,7 @@
 
                         <!-- Strength Filtering -->
                         <div class="filter-group">
-                            <label for="strength-filter">Mood</label>
+                            <label for="strength-filter">Strength</label>
                             <select id="strength-filter" class="form-select">
                                 <option value="">All Strengths</option>
                                 <option value="1-3">Subtle(1-3)</option>
@@ -139,7 +139,7 @@
     </div>
 
     <!-- Results Tab -->
-    <div id="results-tab-content" class="tab-content">
+    <div id="results-tab" class="tab-content">
         <section class="section">
             <div class="container">
                 <div class="quiz-results" id="quiz-results">
@@ -154,7 +154,7 @@
     <div id="scent-modal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="scent-modal-title">Scent Details</h3>
+                <h3 id="scent-modal-title" class="scent-modal-title">Scent Details</h3>
                 <button class="modal-close">&times;</button>
             </div>
             <div id="scent-modal-body">
@@ -184,8 +184,7 @@
             </div>
         </div>
     </div>
-    <div id="footer-container"></div>
-    <script src="/js/app.js"></script>
+    <div id="footer"></div>
     <script src="/js/guide.js"></script>
     <script src="/js/main.js"></script>
 </body>

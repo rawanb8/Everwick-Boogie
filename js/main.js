@@ -1,3 +1,69 @@
+const app = {
+  data: {},
+  scents: [],
+
+  getScents() { return this.scents; },
+  getScentById(id) { return this.scents.find(s => s.id === id) || null; },
+  formatPrice(price) { return `$${Number(price).toFixed(2)}`; },
+
+  async loadData() {
+    try {
+      // fetch products/scents if not already loaded
+      if (!this.scents.length) {
+        const response = await fetch('../json/products.json');
+        const data = await response.json();
+        this.scents = data.scents.map(s => ({
+          ...s,
+          aggressiveness: s.aggressiveness || 2
+        }));
+        // optional: store products if your quiz uses them
+        this.products = data.products || [];
+      }
+    } catch (err) {
+      console.error('Failed to load data in app.loadData():', err);
+    }
+  },
+
+  calculateQuizResults(answers) {
+  const scents = this.getScents();
+  const scores = scents.map(scent => ({ scent, score: 0 }));
+
+  answers.forEach((answer, questionIndex) => {
+    scores.forEach(item => {
+      const scent = item.scent;
+      switch (questionIndex) {
+        case 0: // Mood
+          if (scent.mood === answer) item.score += 3;
+          break;
+        case 1: // Category / family
+          if (scent.family === answer) item.score += 3;
+          break;
+        case 2: // Strength
+          const strengthDiff = Math.abs(scent.aggressiveness - parseInt(answer));
+          item.score += Math.max(3 - strengthDiff, 0);
+          break;
+        case 3: // Season
+          if (scent.season === answer || scent.season === 'all-year') {
+            item.score += scent.season === answer ? 2 : 1;
+          }
+          break;
+      }
+    });
+  });
+
+  // Return **only the top 3 scoring scents**, sorted by score
+  return scores
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)         // top 3
+    .map(item => item.scent);
+},
+
+
+  openModal(id) { document.getElementById(id).style.display = 'block'; },
+  closeModal(id) { document.getElementById(id).style.display = 'none'; },
+  showNotification(msg, type) { alert(msg); }
+};
+
 (function () {
   // Run when DOM is ready
   document.addEventListener('DOMContentLoaded', () => {
@@ -43,12 +109,11 @@
     // toggle on click
     hamburger.addEventListener('click', (e) => {
       let isOpen = mobileMenu.dataset.open === "true";
-      isOpen ? closeMenu() : openMenu(); // another if else notation
-      // > if isOpen is true then closeMenu; else openMenu
+      isOpen ? closeMenu() : openMenu();
     });
 
-    if (mobileClose) mobileClose.addEventListener('click', closeMenu); //close using X button
-    if (mobileBackdrop) mobileBackdrop.addEventListener('click', closeMenu); //close by clicking outside the menu
+    if (mobileClose) mobileClose.addEventListener('click', closeMenu);
+    if (mobileBackdrop) mobileBackdrop.addEventListener('click', closeMenu);
 
     // close on Escape key
     document.addEventListener('keydown', (e) => {
@@ -65,8 +130,8 @@
       else siteNav.classList.remove('scrolled');
     });
   }
-/*================== CART COUNT ==================*/
-  // update cart count from localStorage
+
+  /*================== CART COUNT ==================*/
   function updateCartCount() {
     try {
       let cart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -109,6 +174,9 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.error('Error loading footer:', error);
     }
   }
+
+  // ----------------- NEW: Load scents data for quiz -----------------
+  await app.loadData();
 });
 
 /*================== NEWSLETTER in footer ==================*/
@@ -118,7 +186,7 @@ function initNewsletterForm() {
 
   let input = document.getElementById('newsletter-email');
   let submitBtn = document.getElementById('newsletter-submit');
-  let msgRegion = document.getElementById('newsletter-msg-region'); // aria-live region for feedback messages
+  let msgRegion = document.getElementById('newsletter-msg-region');
 
   // Create aria-live region if not in DOM
   if (!msgRegion) {
@@ -134,7 +202,7 @@ function initNewsletterForm() {
   function showMessage(type, text) {
     msgRegion.innerHTML = '';
     let d = document.createElement('div');
-    d.className = `newsletter-msg newsletter-msg--${type}`; // use backticks for template literal
+    d.className = `newsletter-msg newsletter-msg--${type}`;
     d.textContent = text;
     msgRegion.appendChild(d);
 
@@ -168,20 +236,20 @@ function initNewsletterForm() {
       return;
     }
 
-    // Simulate sending
+     // Simulate sending
     submitBtn.disabled = true;
     submitBtn.setAttribute('aria-disabled', 'true');
     let prevText = submitBtn.textContent;
     submitBtn.textContent = 'Sending...';
 
-    // Short simulated delay
+ // Short simulated delay
     setTimeout(() => {
       showMessage('success', 'Thank you for subscribing to our newsletter!');
-      submitBtn.textContent = prevText; // restore button text
+      submitBtn.textContent = prevText;
       submitBtn.disabled = false;
-      submitBtn.removeAttribute('aria-disabled');
+      submitBtn.removeAttribute('aria-disabled'); // restore button text
       input.value = '';
-      input.focus(); // ready for next entry
+      input.focus();
     }, 800);
   });
 }
