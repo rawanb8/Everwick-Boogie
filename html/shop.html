@@ -32,35 +32,46 @@
 
     <div class="catalog-layout">
 
-        <!-- LEFT FILTERS -->
-        <aside class="catalog-filters">
-            <div class="flex flex-between mb-md">
-                <h4>Filters</h4>
-                <button class="btn btn-ghost btn-small" id="clear-filters">Clear All</button>
-            </div>
+       <aside class="catalog-filters">
+    <div class="flex flex-between mb-md">
+        <h4>Filters</h4>
+        <button class="btn btn-ghost btn-small" id="clear-filters">Clear All</button>
+    </div>
 
-            <!-- Category -->
-            <div class="filter-block">
-                <h5>Category</h5>
-                <label><input type="radio" name="cat" value="all" checked> All Products</label>
-                <label><input type="radio" name="cat" value="signature"> Signature Collection</label>
-                <label><input type="radio" name="cat" value="seasonal"> Seasonal Scents</label>
-                <label><input type="radio" name="cat" value="luxury"> Luxury Line</label>
-                <label><input type="radio" name="cat" value="gifts"> Gift Sets</label>
-            </div>
+    <!-- CATEGORY -->
+    <div class="filter-block">
+        <h5>Category</h5>
+        <label><input type="radio" name="cat" value="all" checked> All Products</label>
+        <label><input type="radio" name="cat" value="signature"> Signature Collection</label>
+        <label><input type="radio" name="cat" value="seasonal"> Seasonal Scents</label>
+        <label><input type="radio" name="cat" value="luxury"> Luxury Line</label>
+        <label><input type="radio" name="cat" value="gifts"> Gift Sets</label>
+    </div>
 
-            <!-- Scent Family -->
-            <div class="filter-block">
-                <h5>Scent Family</h5>
-                <label><input type="radio" name="scent" value="all" checked> All Scents</label>
-                <label><input type="radio" name="scent" value="floral"> Floral</label>
-                <label><input type="radio" name="scent" value="woody"> Woody</label>
-                <label><input type="radio" name="scent" value="citrus"> Citrus</label>
-                <label><input type="radio" name="scent" value="spicy"> Spicy</label>
-                <label><input type="radio" name="scent" value="fresh"> Fresh</label>
-                <label><input type="radio" name="scent" value="sweet"> Sweet</label>
-            </div>
-        </aside>
+    <!-- SCENT FAMILY -->
+    <div class="filter-block">
+        <h5>Scent Family</h5>
+        <label><input type="radio" name="scent" value="all" checked> All Scents</label>
+        <label><input type="radio" name="scent" value="floral"> Floral</label>
+        <label><input type="radio" name="scent" value="woody"> Woody</label>
+        <label><input type="radio" name="scent" value="citrus"> Citrus</label>
+        <label><input type="radio" name="scent" value="spicy"> Spicy</label>
+        <label><input type="radio" name="scent" value="fresh"> Fresh</label>
+        <label><input type="radio" name="scent" value="sweet"> Sweet</label>
+    </div>
+
+    <!-- PRICE RANGE -->
+    <div class="filter-block">
+        <h5>Price Range</h5>
+        <label><input type="radio" name="price" value="all" checked> All Prices</label>
+        <label><input type="radio" name="price" value="under30"> Under $30</label>
+        <label><input type="radio" name="price" value="30to50">$30 - $50</label>
+        <label><input type="radio" name="price" value="50to75">$50 - $75</label>
+        <label><input type="radio" name="price" value="75plus">$75 & Above</label>
+    </div>
+
+</aside>
+
 
         <!-- ================================
              EMPTY PRODUCT GRID (DYNAMIC)

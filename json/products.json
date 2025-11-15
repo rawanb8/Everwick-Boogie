@@ -8,7 +8,8 @@
       "family": "woody",
       "mood": "cozy",
       "colors": ["dark-brown", "amber"],
-      "description": "Warm and comforting, like a crackling fireplace."
+      "description": "Warm and comforting, like a crackling fireplace.",
+      "aggressiveness": 7
     },
     {
       "id": 2,
@@ -18,7 +19,8 @@
       "family": "fresh",
       "mood": "energizing",
       "colors": ["icy-blue", "white"],
-      "description": "Crisp and magical like a snowy forest."
+      "description": "Crisp and magical like a snowy forest.",
+      "aggressiveness": 6
     },
     {
       "id": 3,
@@ -28,7 +30,8 @@
       "family": "sweet",
       "mood": "energizing",
       "colors": ["bright-yellow", "orange"],
-      "description": "A fruity, sunny tropical escape."
+      "description": "A fruity, sunny tropical escape.",
+      "aggressiveness": 5
     },
     {
       "id": 4,
@@ -38,7 +41,8 @@
       "family": "floral",
       "mood": "romantic",
       "colors": ["soft-pink", "white"],
-      "description": "Soft floral blooms that welcome spring."
+      "description": "Soft floral blooms that welcome spring.",
+      "aggressiveness": 3
     },
     {
       "id": 5,
@@ -48,7 +52,8 @@
       "family": "spicy",
       "mood": "cozy",
       "colors": ["amber", "deep-brown"],
-      "description": "Warm maple sweetness with autumn spices."
+      "description": "Warm maple sweetness with autumn spices.",
+      "aggressiveness": 6
     },
     {
       "id": 6,
@@ -58,7 +63,8 @@
       "family": "sweet",
       "mood": "cozy",
       "colors": ["deep-brown", "red"],
-      "description": "Holiday chocolate with a cool mint twist."
+      "description": "Holiday chocolate with a cool mint twist.",
+      "aggressiveness": 7
     },
     {
       "id": 7,
@@ -68,7 +74,8 @@
       "family": "sweet",
       "mood": "cozy",
       "colors": ["cream", "gold"],
-      "description": "Warm glowing vanilla with amber and musk."
+      "description": "Warm glowing vanilla with amber and musk.",
+      "aggressiveness": 5
     },
     {
       "id": 8,
@@ -78,7 +85,8 @@
       "family": "fresh",
       "mood": "relaxing",
       "colors": ["white", "sandy-beige"],
-      "description": "A beachy, relaxed summer vibe."
+      "description": "A beachy, relaxed summer vibe.",
+      "aggressiveness": 4
     },
     {
       "id": 9,
@@ -88,7 +96,8 @@
       "family": "floral",
       "mood": "romantic",
       "colors": ["soft-pink", "white"],
-      "description": "A bouquet-like floral escape."
+      "description": "A bouquet-like floral escape.",
+      "aggressiveness": 3
     },
     {
       "id": 10,
@@ -98,7 +107,8 @@
       "family": "woody",
       "mood": "cozy",
       "colors": ["brown", "cream", "gold"],
-      "description": "A deep woodsy scent inspired by fall leaves."
+      "description": "A deep woodsy scent inspired by fall leaves.",
+      "aggressiveness": 7
     },
     {
       "id": 11,
@@ -108,7 +118,8 @@
       "family": "fresh",
       "mood": "relaxing",
       "colors": ["pale-green", "white"],
-      "description": "Light and pure, like a refreshing spring morning."
+      "description": "Light and pure, like a refreshing spring morning.",
+      "aggressiveness": 2
     },
     {
       "id": 12,
@@ -118,7 +129,8 @@
       "family": "spicy",
       "mood": "cozy",
       "colors": ["burnt-orange", "amber"],
-      "description": "Warm pumpkin spice and cozy fall nights."
+      "description": "Warm pumpkin spice and cozy fall nights.",
+      "aggressiveness": 6
     },
     {
       "id": 13,
@@ -128,7 +140,8 @@
       "family": "spicy",
       "mood": "cozy",
       "colors": ["tan", "cinnamon"],
-      "description": "A chai blend that feels like a warm hug."
+      "description": "A chai blend that feels like a warm hug.",
+      "aggressiveness": 6
     },
     {
       "id": 14,
@@ -138,7 +151,8 @@
       "family": "sweet",
       "mood": "cozy",
       "colors": ["deep-brown", "cream", "soft-beige"],
-      "description": "Rich chocolate with creamy sweetness."
+      "description": "Rich chocolate with creamy sweetness.",
+      "aggressiveness": 7
     },
     {
       "id": 15,
@@ -148,7 +162,8 @@
       "family": "sweet",
       "mood": "cozy",
       "colors": ["warm-brown", "caramel", "cream"],
-      "description": "Warm toasted hazelnut with creamy vanilla."
+      "description": "Warm toasted hazelnut with creamy vanilla.",
+      "aggressiveness": 6
     }
   ],
 
@@ -412,7 +427,7 @@
     "name": "Maple Woods",
     "slug": "maple-woods",
     "price": 32,
-    "images": ["/media/products/candles/Winter-Wonderland.png"],
+    "images": ["/media/products/candles/Maple-Cinnamon.png"],
     "collections": ["fall", "best-sellers"],
     "featured": true,
     "shortDescription": "Rich, boozy sweetness with autumn spices for cozy evenings.",
@@ -476,7 +491,7 @@
     "name": "Bloom Garden",
     "slug": "bloom-garden",
     "price": 23,
-    "images": ["/media/products/candles/Winter-Wonderland.png"],
+    "images": ["/media/products/candles/Bloom-Garden.png"],
     "collections": ["spring", "aromatherapy"],
     "featured": false,
     "shortDescription": "A floral escape that captures the scent of blooming petals.",
