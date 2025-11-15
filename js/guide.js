@@ -31,6 +31,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateQuizProgress();
     updateQuizButtons();
 
+<<<<<<< HEAD
+=======
+    // update progress/buttons initial state
+    updateQuizProgress();
+    updateQuizButtons();
+
+>>>>>>> fd137ebe08e794a5e902a561f4ece9414fe328d8
     // automatically switch to the quiz tab when page loads if hash is present
     if (window.location.hash && document.getElementById(`${window.location.hash.slice(1)}-tab`)) {
       showTab(window.location.hash.slice(1));

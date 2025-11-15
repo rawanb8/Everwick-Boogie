@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Everwick Boogee | Shop Candles</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Include header/nav -->
+  <div id="nav-placeholder"></div>
+
+  <!-- filter section -->
+  <section class="filters">
+    <h2>Shop Our Candles</h2>
+    <div class="filter-options">
+      <select>
+        <option>Sort by</option>
+        <option>Price: Low to High</option>
+        <option>Price: High to Low</option>
+        <option>Newest</option>
+        <option>Best Sellers</option>
+      </select>
+
+      <select>
+        <option>Filter by Scent</option>
+        <option>Lavender</option>
+        <option>Vanilla</option>
+        <option>Cinnamon</option>
+        <option>Rose</option>
+      </select>
+
+      <select>
+        <option>Filter by Collection</option>
+        <option>Fall Collection</option>
+        <option>Holiday Collection</option>
+        <option>Everyday Candles</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- product grid (dynamic) -->
+  <section class="product-grid" id="product-grid">
+    <!-- Products will be inserted here by JS -->
+  </section>
+
+  <!-- Include footer -->
+  <div id="footer-placeholder"></div>
+
+  <!-- Script to include nav/footer -->
+  <script>
+    function includeHTML(id, file) {
+      fetch(file)
+        .then(response => response.text())
+        .then(data => document.getElementById(id).innerHTML = data);
+    }
+
+    includeHTML("nav-placeholder", "nav.html");
+    includeHTML("footer-placeholder", "footer.html");
+  </script>
+
+</body>
+</html>
