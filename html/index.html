@@ -16,14 +16,13 @@
     <!-- Navbar added dynamically -->
     <div id="navbar"></div>
     <!--space between navbar and home page content so that they dont overlap-->
-    <div class="page-spacer" aria-hidden="true"></div> 
+    <div class="page-spacer" aria-hidden="true"></div>
     <main class="home-page">
 
         <!-- ====== Hero ====== -->
         <section class="hero" id="hero">
             <div class="hero-media">
-                <video class="hero-video" autoplay muted loop playsinline preload="auto"
-                    poster="#">
+                <video class="hero-video" autoplay muted loop playsinline preload="auto" poster="#">
                     <source src="/media/videos/hero-candle.mp4" type="video/mp4">
                     <!-- fallback image will show via poster -->
                 </video>
@@ -72,7 +71,7 @@
             <div class="about-media">
                 <video autoplay muted loop playsinline preload="auto" width="640" height="360"
                     poster="../media/images/about-poster.jpg">
-                    <source src="/media/videos/candle-home.mp4" type="video/mp4">
+                    <source src="/media/videos/home-about.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
             </div>
@@ -114,10 +113,14 @@
 
         <!-- ====== Personalized Quiz CTA ====== -->
         <section id="quiz-cta" class="quiz-cta container" aria-labelledby="quiz-cta-title">
-            <h2 id="quiz-cta-title" class="section-title">Find Your Perfect Scent</h2>
-            <p>Not sure which candle matches your mood, style, or preferences? Take our personalized quiz to discover
-                the candle that’s perfect for you!</p>
-            <a href="../html/guide.html#quiz" class="btn btn-primary">Take the Quiz</a>
+            <div class="quiz-content">
+                <h2 id="quiz-cta-title" class="section-title">Find Your Perfect Scent</h2>
+                <p>Not sure which candle matches your mood, style, or preferences? Take our personalized quiz to discover the candle that’s perfect for you!</p>
+                <a href="../html/guide.html#quiz" class="btn btn-primary">Take the Quiz</a>
+            </div>
+            <div class="quiz-media">
+                <img src="/media/inpage/home-quiz.png" alt="scent">
+            </div>
         </section>
 
     </main>
