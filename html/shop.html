@@ -12,20 +12,20 @@
   <!-- Include header/nav -->
   <div id="nav-placeholder"></div>
 
-   <div class="container section">
+  <div class="container section">
 
     <!-- Top Bar (Filters + Sort) -->
     <div class="flex flex-between flex-wrap mb-md">
         <button class="btn btn-secondary btn-small">☰ Filters</button>
-        <span class="product-count text-right">15 products</span>
+        <span class="product-count text-right" id="product-count">0 products</span>
 
         <div class="flex flex-between" style="gap: .5rem;">
             <label for="sort-by">Sort by:</label>
             <select id="sort-by" class="form-select" style="width: 160px;">
-                <option>Featured</option>
-                <option>Price: Low to High</option>
-                <option>Price: High to Low</option>
-                <option>Rating</option>
+                <option value="featured">Featured</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="rating">Rating</option>
             </select>
         </div>
     </div>
@@ -36,85 +36,37 @@
         <aside class="catalog-filters">
             <div class="flex flex-between mb-md">
                 <h4>Filters</h4>
-                <button class="btn btn-ghost btn-small">Clear All</button>
+                <button class="btn btn-ghost btn-small" id="clear-filters">Clear All</button>
             </div>
 
             <!-- Category -->
             <div class="filter-block">
                 <h5>Category</h5>
-                <label><input type="radio" name="cat" checked> All Products</label>
-                <label><input type="radio" name="cat"> Signature Collection</label>
-                <label><input type="radio" name="cat"> Seasonal Scents</label>
-                <label><input type="radio" name="cat"> Luxury Line</label>
-                <label><input type="radio" name="cat"> Gift Sets</label>
+                <label><input type="radio" name="cat" value="all" checked> All Products</label>
+                <label><input type="radio" name="cat" value="signature"> Signature Collection</label>
+                <label><input type="radio" name="cat" value="seasonal"> Seasonal Scents</label>
+                <label><input type="radio" name="cat" value="luxury"> Luxury Line</label>
+                <label><input type="radio" name="cat" value="gifts"> Gift Sets</label>
             </div>
 
             <!-- Scent Family -->
             <div class="filter-block">
                 <h5>Scent Family</h5>
-                <label><input type="radio" name="scent" checked> All Scents</label>
-                <label><input type="radio" name="scent"> Floral</label>
-                <label><input type="radio" name="scent"> Woody</label>
-                <label><input type="radio" name="scent"> Citrus</label>
-                <label><input type="radio" name="scent"> Spicy</label>
-                <label><input type="radio" name="scent"> Fresh</label>
-                <label><input type="radio" name="scent"> Sweet</label>
+                <label><input type="radio" name="scent" value="all" checked> All Scents</label>
+                <label><input type="radio" name="scent" value="floral"> Floral</label>
+                <label><input type="radio" name="scent" value="woody"> Woody</label>
+                <label><input type="radio" name="scent" value="citrus"> Citrus</label>
+                <label><input type="radio" name="scent" value="spicy"> Spicy</label>
+                <label><input type="radio" name="scent" value="fresh"> Fresh</label>
+                <label><input type="radio" name="scent" value="sweet"> Sweet</label>
             </div>
         </aside>
 
-        <!-- PRODUCT GRID -->
-        <main class="catalog-grid">
-
-            <!-- Card 1 -->
-            <article class="product-card">
-                <span class="badge badge-bestseller">Bestseller</span>
-                <img src="https://via.placeholder.com/350x300" alt="Midnight Amber" class="product-img">
-
-                <p class="product-cat">SIGNATURE</p>
-                <h4 class="product-title">Midnight Amber</h4>
-                <p class="product-desc">
-                    A sophisticated blend of warm amber, vanilla, and sandalwood that creates an intimate...
-                </p>
-
-                <div class="flex flex-between">
-                    <span class="product-price">$48.00</span>
-                    <span class="product-rating">⭐ 4.9 (234)</span>
-                </div>
-            </article>
-
-            <!-- Card 2 -->
-            <article class="product-card">
-                <img src="https://via.placeholder.com/350x300" alt="Lavender Dreams" class="product-img">
-
-                <p class="product-cat">SIGNATURE</p>
-                <h4 class="product-title">Lavender Dreams</h4>
-                <p class="product-desc">
-                    Pure French lavender combined with hints of chamomile and bergamot...
-                </p>
-
-                <div class="flex flex-between">
-                    <span class="product-price">$42.00</span>
-                    <span class="product-rating">⭐ 4.8 (189)</span>
-                </div>
-            </article>
-
-            <!-- Card 3 -->
-            <article class="product-card">
-                <span class="badge badge-new">New</span>
-                <img src="https://via.placeholder.com/350x300" alt="Citrus Sunrise" class="product-img">
-
-                <p class="product-cat">SEASONAL</p>
-                <h4 class="product-title">Citrus Sunrise</h4>
-                <p class="product-desc">
-                    An energizing fusion of blood orange, grapefruit, and lemon zest that awakens the...
-                </p>
-
-                <div class="flex flex-between">
-                    <span class="product-price">$38.00</span>
-                    <span class="product-rating">⭐ 4.7 (156)</span>
-                </div>
-            </article>
-
+        <!-- ================================
+             EMPTY PRODUCT GRID (DYNAMIC)
+             ================================ -->
+        <main class="catalog-grid" id="product-grid">
+            <!-- JS will insert product cards here -->
         </main>
 
     </div>
