@@ -4,46 +4,122 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Everwick Boogee | Shop Candles</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/shop.css">
 </head>
 <body>
 
   <!-- Include header/nav -->
   <div id="nav-placeholder"></div>
 
-  <!-- filter section -->
-  <section class="filters">
-    <h2>Shop Our Candles</h2>
-    <div class="filter-options">
-      <select>
-        <option>Sort by</option>
-        <option>Price: Low to High</option>
-        <option>Price: High to Low</option>
-        <option>Newest</option>
-        <option>Best Sellers</option>
-      </select>
+   <div class="container section">
 
-      <select>
-        <option>Filter by Scent</option>
-        <option>Lavender</option>
-        <option>Vanilla</option>
-        <option>Cinnamon</option>
-        <option>Rose</option>
-      </select>
+    <!-- Top Bar (Filters + Sort) -->
+    <div class="flex flex-between flex-wrap mb-md">
+        <button class="btn btn-secondary btn-small">☰ Filters</button>
+        <span class="product-count text-right">15 products</span>
 
-      <select>
-        <option>Filter by Collection</option>
-        <option>Fall Collection</option>
-        <option>Holiday Collection</option>
-        <option>Everyday Candles</option>
-      </select>
+        <div class="flex flex-between" style="gap: .5rem;">
+            <label for="sort-by">Sort by:</label>
+            <select id="sort-by" class="form-select" style="width: 160px;">
+                <option>Featured</option>
+                <option>Price: Low to High</option>
+                <option>Price: High to Low</option>
+                <option>Rating</option>
+            </select>
+        </div>
     </div>
-  </section>
 
-  <!-- product grid (dynamic) -->
-  <section class="product-grid" id="product-grid">
-    <!-- Products will be inserted here by JS -->
-  </section>
+    <div class="catalog-layout">
+
+        <!-- LEFT FILTERS -->
+        <aside class="catalog-filters">
+            <div class="flex flex-between mb-md">
+                <h4>Filters</h4>
+                <button class="btn btn-ghost btn-small">Clear All</button>
+            </div>
+
+            <!-- Category -->
+            <div class="filter-block">
+                <h5>Category</h5>
+                <label><input type="radio" name="cat" checked> All Products</label>
+                <label><input type="radio" name="cat"> Signature Collection</label>
+                <label><input type="radio" name="cat"> Seasonal Scents</label>
+                <label><input type="radio" name="cat"> Luxury Line</label>
+                <label><input type="radio" name="cat"> Gift Sets</label>
+            </div>
+
+            <!-- Scent Family -->
+            <div class="filter-block">
+                <h5>Scent Family</h5>
+                <label><input type="radio" name="scent" checked> All Scents</label>
+                <label><input type="radio" name="scent"> Floral</label>
+                <label><input type="radio" name="scent"> Woody</label>
+                <label><input type="radio" name="scent"> Citrus</label>
+                <label><input type="radio" name="scent"> Spicy</label>
+                <label><input type="radio" name="scent"> Fresh</label>
+                <label><input type="radio" name="scent"> Sweet</label>
+            </div>
+        </aside>
+
+        <!-- PRODUCT GRID -->
+        <main class="catalog-grid">
+
+            <!-- Card 1 -->
+            <article class="product-card">
+                <span class="badge badge-bestseller">Bestseller</span>
+                <img src="https://via.placeholder.com/350x300" alt="Midnight Amber" class="product-img">
+
+                <p class="product-cat">SIGNATURE</p>
+                <h4 class="product-title">Midnight Amber</h4>
+                <p class="product-desc">
+                    A sophisticated blend of warm amber, vanilla, and sandalwood that creates an intimate...
+                </p>
+
+                <div class="flex flex-between">
+                    <span class="product-price">$48.00</span>
+                    <span class="product-rating">⭐ 4.9 (234)</span>
+                </div>
+            </article>
+
+            <!-- Card 2 -->
+            <article class="product-card">
+                <img src="https://via.placeholder.com/350x300" alt="Lavender Dreams" class="product-img">
+
+                <p class="product-cat">SIGNATURE</p>
+                <h4 class="product-title">Lavender Dreams</h4>
+                <p class="product-desc">
+                    Pure French lavender combined with hints of chamomile and bergamot...
+                </p>
+
+                <div class="flex flex-between">
+                    <span class="product-price">$42.00</span>
+                    <span class="product-rating">⭐ 4.8 (189)</span>
+                </div>
+            </article>
+
+            <!-- Card 3 -->
+            <article class="product-card">
+                <span class="badge badge-new">New</span>
+                <img src="https://via.placeholder.com/350x300" alt="Citrus Sunrise" class="product-img">
+
+                <p class="product-cat">SEASONAL</p>
+                <h4 class="product-title">Citrus Sunrise</h4>
+                <p class="product-desc">
+                    An energizing fusion of blood orange, grapefruit, and lemon zest that awakens the...
+                </p>
+
+                <div class="flex flex-between">
+                    <span class="product-price">$38.00</span>
+                    <span class="product-rating">⭐ 4.7 (156)</span>
+                </div>
+            </article>
+
+        </main>
+
+    </div>
+</div>
+
 
   <!-- Include footer -->
   <div id="footer-placeholder"></div>

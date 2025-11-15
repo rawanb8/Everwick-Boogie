@@ -1,0 +1,116 @@
+/* ============================
+   PRODUCT CATALOG PAGE STYLING
+   ============================ */
+
+/* Layout */
+.catalog-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: var(--space-xl);
+    margin-top: var(--space-xl);
+}
+
+/* Filters Sidebar */
+.catalog-filters {
+    background: var(--white);
+    padding: var(--space-lg);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    height: fit-content;
+}
+
+.filter-block {
+    margin-bottom: var(--space-lg);
+}
+
+.filter-block label {
+    display: block;
+    margin: .35rem 0;
+    color: var(--text-light);
+    cursor: pointer;
+}
+
+/* Product Grid */
+.catalog-grid {
+    display: grid;
+    gap: var(--space-xl);
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+/* Product Card */
+.product-card {
+    height: 300px;
+    background: var(--white);
+    padding: var(--space-md);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    position: relative;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.product-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+}
+
+.product-img {
+    width: 100%;
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-md);
+}
+
+.product-cat {
+    font-size: var(--font-size-sm);
+    color: var(--muted);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.product-title {
+    font-family: "TAN Meringue", serif;
+    color: var(--text-dark);
+    margin-top: .2rem;
+}
+
+.product-desc {
+    color: var(--text-light);
+    font-size: var(--font-size-sm);
+    margin: .6rem 0 1rem;
+}
+
+.product-price {
+    font-weight: 700;
+    color: var(--accent-color);
+}
+
+/* ============================
+   BADGES (New, Bestseller)
+   ============================ */
+.badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    padding: .35rem .75rem;
+    border-radius: 20px;
+    font-size: var(--font-size-xs);
+    color: var(--white);
+}
+
+.badge-bestseller {
+    background: var(--primary-color);
+}
+
+.badge-new {
+    background: var(--success-color);
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .catalog-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .catalog-filters {
+        order: 2;
+    }
+}
