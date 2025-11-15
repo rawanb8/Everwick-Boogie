@@ -32,12 +32,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateQuizButtons();
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     // update progress/buttons initial state
     updateQuizProgress();
     updateQuizButtons();
 
 >>>>>>> fd137ebe08e794a5e902a561f4ece9414fe328d8
+=======
+>>>>>>> 9b5cb8c210b2f78d2e992c294d70c3e0e5a2eaae
     // automatically switch to the quiz tab when page loads if hash is present
     if (window.location.hash && document.getElementById(`${window.location.hash.slice(1)}-tab`)) {
       showTab(window.location.hash.slice(1));
@@ -48,6 +51,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     console.error(err);
     app.showNotification?.('Failed to load data. Please try again.', 'error');
   }
+<<<<<<< HEAD
 
   try {
     // fetch the JSON file
@@ -64,6 +68,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   } catch (err) {
     console.error('Failed to load scents:', err);
   }
+=======
+>>>>>>> 9b5cb8c210b2f78d2e992c294d70c3e0e5a2eaae
 });
 
 function initTabs() {
