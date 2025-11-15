@@ -192,6 +192,143 @@
     }
 }
 
+/* ================================CREATE YOUR PERFECT CANDLE================================ */
+#create-candle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3rem;
+    margin-top: 5rem;
+    margin-bottom: 5rem;
+}
+
+/* Left content */
+.candle-content {
+    flex: 1;
+}
+
+.candle-content .section-title {
+    margin-bottom: 1rem;
+}
+
+.candle-sub {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-bottom: 2rem;
+}
+
+/* 2×2 grid for features */
+.candle-features {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+}
+
+.feature-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+/* Icons */
+.feature-item i {
+    font-size: 1.7rem;
+    color: var(--accent, #c28f4a); /* fallback gold tone */
+}
+
+.feature-item h3 {
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.feature-item p {
+    font-size: 0.95rem;
+    color: var(--text-light);
+    line-height: 1.5;
+}
+
+/* Right image */
+.candle-media {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.candle-media img {
+    width: 100%;
+    height: auto;
+    max-width: 550px; /* good visual size */
+    aspect-ratio: 3 / 2; /* matches your image proportion */
+    object-fit: cover;
+    border-radius: 12px;
+}
+
+
+/* Tablets */
+@media (max-width: 900px) {
+    #create-candle {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .candle-features {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .candle-media img {
+        max-width: 400px;
+    }
+}
+
+/* Phones */
+@media (max-width: 600px) {
+    .candle-features {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .candle-media img {
+        max-width: 300px;
+    }
+}
+
+/* Feature card hover */
+.feature-item {
+    padding: 1rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+/* Whole card animates */
+.feature-item:hover {
+    background: rgba(194, 143, 74, 0.08); /* soft warm gold tint */
+    transform: translateY(-6px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.08);
+}
+
+/* Icon hover animation */
+.feature-item i {
+    transition: all 0.3s ease;
+    transform-origin: center;
+}
+
+/* Icon grows + changes color */
+.feature-item:hover i {
+    transform: scale(1.25);
+    color: var(--accent-dark, #a67633); /* deeper warm tone */
+}
+
+/* Title hover effect */
+.feature-item h3 {
+    transition: color 0.3s ease;
+}
+
+.feature-item:hover h3 {
+    color: var(--accent-dark, #a67633);
+}
+
+
 /* ========== ABOUT (inline video) ========== */
 .about {
     display: grid;
