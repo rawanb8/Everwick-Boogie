@@ -253,3 +253,66 @@ function initNewsletterForm() {
     }, 800);
   });
 }
+
+let modalLoaded = false;
+
+// Load login modal from login.html
+async function loadLoginModal() {
+    const response = await fetch('/html/login.html');
+    const modalHTML = await response.text();
+
+    // Create a wrapper div
+    const modalContainer = document.createElement('div');
+    modalContainer.innerHTML = modalHTML;
+    document.body.appendChild(modalContainer);
+
+    modalLoaded = true;
+
+    // Attach close functionality to close button & overlay
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modal-close') || e.target.classList.contains('modal-overlay')) {
+            closeLoginModal();
+        }
+    });
+
+    // Attach form submission
+    const loginForm = document.getElementById('loginForm');
+    if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Handle login logic here
+            console.log('Login submitted', {
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value
+            });
+            closeLoginModal();
+        });
+    }
+}
+
+// Show modal
+function openLoginModal() {
+    if (!modalLoaded) {
+        console.warn('Modal not loaded yet!');
+        return;
+    }
+    const modal = document.getElementById('login-modal');
+    if (modal) modal.style.display = 'flex';
+}
+
+// Hide modal
+function closeLoginModal() {
+    const modal = document.getElementById('login-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+// Load modal on page load
+window.addEventListener('DOMContentLoaded', loadLoginModal);
+
+// Optional: attach "Proceed to Payment" dynamically after modal loaded
+window.addEventListener('DOMContentLoaded', async () => {
+    await loadLoginModal();
+
+    const proceedBtn = document.getElementById('proceed-to-payment');
+    if (proceedBtn) proceedBtn.addEventListener('click', openLoginModal);
+});

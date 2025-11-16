@@ -110,7 +110,9 @@ function displayScents(scents) {
   container.innerHTML = scents.map(scent => {
     const displayCategory = scent.category || scent.season || '';
     const strengthDots = '●'.repeat(Math.min(10, scent.aggressiveness)) + '○'.repeat(10 - Math.min(10, scent.aggressiveness));
-    const priceHtml = app.formatPrice?.(scent.price) || `$${scent.price}`;
+   const product = app.products?.find(p => p.scentId === scent.id);
+    const priceHtml = product ? app.formatPrice(product.price) : '$0.00';
+
     return `
       <div class="scent-card card" role="button" tabindex="0" onclick="showScentDetails(${scent.id})"
            onkeydown="if(event.key==='Enter') showScentDetails(${scent.id})">
@@ -312,9 +314,7 @@ function nextQuestion() {
 
     updateQuizProgress();
     updateQuizButtons();
-
-    // scroll into view for better UX
-    document.getElementById(`question-${currentQuizQuestion}`).scrollIntoView({ behavior: 'smooth' });
+ 
   }
 }
 
@@ -326,8 +326,6 @@ function previousQuestion() {
 
     updateQuizProgress();
     updateQuizButtons();
-
-    document.getElementById(`question-${currentQuizQuestion}`).scrollIntoView({ behavior: 'smooth' });
   }
 }
 

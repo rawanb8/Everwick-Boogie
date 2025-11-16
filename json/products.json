@@ -14,7 +14,7 @@
     {
       "id": 2,
       "name": "Winter Wonderland",
-      "notes": ["fir", "eucalyptus", "snow"],
+      "notes": ["white cedar", "vanilla frost", "snow"],
       "season": "winter",
       "family": "fresh",
       "mood": "energizing",
@@ -113,7 +113,7 @@
     {
       "id": 11,
       "name": "Morning Brew",
-      "notes": ["green tea", "cucumber", "lily"],
+      "notes": ["vanilla cream", "coffee bean", "espresso"],
       "season": "spring",
       "family": "fresh",
       "mood": "relaxing",

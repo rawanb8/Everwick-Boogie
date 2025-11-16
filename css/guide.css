@@ -4,6 +4,42 @@
   text-align: center;
 }
 
+.page-header h1 {
+  font-size: 3rem;
+  font-weight: 700;
+  /* bold */
+  color: var(--primary-color);
+  /* main brand color */
+  margin-bottom: var(--space-md);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  -webkit-text-stroke: 1px var(--accent-color);
+  /* border around text (works in Chrome/Safari) */
+  letter-spacing: 1px;
+}
+
+.quote {
+  font-size: 1.25rem;
+  /* slightly larger than normal for emphasis */
+  font-weight: 400;
+  /* normal weight, not bold */
+  color: var(--text-light);
+  /* softer text color */
+  font-style: italic;
+  /* adds elegance */
+  margin-top: var(--space-sm);
+  /* spacing below header */
+  line-height: 1.6;
+  /* improves readability */
+  max-width: 800px;
+  /* keeps text in readable width */
+  margin-left: auto;
+  margin-right: auto;
+  /* center the paragraph */
+  text-align: center;
+  /* centered under header */
+}
+
 .tabs-section {
   background: var(--white);
   border-bottom: 1px solid var(--gray-light);
@@ -198,14 +234,25 @@
   margin-bottom: var(--space-sm);
   cursor: pointer;
   transition: all var(--transition-fast);
+  background: var(--background-light);
+  color: var(--text-dark);
+
 }
 
 .quiz-option:hover {
   border-color: var(--primary-color);
+  background: var(--secondary-color);
+  color: var(--text-dark);
 }
 
 .quiz-option input[type="radio"] {
   margin-right: var(--space-sm);
+}
+
+.quiz-option input[type="radio"],
+.scale-input input[type="range"] {
+  accent-color: var(--accent-color);
+  /* or var(--primary-color) for a different pop */
 }
 
 .scale-container {
@@ -282,7 +329,7 @@
   gap: var(--space-sm);
 }
 
-.recommendation-actions > * {
+.recommendation-actions>* {
   flex: 1 1 auto;
   min-width: 120px;
 }
@@ -313,6 +360,7 @@
 }
 
 @media (max-width: 480px) {
+
   .tabs-section,
   .quiz-container {
     padding: var(--space-lg) var(--space-md);
