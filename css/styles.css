@@ -626,16 +626,10 @@
     padding: 2rem 1rem;
 }
 
-/* ensure hero title doesn't get hidden under nav on wide screens */
+
 .hero-content.container {
     margin-top: 0;
 }
-
-/* If the navbar should visually be above the hero content, reduce this z-index accordingly.
-   If you want hero content to appear above navbar (rare), set .site-nav z-index lower. */
-
-/* ---------- Prevent overlap / squeezing in long pages ---------- */
-
 
 /* ---------- Small-screen safety: shrink hero headline rather than overlap nav ---------- */
 @media (max-width: 900px) {
@@ -648,3 +642,144 @@
         white-space: normal;
     }
 }
+
+.category-list {
+  display: flex;
+  flex-wrap: wrap;          /* cards wrap to new lines */
+  gap: 1.5rem;
+  justify-content: center;
+}
+
+.category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 220px;             /* fixed width */
+  text-decoration: none;
+  color: #333;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.category-card img {
+  width: 100%;
+  height: 220px;            /* fixed height */
+  object-fit: cover;        /* maintains aspect ratio without stretching */
+  display: block;
+}
+
+.category-card h3 {
+  margin: 0.75rem 0;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.category-card:hover {
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+  color: #000;
+}
+
+
+/* ---------- GENERAL GRID CONTAINERS ---------- */
+#featured-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+#category-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+/* =================== FEATURED PRODUCTS CAROUSEL =================== */
+.featured-carousel {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    margin-top: var(--space-2xl);
+    margin-bottom: var(--space-2xl);
+}
+
+.featured-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-md);
+    margin-top: var(--space-md);
+}
+
+.featured-controls button {
+    background: var(--primary-color);
+    color: var(--white);
+    border: none;
+    border-radius: var(--radius-md);
+    padding: var(--space-sm) var(--space-md);
+    cursor: pointer;
+    font-weight: 600;
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal), background var(--transition-normal);
+}
+
+.featured-controls button:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.featured-page-indicator {
+    font-size: var(--font-size-base);
+    color: var(--text-light);
+}
+
+#featured-grid {
+    display: grid;
+    gap: var(--space-lg);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    margin-top: var(--space-md);
+}
+
+/* Product card overrides to fit carousel context */
+.featured-carousel .product-card {
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+
+.featured-carousel .product-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .featured-carousel {
+        gap: var(--space-md);
+    }
+
+    #featured-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: var(--space-md);
+    }
+}
+
+@media (max-width: 600px) {
+    #featured-grid {
+        grid-template-columns: 1fr;
+        gap: var(--space-sm);
+    }
+
+    .featured-controls {
+        flex-direction: column;
+        gap: var(--space-sm);
+    }
+
+    .featured-controls button {
+        width: 100%;
+    }
+}
+
