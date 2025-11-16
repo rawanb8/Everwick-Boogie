@@ -253,3 +253,36 @@ function initNewsletterForm() {
     }, 800);
   });
 }
+
+//LOGIN MODAL 
+async function loadLoginModal() {
+    const response = await fetch('/html/login.html'); 
+    const modalHTML = await response.text();
+    const modalContainer = document.createElement('div');
+    modalContainer.innerHTML = modalHTML;
+    document.body.appendChild(modalContainer);
+}
+
+// Call this on page load
+window.addEventListener('DOMContentLoaded', loadLoginModal);
+
+// Show modal
+function openLoginModal() {
+    const modal = document.getElementById('login-modal');
+    modal.style.display = 'flex';
+}
+
+// Hide modal
+function closeLoginModal() {
+    const modal = document.getElementById('login-modal');
+    modal.style.display = 'none';
+}
+
+// Attach close button
+document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('modal-close')) {
+        closeLoginModal();
+    }
+});
+
+
