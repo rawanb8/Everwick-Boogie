@@ -18,21 +18,20 @@
       align-items: center;
     }
 
-    .search-box {
+    .shop-controls .search-box {
       position: relative;
       display: flex;
       align-items: center;
     }
 
-    .search-btn {
-      position: absolute;
-      right: var(--space-sm);
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: var(--font-size-lg);
-    }
-
+    .shop-controls .search-btn {
+  position: absolute;
+  right: var(--space-sm);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: var(--font-size-lg);
+}
     .sort-controls {
       display: flex;
       align-items: center;
@@ -426,3 +425,4 @@
         justify-content: center;
       }
     }
+    
