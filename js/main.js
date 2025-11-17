@@ -1,7 +1,18 @@
 const app = {
   data: {},
   scents: [],
+  products: [],
+  cart: [],
+  colors: [],
+  sizes: [],
+  wicks:[],
 
+getSizes() {
+  return this.sizes || [];
+},
+getColors() { return this.colors || []; },
+getContainers() { return this.containers || []; },
+getWicks() { return this.wicks || []; },
   getScents() { return this.scents; },
   getScentById(id) { return this.scents.find(s => s.id === id) || null; },
   formatPrice(price) { return `$${Number(price).toFixed(2)}`; },
@@ -25,43 +36,53 @@ const app = {
   },
 
   calculateQuizResults(answers) {
-  const scents = this.getScents();
-  const scores = scents.map(scent => ({ scent, score: 0 }));
+    const scents = this.getScents();
+    const scores = scents.map(scent => ({ scent, score: 0 }));
 
-  answers.forEach((answer, questionIndex) => {
-    scores.forEach(item => {
-      const scent = item.scent;
-      switch (questionIndex) {
-        case 0: // Mood
-          if (scent.mood === answer) item.score += 3;
-          break;
-        case 1: // Category / family
-          if (scent.family === answer) item.score += 3;
-          break;
-        case 2: // Strength
-          const strengthDiff = Math.abs(scent.aggressiveness - parseInt(answer));
-          item.score += Math.max(3 - strengthDiff, 0);
-          break;
-        case 3: // Season
-          if (scent.season === answer || scent.season === 'all-year') {
-            item.score += scent.season === answer ? 2 : 1;
-          }
-          break;
-      }
+    answers.forEach((answer, questionIndex) => {
+      scores.forEach(item => {
+        const scent = item.scent;
+        switch (questionIndex) {
+          case 0: // Mood
+            if (scent.mood === answer) item.score += 3;
+            break;
+          case 1: // Category / family
+            if (scent.family === answer) item.score += 3;
+            break;
+          case 2: // Strength
+            const strengthDiff = Math.abs(scent.aggressiveness - parseInt(answer));
+            item.score += Math.max(3 - strengthDiff, 0);
+            break;
+          case 3: // Season
+            if (scent.season === answer || scent.season === 'all-year') {
+              item.score += scent.season === answer ? 2 : 1;
+            }
+            break;
+        }
+      });
     });
-  });
 
-  // Return **only the top 3 scoring scents**, sorted by score
-  return scores
-    .sort((a, b) => b.score - a.score)
-    .slice(0, 3)         // top 3
-    .map(item => item.scent);
-},
+    // Return **only the top 3 scoring scents**, sorted by score
+    return scores
+      .sort((a, b) => b.score - a.score)
+      .slice(0, 3)         // top 3
+      .map(item => item.scent);
+  },
 
 
   openModal(id) { document.getElementById(id).style.display = 'block'; },
   closeModal(id) { document.getElementById(id).style.display = 'none'; },
-  showNotification(msg, type) { alert(msg); }
+  showNotification(msg, type) { alert(msg); },
+
+
+  getProducts() {
+    return this.products || [];
+  },
+
+  getProductById(id) {
+    return this.products.find(p => p.id === id) || null;
+  }
+
 };
 
 (function () {
@@ -163,7 +184,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (footerContainer) {
     try {
-      const response = await fetch('footer.html'); 
+      const response = await fetch('footer.html');
       const footerHTML = await response.text();
       footerContainer.innerHTML = footerHTML;
 
@@ -236,13 +257,13 @@ function initNewsletterForm() {
       return;
     }
 
-     // Simulate sending
+    // Simulate sending
     submitBtn.disabled = true;
     submitBtn.setAttribute('aria-disabled', 'true');
     let prevText = submitBtn.textContent;
     submitBtn.textContent = 'Sending...';
 
- // Short simulated delay
+    // Short simulated delay
     setTimeout(() => {
       showMessage('success', 'Thank you for subscribing to our newsletter!');
       submitBtn.textContent = prevText;
@@ -258,52 +279,52 @@ let modalLoaded = false;
 
 // Load login modal from login.html
 async function loadLoginModal() {
-    const response = await fetch('/html/login.html');
-    const modalHTML = await response.text();
+  const response = await fetch('/html/login.html');
+  const modalHTML = await response.text();
 
-    // Create a wrapper div
-    const modalContainer = document.createElement('div');
-    modalContainer.innerHTML = modalHTML;
-    document.body.appendChild(modalContainer);
+  // Create a wrapper div
+  const modalContainer = document.createElement('div');
+  modalContainer.innerHTML = modalHTML;
+  document.body.appendChild(modalContainer);
 
-    modalLoaded = true;
+  modalLoaded = true;
 
-    // Attach close functionality to close button & overlay
-    document.addEventListener('click', (e) => {
-        if (e.target.classList.contains('modal-close') || e.target.classList.contains('modal-overlay')) {
-            closeLoginModal();
-        }
-    });
-
-    // Attach form submission
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-        loginForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            // Handle login logic here
-            console.log('Login submitted', {
-                username: document.getElementById('username').value,
-                password: document.getElementById('password').value
-            });
-            closeLoginModal();
-        });
+  // Attach close functionality to close button & overlay
+  document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('modal-close') || e.target.classList.contains('modal-overlay')) {
+      closeLoginModal();
     }
+  });
+
+  // Attach form submission
+  const loginForm = document.getElementById('loginForm');
+  if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      // Handle login logic here
+      console.log('Login submitted', {
+        username: document.getElementById('username').value,
+        password: document.getElementById('password').value
+      });
+      closeLoginModal();
+    });
+  }
 }
 
 // Show modal
 function openLoginModal() {
-    if (!modalLoaded) {
-        console.warn('Modal not loaded yet!');
-        return;
-    }
-    const modal = document.getElementById('login-modal');
-    if (modal) modal.style.display = 'flex';
+  if (!modalLoaded) {
+    console.warn('Modal not loaded yet!');
+    return;
+  }
+  const modal = document.getElementById('login-modal');
+  if (modal) modal.style.display = 'flex';
 }
 
 // Hide modal
 function closeLoginModal() {
-    const modal = document.getElementById('login-modal');
-    if (modal) modal.style.display = 'none';
+  const modal = document.getElementById('login-modal');
+  if (modal) modal.style.display = 'none';
 }
 
 // Load modal on page load
@@ -311,8 +332,8 @@ window.addEventListener('DOMContentLoaded', loadLoginModal);
 
 // Optional: attach "Proceed to Payment" dynamically after modal loaded
 window.addEventListener('DOMContentLoaded', async () => {
-    await loadLoginModal();
+  await loadLoginModal();
 
-    const proceedBtn = document.getElementById('proceed-to-payment');
-    if (proceedBtn) proceedBtn.addEventListener('click', openLoginModal);
+  const proceedBtn = document.getElementById('proceed-to-payment');
+  if (proceedBtn) proceedBtn.addEventListener('click', openLoginModal);
 });
