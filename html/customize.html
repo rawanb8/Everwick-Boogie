@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Customize — Everwick Boogie</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/customize.css">
+  <script src="/js/main.js" defer></script>        <!-- must define `app` -->
+  <script src="/js/customize.js" defer></script>    <!-- page script -->
+</head>
+<body>
+  <div id="navbar"></div>
+  <div class="page-spacer"></div>
+
+  <main class="container customize-page">
+    <section class="customize-hero section">
+      <h1 class="section-title">Customize your candle</h1>
+      <p class="muted">Pick color, scent, size, container and extras — see changes live.</p>
+    </section>
+
+    <section class="customize-grid section">
+      <!-- Controls (left) -->
+      <div class="custom-controls">
+        <div class="control-group">
+          <h3>Color</h3>
+          <div id="colors" aria-label="Choose color"></div>
+        </div>
+
+        <div class="control-group">
+          <h3>Scent</h3>
+          <select id="scent-select" aria-label="Choose scent"></select>
+        </div>
+
+        <div class="control-group">
+          <h3>Size</h3>
+          <div id="sizes"></div>
+        </div>
+
+        <div class="control-group">
+          <h3>Container</h3>
+          <div id="containers"></div>
+        </div>
+
+        <div class="control-group">
+          <h3>Wick</h3>
+          <div id="wicks"></div>
+        </div>
+
+        <div class="control-group">
+          <h3>Label style</h3>
+          <div id="labels"></div>
+        </div>
+
+        <div class="control-group">
+          <h3>Additions</h3>
+          <div id="additions"></div>
+        </div>
+
+        <div class="control-group price-cta">
+          <div class="price-row">
+            <div>Price:</div>
+            <div id="custom-price">—</div>
+          </div>
+          <button id="add-to-cart" class="btn btn-primary">Add to cart</button>
+        </div>
+      </div>
+
+      <!-- Live Preview (right) -->
+      <aside class="custom-preview" aria-label="Live preview">
+        <div class="preview-frame">
+          <img id="layer-base" src="/media/custom/base-candle.png" alt="Base candle">
+          <img id="layer-color" src="" alt="" class="layer layer-color">
+          <img id="layer-label" src="" alt="" class="layer layer-label">
+          <img id="layer-additions" src="" alt="" class="layer layer-additions">
+        </div>
+
+        <div class="preview-details">
+          <h3 id="preview-name">Custom Candle</h3>
+          <p id="preview-scent" class="muted">Choose a scent</p>
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <div id="footer"></div>
+</body>
+</html>
