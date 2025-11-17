@@ -427,9 +427,6 @@ function displayQuizResults(recommendations) {
             <strong>Mood:</strong> ${scent.mood}
           </div>
           <div class="recommendation-actions">
-            <button class="btn btn-outline btn-small" onclick="showScentDetails(${scent.id})">
-              View Details
-            </button>
             <a href="customize.html?scent=${scent.id}" class="btn btn-primary btn-small">
               Create Candle
             </a>
