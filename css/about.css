@@ -1,10 +1,9 @@
 /* =================== CONTACT PAGE =================== */
 .contact-layout {
-    display: grid;
-    grid-template-columns: 1fr 400px;
     gap: var(--space-2xl);
     align-items: start;
-    scroll-margin-top: 80px;
+    display: flex;
+    flex-wrap: wrap;
 }
 
 .contact-form-section {
@@ -12,6 +11,22 @@
     padding: var(--space-2xl);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-sm);
+}
+
+.contact-form-section,
+.contact-info-section {
+    flex: 1 1 400px; /* grow/shrink, minimum 400px */
+    min-width: 300px; /* prevents collapsing too small */
+}
+
+div h1 {
+    color: #596439;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+div p{
+    font-size: var(--font-size-lg);
+    font-style: italic;
 }
 
 .contact-form-section h2 {
@@ -90,6 +105,7 @@
 
 .social-links {
     display: flex;
+    flex-wrap: wrap;
     flex-direction: column;
     gap: var(--space-sm);
     margin-top: var(--space-md);
@@ -178,47 +194,20 @@
 
 /* Grid for cards */
 .values-grid {
-    display: grid;
+    display: flex;
+    flex-wrap: wrap;
     gap: var(--space-2xl);
-    grid-template-columns: repeat(4, 1fr); /* always 4 columns */
-    justify-items: stretch; /* make cards fill column width */
 }
-
-/* Optional: make cards a little bigger on very wide screens */
-@media (min-width: 1600px) {
-    .values-grid {
-        grid-template-columns: repeat(4, 1fr);
-        max-width: 1400px; /* limit container so cards stay nice */
-        margin: 0 auto;
-    }
-}
-
-/* Responsive for smaller screens */
-@media (max-width: 1200px) {
-    .values-grid {
-        grid-template-columns: repeat(2, 1fr); /* 2 by 2 */
-    }
-}
-
-@media (max-width: 768px) {
-    .values-grid {
-        grid-template-columns: 1fr; /* 1 card per row */
-    }
-}
-
-
 
 
 .value-card {
+    flex: 1 1 250px; 
+    max-width: 300px;
     background: var(--background-light);
     padding: var(--space-2xl);
     border-radius: var(--radius-lg);
     text-align: center;
     transition: transform var(--transition-normal);
-}
-
-.value-card:hover {
-    transform: translateY(-4px);
 }
 
 .value-icon {
@@ -377,10 +366,10 @@
 }
 
 .team-grid {
-    display: grid;
+    display: flex;
+    flex-wrap: wrap;
     gap: var(--space-2xl);
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    justify-items: center;
+    
 }
 
 .team-member {
@@ -389,6 +378,8 @@
     padding: var(--space-xl);
     text-align: center;
     box-shadow: var(--shadow-sm);
+      flex: 1 1 250px;
+    max-width: 300px;
     transition: transform var(--transition-normal), box-shadow var(--transition-normal);
 }
 
@@ -428,6 +419,8 @@
 @media (max-width: 768px) {
     .team-grid {
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+         justify-items: center;       /* centers items horizontally */
+    gap: 2rem;
     }
 }
 
@@ -610,11 +603,6 @@ select:focus {
         text-align: center;
     }
 
-    .values-grid {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: var(--space-2xl);
-    }
-
     .timeline-item {
         flex-direction: column;
         gap: var(--space-md);
@@ -643,6 +631,53 @@ select:focus {
 
 @media (max-width: 360px) {
     .timeline-item {
+        gap: var(--space-sm);
+    }
+}
+
+@media (max-width: 570px) {
+    .contact-form-section,
+    .contact-info-section,
+    .value-card,
+    .team-member {
+        flex: 1 1 100%;
+        max-width: 100%;
+    }
+
+    .mission-img {
+        margin-left: 0;
+        width: 100%;
+        height: auto;
+    }
+
+    .mission-content {
+        flex-direction: column;
+        gap: var(--space-lg);
+        text-align: center;
+    }
+
+    .timeline-item {
+        flex-direction: column;
+        align-items: flex-start; /* stack content vertically */
+        gap: var(--space-sm);
+        position: relative; /* keep for pseudo-element if needed */
+    }
+
+    /* Remove the vertical line between items */
+    .timeline-item:not(:last-child):before {
+        display: none;
+    }
+
+    .timeline-marker {
+        margin-bottom: var(--space-sm); /* space between marker and content */
+    }
+
+    .timeline-content {
+        width: 100%;
+    }
+
+    .social-links {
+        flex-direction: column;
         gap: var(--space-sm);
     }
 }

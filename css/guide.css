@@ -7,16 +7,15 @@
 .page-header h1 {
   font-size: 3rem;
   font-weight: 700;
-  /* bold */
-  color: var(--primary-color);
+  color: #8A9A5B;
   /* main brand color */
   margin-bottom: var(--space-md);
   text-transform: uppercase;
   letter-spacing: 1px;
-  -webkit-text-stroke: 1px var(--accent-color);
-  /* border around text (works in Chrome/Safari) */
   letter-spacing: 1px;
 }
+
+
 
 .quote {
   font-size: 1.25rem;
@@ -76,7 +75,7 @@
 }
 
 .filters-section {
-  background: var(--gray-light);
+  background-color: #b1b999;
   padding: var(--space-xl) 0;
 }
 
