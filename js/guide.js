@@ -88,7 +88,7 @@ function loadScentsLibrary() {
   scents.forEach(s => {
     s.season = s.season?.toLowerCase() || '';
     s.mood = s.mood?.toLowerCase() || '';
-    s.category = s.category?.toLowerCase() || '';
+    s.category = s.family?.toLowerCase() || '';
     s.aggressiveness = Number(s.aggressiveness) || 0;
   });
 

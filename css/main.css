@@ -62,9 +62,12 @@
     --nav-glass: rgba(255, 255, 255, 0.06);
 
     /* Alerts */
-    --error-color: #e74c3c;  /*forms alerts*/
-    --success-color: #27ae60; /*forms alerts*/
-    --warm: #f0db83; /*Highlight / cart badge / CTA*/
+    --error-color: #e74c3c;
+    /*forms alerts*/
+    --success-color: #27ae60;
+    /*forms alerts*/
+    --warm: #f0db83;
+    /*Highlight / cart badge / CTA*/
 
     /* Typography */
     --font-primary: 'Georgia', serif;
@@ -106,10 +109,10 @@
     --transition-slow: 0.5s ease-in-out;
 
     /* Layout */
-     --max-width: 1200px;
+    --max-width: 1200px;
 
     /* Background Gradient */
-     --bg: linear-gradient(180deg, #fbf9f6, var(--secondary-color)); 
+    --bg: linear-gradient(180deg, #fbf9f6, var(--secondary-color));
 
     --nav-height: 72px;
 
@@ -150,8 +153,7 @@ h3,
 h4,
 h5,
 h6 {
-     font-family: 'Poppins', sans-serif;
-    font-weight: 400;
+    font-family: 'Poppins', sans-serif;
     line-height: 1.2;
     margin-bottom: var(--space-md);
 }
@@ -272,7 +274,8 @@ a:hover {
     letter-spacing: 0.02em;
     transition: all var(--transition-fast);
     gap: var(--space-sm);
-    border: none; /* remove default border */
+    border: none;
+    /* remove default border */
     outline: none;
 }
 
@@ -501,9 +504,9 @@ body.modal-open {
 
 .site-nav {
     position: fixed;
-    top:0;
-    left:0;
-    right:0;
+    top: 0;
+    left: 0;
+    right: 0;
     height: var(--nav-height);
     inset: 0 0 auto 0;
     z-index: 1200;
@@ -951,7 +954,8 @@ body.modal-open {
 
 /* Modal container */
 #login-modal {
-    display: none; /* hidden by default */
+    display: none;
+    /* hidden by default */
     position: fixed;
     inset: 0;
     z-index: 9999;
@@ -966,7 +970,8 @@ body.modal-open {
     position: absolute;
     inset: 0;
     background: url('/media/inpage/login.image.jpg') no-repeat center center/cover;
-    filter: blur(5px); /* blur effect */
+    filter: blur(5px);
+    /* blur effect */
     z-index: 0;
 }
 
@@ -974,14 +979,16 @@ body.modal-open {
 #login-modal .overlay {
     position: absolute;
     inset: 0;
-    background: rgba(0, 0, 0, 0.3); /* subtle dark tint */
+    background: rgba(0, 0, 0, 0.3);
+    /* subtle dark tint */
     z-index: 1;
 }
 
 /* Modal content (centered login form) */
 #login-modal .login-wrap {
     position: relative;
-    z-index: 2; /* above overlay and background */
+    z-index: 2;
+    /* above overlay and background */
     width: 100%;
     max-width: 450px;
     display: flex;
@@ -989,8 +996,10 @@ body.modal-open {
     gap: 1.5rem;
     align-items: center;
     padding: 2rem;
-    background: rgba(255, 255, 255, 0.05); /* subtle transparent */
-    backdrop-filter: blur(8px); /* glass effect */
+    background: rgba(255, 255, 255, 0.05);
+    /* subtle transparent */
+    backdrop-filter: blur(8px);
+    /* glass effect */
     border-radius: 1rem;
     animation: fadeInUp 0.8s ease forwards;
 }
@@ -1067,6 +1076,7 @@ body.modal-open {
         opacity: 0;
         transform: translateY(30px);
     }
+
     100% {
         opacity: 1;
         transform: translateY(0);

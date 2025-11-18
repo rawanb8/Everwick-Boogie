@@ -7,16 +7,15 @@
 .page-header h1 {
   font-size: 3rem;
   font-weight: 700;
-  /* bold */
-  color: var(--primary-color);
+  color: #8A9A5B;
   /* main brand color */
   margin-bottom: var(--space-md);
   text-transform: uppercase;
   letter-spacing: 1px;
-  -webkit-text-stroke: 1px var(--accent-color);
-  /* border around text (works in Chrome/Safari) */
   letter-spacing: 1px;
 }
+
+
 
 .quote {
   font-size: 1.25rem;
@@ -76,7 +75,7 @@
 }
 
 .filters-section {
-  background: var(--gray-light);
+  background-color: #b1b999;
   padding: var(--space-xl) 0;
 }
 
@@ -85,6 +84,7 @@
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: var(--space-md);
   margin: var(--space-md) 0;
+  align-items: stretch;
 }
 
 .scent-card {
@@ -95,9 +95,17 @@
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   overflow: hidden;
   background: var(--white);
+  height: 100%;
+}
+
+.scent-card .card-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .scent-card:hover {
@@ -106,19 +114,20 @@
 }
 
 .scent-image {
-  position: relative;
   width: 100%;
-  height: 200px;
+  aspect-ratio: 1/1;
   overflow: hidden;
-  border-radius: var(--radius-md);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .scent-image img,
 .recommendation-card img,
 .scent-detail-image {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto;
+  object-fit: contain;
   object-position: center;
   display: block;
 }
@@ -142,6 +151,7 @@
 .card-title {
   margin: var(--space-xs) 0;
   font-weight: 500;
+  font-family: "TAN Meringue", "Amsterdam Two", serif;
   color: var(--text-dark);
   margin-bottom: var(--space-xs);
 }
@@ -159,7 +169,11 @@
 .scent-details,
 .scent-mood,
 .scent-strength {
-  margin: var(--space-md) 0;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  font-family: var(--font-secondary);
+  color: var(--text-dark);
+  margin: var(--space-sm) 0;
   word-break: break-word;
 }
 
@@ -172,6 +186,7 @@
 .strength-bar {
   color: var(--primary-color);
   font-weight: bold;
+  font-size: var(--font-size-lg);
 }
 
 .scent-notes,
@@ -193,9 +208,9 @@
   max-width: 600px;
   margin: 0 auto;
   padding: var(--space-lg);
-  background: var(--white); 
-    border-radius: var(--radius-lg);
-    box-shadow: var(--shadow-md);
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
 }
 
 .quiz-progress {
@@ -236,8 +251,8 @@
 .quiz-options {
   margin-top: var(--space-lg);
   display: flex;
-    flex-direction: column;
-    gap: var(--space-sm);
+  flex-direction: column;
+  gap: var(--space-sm);
 }
 
 .quiz-option {
@@ -247,7 +262,7 @@
   margin-bottom: var(--space-sm);
   cursor: pointer;
   transition: all var(--transition-fast);
-   font-size: var(--font-size-base);
+  font-size: var(--font-size-base);
   background: var(--background-light);
   color: var(--text-dark);
 
@@ -261,24 +276,18 @@
 
 .quiz-option input[type="radio"] {
   margin-right: var(--space-sm);
-   accent-color: var(--accent-color);
+  accent-color: var(--accent-color);
 }
 
 .quiz-option input[type="radio"],
-.scale-input input[type="range"] {
-  /* accent-color: var(--accent-color); */
-  flex: 1;
-}
-
 input[type="range"] {
-  width: 100%;
-  height: 12px;
-  background: var(--gray-light);
-  border-radius: var(--radius-lg);
+  accent-color: var(--accent-color);
+  flex: 1;
 }
 
 /* Chrome / Safari track */
 input[type="range"]::-webkit-slider-runnable-track {
+  -webkit-appearance: none;
   height: 12px;
   background: var(--gray-light);
   border-radius: var(--radius-lg);
@@ -292,6 +301,20 @@ input[type="range"]::-webkit-slider-thumb {
   background: var(--accent-color);
   border: 2px solid var(--primary-color);
   margin-top: -4px;
+}
+
+/* Firefox */
+input[type="range"]::-moz-range-thumb {
+  background: var(--accent-color);
+  border: 2px solid var(--primary-color);
+  border-radius: 50%;
+}
+
+/* IE/Edge */
+input[type="range"]::-ms-thumb {
+  background: var(--accent-color);
+  border: 2px solid var(--primary-color);
+  border-radius: 50%;
 }
 
 
@@ -315,8 +338,8 @@ input[type="range"]::-webkit-slider-thumb {
 .quiz-navigation {
   display: flex;
   justify-content: space-between;
-   margin-top: var(--space-lg);
-    gap: var(--space-md);
+  margin-top: var(--space-lg);
+  gap: var(--space-md);
 }
 
 .scent-details-full {
@@ -398,6 +421,11 @@ input[type="range"]::-webkit-slider-thumb {
   .recommendation-actions {
     flex-direction: column;
   }
+
+  .scent-image {
+    aspect-ratio: 1;
+    /* make it square on tablets */
+  }
 }
 
 @media (max-width: 480px) {
@@ -430,6 +458,7 @@ input[type="range"]::-webkit-slider-thumb {
   .filter-grid,
   .scent-details-full {
     gap: var(--space-sm);
+    grid-template-columns: 1fr;
   }
 
   .quiz-option {
@@ -444,6 +473,12 @@ input[type="range"]::-webkit-slider-thumb {
   .tabs::-webkit-scrollbar {
     display: none;
   }
+
+  .scent-image {
+    aspect-ratio: 1;
+    /* make it square on tablets */
+  }
+
 }
 
 @media (hover: none) {
@@ -459,33 +494,60 @@ input[type="range"]::-webkit-slider-thumb {
 
 /* Make ALL recommendation cards equal height */
 .recommendation-card {
-    display: flex;
-    flex-direction: column;
-    height: 100%;             /* make the grid rows equal height */
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  /* make the grid rows equal height */
 }
 
 /* FIX image height so all cards start equal */
 .recommendation-card .card-image img {
-    height: 180px;           /* fixed height */
-    width: 100%;
-    object-fit: cover;
-    display: block;
+  height: 180px;
+  /* fixed height */
+  width: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 /* Make card content stretch to equalize height */
 .recommendation-card .card-content {
-    flex: 1;                 
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;  /* pushes button to bottom */
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* pushes button to bottom */
 }
 
 /* Make the description area flexible */
 .recommendation-card p {
-    flex: 1;                 /* fills vertical space equally */
+  flex: 1;
+  /* fills vertical space equally */
 }
 
 /* Button at bottom */
 .recommendation-card .btn {
-    margin-top: auto;
+  margin-top: auto;
+}
+
+.recommendation-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--white);
+  height: 100%;
+}
+
+.recommendation-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: var(--shadow-lg);
+}
+
+.quiz-results-header h2 {
+  font-family: "Lora" ;
 }
