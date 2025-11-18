@@ -5,17 +5,7 @@ const app = {
   cart: [],
   colors: [],
   sizes: [],
-  containers: [],
-  wicks:[],
-
-  // Utility: debounce for search
-  debounce(fn, delay) {
-    let timeout;
-    return function(...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => fn.apply(this, args), delay);
-    };
-  },
+  wicks: [],
 
   getSizes() {
     return this.sizes || [];
