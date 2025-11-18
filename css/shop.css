@@ -455,33 +455,29 @@
 .product-card {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  cursor: pointer;
-  box-shadow: var(--shadow-md);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border-radius: var(--radius-lg);
+  height: 520px;
+  background: linear-gradient(145deg, #ffffff, #f9f7f4); /* soft off-white gradient */
+  border-radius: 24px;
   overflow: hidden;
-  background: var(--white);
-  height: 100%;
-  padding-bottom: 0;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.03);
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+  padding-bottom: var(--space-lg);
 }
 
 .product-card:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 28px 60px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.05);
 }
 
 /* Product Image Enhancements */
 .product-image {
   width: 100%;
-  aspect-ratio: 1/1;
-  overflow: hidden;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  height: 45%;
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   position: relative;
+  border-bottom: 1px solid rgba(0,0,0,0.05); /* subtle separation */
 }
 
 .product-image::after {
@@ -490,6 +486,7 @@
   inset: 0;
   background: linear-gradient(to bottom, rgba(255,255,255,0.0), rgba(0,0,0,0.08));
   pointer-events: none;
+  border-radius: 0 0 24px 24px;
 }
 
 /* Product Details */
@@ -497,105 +494,22 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: var(--space-md);
+  padding: var(--space-lg);
 }
 
 .product-details h3 {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   font-weight: 700;
-  font-family: "TAN Meringue", "Amsterdam Two", serif;
-  color: var(--text-dark);
-  margin-bottom: var(--space-xs);
+  color: #2b2b2b;
+  margin-bottom: var(--space-sm);
 }
 
 .product-details p {
   flex: 1;
-  color: var(--text-light);
-  line-height: 1.5;
-  margin-bottom: var(--space-sm);
-  font-size: 0.9rem;
-}
-
-/* Product Price */
-.product-price .price {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--primary-color);
-}
-
-/* Card Content Area */
-.card-content {
-  padding: var(--space-md);
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-}
-
-.card-title {
-  margin: var(--space-xs) 0;
-  font-weight: 700;
-  font-family: "TAN Meringue", "Amsterdam Two", serif;
-  color: var(--text-dark);
-  margin-bottom: var(--space-xs);
-  font-size: 1.2rem;
-}
-
-.card-description {
-  font-size: var(--font-size-base);
-  color: var(--text-light);
-  line-height: 1.5;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  text-overflow: ellipsis;
-  margin-bottom: var(--space-sm);
-  flex-grow: 1;
-}
-
-/* Scent Details Section (from guide.css styling) */
-.scent-details,
-.scent-mood,
-.scent-strength {
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  font-family: var(--font-secondary);
-  color: var(--text-dark);
-  margin: var(--space-sm) 0;
-  word-break: break-word;
-}
-
-.scent-mood,
-.scent-strength {
-  font-size: var(--font-size-sm);
-  color: var(--text-light);
-}
-
-.strength-bar {
-  color: var(--primary-color);
-  font-weight: bold;
-  font-size: var(--font-size-lg);
-}
-
-.scent-price {
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  font-family: var(--font-secondary);
-  color: var(--text-dark);
-  margin: var(--space-sm) 0;
-}
-
-.product-specs {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-xs);
-  margin-bottom: var(--space-sm);
-}
-
-.spec {
-  font-size: var(--font-size-sm);
-  color: var(--text-light);
+  color: #555555;
+  line-height: 1.6;
+  margin-bottom: var(--space-md);
+  font-size: 0.95rem;
 }
 
 /* Product Price */
@@ -607,54 +521,50 @@
 
 /* Luxury "Add to Cart" button */
 .product-actions .btn.btn-primary {
-  width: 100%;
-  padding: 8px 12px;
-  border-radius: 8px;
-  background: var(--primary-color);
-  color: var(--white);
-  font-weight: 600;
-  font-size: 0.85rem;
-  font-family: "Lora", Georgia, serif;
-  letter-spacing: 0.5px;
+  width: 90%;
+  padding: 16px 28px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #bfa56a, #8c6e4f); /* rich gold gradient */
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.2);
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 1px;
   text-transform: uppercase;
-  border: none;
-  box-shadow: none;
-  transition: all 0.2s ease;
-  margin: 0;
-  display: inline-block;
-  flex: 1;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15), inset 0 -2px 0 rgba(255,255,255,0.2);
+  transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  margin: 0 auto;
+  display: block;
 }
 
 .product-actions .btn.btn-primary:hover {
-  background: var(--primary-dark);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
+  background: linear-gradient(135deg, #d2b778, #a1845c);
+  transform: translateY(-4px);
+  box-shadow: 0 16px 35px rgba(0,0,0,0.2), inset 0 -2px 0 rgba(255,255,255,0.25);
 }
 
 /* Optional: Luxury "View Details" button */
 .product-actions .btn.btn-outline {
-  width: 100%;
-  padding: 8px 12px;
-  border-radius: 8px;
-  border: 1.5px solid var(--primary-color);
-  color: var(--primary-color);
+  width: 90%;
+  padding: 14px 26px;
+  border-radius: 18px;
+  border: 2px solid #bfa56a;
+  color: #bfa56a;
   font-weight: 600;
-  font-size: 0.85rem;
-  font-family: "Lora", Georgia, serif;
-  letter-spacing: 0.5px;
+  font-size: 1rem;
+  letter-spacing: 0.8px;
   text-transform: uppercase;
   background: transparent;
-  transition: all 0.2s ease;
-  margin: 0;
-  display: inline-block;
-  flex: 1;
+  transition: all 0.3s ease;
+  margin: 0 auto 10px auto;
+  display: block;
 }
 
 .product-actions .btn.btn-outline:hover {
-  background: var(--primary-color);
-  color: var(--white);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-sm);
+  background: #bfa56a;
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.15);
 }
 
 /* Featured & Stock Badges */
@@ -677,8 +587,8 @@
   transform: translateY(-2px);
   transition: transform 0.3s ease;
 }
-.products-grid .product-card h3 { 
-  font-family: "TAN Meringue", "Amsterdam Two", serif;
+.products-grid .product-card h3 {
+  font-family: 'Playfair Display', serif;
   font-weight: 700;
   font-size: 1.4rem;
   color: #2b2b2b;
