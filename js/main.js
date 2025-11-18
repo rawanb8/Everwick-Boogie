@@ -5,17 +5,7 @@ const app = {
   cart: [],
   colors: [],
   sizes: [],
-  containers: [],
-  wicks:[],
-
-  // Utility: debounce for search
-  debounce(fn, delay) {
-    let timeout;
-    return function(...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => fn.apply(this, args), delay);
-    };
-  },
+  wicks: [],
 
   getSizes() {
     return this.sizes || [];
@@ -287,6 +277,34 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
 
+  // AFTER nav.html is loaded
+  const loginModal = document.querySelector(".login-modal-wrapper"); // updated
+  const closeBtn = document.querySelector(".login-modal-close");     // updated
+  const loginTriggers = document.querySelectorAll(".open-login");     // stays the same
+
+  loginTriggers.forEach(btn => {
+    btn.addEventListener("click", () => {
+      loginModal.style.display = "flex";
+    });
+  });
+
+  closeBtn?.addEventListener("click", () => {
+    loginModal.style.display = "none";
+  });
+
+  // Close modal if clicking outside the content
+  window.addEventListener("click", e => {
+    if (e.target === loginModal) loginModal.style.display = "none";
+  });
+
+  // Optional: close on Escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && loginModal.style.display === "flex") {
+      loginModal.style.display = "none";
+    }
+  });
+
+
   const footerContainer = document.getElementById('footer');
 
   if (footerContainer) {
@@ -305,6 +323,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // ----------------- NEW: Load scents data for quiz -----------------
   await app.loadData();
+
 
 });
 
@@ -383,6 +402,30 @@ function initNewsletterForm() {
   });
 }
 
+const loginForm = document.getElementById("loginForm");
+
+loginForm.addEventListener("submit", (e) => {
+  e.preventDefault(); // prevent page reload
+
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+
+  let loginModal = document.querySelector('.login-modal-wrapper')
+  const allowedUsers = [
+    { username: "rama", password: "12345" },
+    { username: "maryam", password: "6789" },
+    { username: "rawan", password: "1011" }
+  ];
+  // check if entered credentials match any user in the array
+  const user = allowedUsers.find(u => u.username === username && u.password === password);
+
+  if (user) {
+    alert(`Login successful! Welcome, ${user.username}`);
+    loginModal.style.display = "none"; // hide modal
+    loginForm.reset(); // clear form inputs
+  } else {
+    alert("Incorrect username or password.");
+  }
 const loginForm = document.getElementById("loginForm");
 
 loginForm.addEventListener("submit", (e) => {
