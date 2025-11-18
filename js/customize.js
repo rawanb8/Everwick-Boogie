@@ -1,623 +1,515 @@
 (function ($) {
-  // use IIFE with jQuery passed in
-  'use strict';
+    'use strict';
 
-  // --- Config / constants ---
-  // The six colors you asked for (slug used in filenames)
-  let COLORS = [
-    { slug: 'pure-white', name: 'Pure White', hex: '#FFFFFF' },
-    { slug: 'soft-pink', name: 'Soft Pink', hex: '#FFB6C1' },
-    { slug: 'ocean-blue', name: 'Ocean Blue', hex: '#4682B4' },
-    { slug: 'lavender', name: 'Lavender', hex: '#E6E6FA' },
-    { slug: 'golden-yellow', name: 'Golden Yellow', hex: '#FFD700' },
-    { slug: 'forest-green', name: 'Forest Green', hex: '#228B22' }
-  ];
+    // --- Config / constants ---
+    let COLORS = [
+        { slug: 'pure-white', name: 'Pure White', hex: '#FFFFFF' },
+        { slug: 'soft-pink', name: 'Soft Pink', hex: '#FFB6C1' },
+        { slug: 'ocean-blue', name: 'Ocean Blue', hex: '#4682B4' },
+        { slug: 'lavender', name: 'Lavender', hex: '#E6E6FA' },
+        { slug: 'golden-yellow', name: 'Golden Yellow', hex: '#FFD700' },
+        { slug: 'forest-green', name: 'Forest Green', hex: '#228B22' }
+    ];
 
-  // Available label options we will support (filename suffix)
-  let LABELS = [
-    { slug: 'no-label', name: 'No label' },
-    { slug: 'label1', name: 'Label style 1' },
-    { slug: 'label2', name: 'Label style 2' }
-  ];
+    let LABELS = [
+        { slug: 'no-label', name: 'No label' },
+        { slug: 'label1', name: 'Label style 1' },
+        { slug: 'label2', name: 'Label style 2' }
+    ];
 
-  // Additions default set (glitter $2 included)
-  let DEFAULT_ADDITIONS = [
-    { key: 'glitter', name: 'Glitter', price: 2 },
-    { key: 'gold-flecks', name: 'Gold flecks', price: 3 },
-    { key: 'dried-flowers', name: 'Dried flowers', price: 4 }
-  ];
+    let DEFAULT_ADDITIONS = [
+        { key: 'glitter', name: 'Glitter', price: 2 },
+        { key: 'gold-flecks', name: 'Gold flecks', price: 3 },
+        { key: 'dried-flowers', name: 'Dried flowers', price: 4 }
+    ];
 
-  // Image path pattern 
-  // filenames: /media/custom/candles/{colorSlug}-{labelSlug}.png
-  function candleImagePath(colorSlug, labelSlug) {
-    colorSlug = (colorSlug || 'pure-white').toString();
-    labelSlug = (labelSlug || 'no-label').toString();
-    return '/media/custom/candles/' + colorSlug + '-' + labelSlug + '.png';
-  }
-
-  // Fallback base image -> if image not available display the base candke
-  let BASE_IMAGE = '/media/custom/base-candle.png';
-
-  // --- State ---
-  let state = {
-    color: 'pure-white',      // selected color slug
-    label: 'no-label',            // 'no-label' | 'label1' | 'label2'
-    scentId: null,
-    sizeId: null,
-    containerId: null,
-    wickId: null,
-    additions: new Set()
-  };
-
-  // Data loaded from app
-  let sizesList = [];      // from app.data.size if present
-  let containersList = []; // from app.data.container
-  let wicksList = [];      // from app.data.wick
-  let scentsList = [];     // app.scents
-
-  // Safe number helper
-  function toNumber(v) {
-    let n = Number(v);
-    return Number.isFinite(n) ? n : 0;
-  }
-
-  // Update preview image: picks file by color + label
-  function updatePreviewImage() {
-    let path = candleImagePath(state.color, state.label);
-    // set the main preview image (replace base candle with image we want)
-    let $layerBase = $('#layer-base');
-    if ($layerBase.length) {
-      // attempt to load file and fallback to base image if missing
-      // create temporary image to test existence
-      let testImg = new Image();
-      testImg.onload = function () {
-        $layerBase.attr('src', path);
-      };
-      testImg.onerror = function () {
-        // fallback: try color-no-label variant
-        let fallback = '/media/custom/candles/' + state.color + '-no-label.png';
-        let fb = new Image();
-        fb.onload = function () {
-          $layerBase.attr('src', fallback);
-        };
-        fb.onerror = function () {
-          // ultimate fallback
-          $layerBase.attr('src', BASE_IMAGE);
-        };
-        fb.src = fallback;
-      };
-      testImg.src = path;
+    function candleImagePath(colorSlug, labelSlug) {
+        colorSlug = (colorSlug || 'pure-white').toString();
+        labelSlug = (labelSlug || 'no-label').toString();
+        return '/media/custom/candles/' + colorSlug + '-' + labelSlug + '.png';
     }
 
-    // update preview text (name + scent)
-    $('#preview-name').text((state.label === 'no-label' ? capitalizeWords(state.color.replace(/-/g,' ')) : (capitalizeWords(state.color.replace(/-/g,' ')) + ' — ' + LABELS.find(l=>l.slug===state.label).name)));
-    let scentObj = scentsList.find(s => s.id === state.scentId) || null;
-    $('#preview-scent').text(scentObj ? scentObj.name : 'Choose a scent');
-  }
+    let BASE_IMAGE = '/media/custom/base-candle.png';
 
-  // Capitalize helper
-  function capitalizeWords(s) {
-    return (s || '').toString().replace(/\b\w/g, function (c) { return c.toUpperCase(); });
-  }
-
-  // Recalculate price and write to #custom-price
-  function updatePriceDisplay() {
-    // base price from size
-    let basePrice = 0;
-    let sizeObj = sizesList.find(sz => String(sz.id) === String(state.sizeId));
-    if (sizeObj) basePrice = toNumber(sizeObj.price || sizeObj.price || 0);
-
-    // container price modifier (some JSON uses price_modifier)
-    let containerExtra = 0;
-    let containerObj = containersList.find(c => String(c.id) === String(state.containerId));
-    if (containerObj) containerExtra = toNumber(containerObj.price_modifier || containerObj.price || 0);
-
-    // wick price_modifier or price
-    let wickExtra = 0;
-    let wickObj = wicksList.find(w => String(w.id) === String(state.wickId));
-    if (wickObj) wickExtra = toNumber(wickObj.price_modifier || wickObj.price || 0);
-
-    // additions
-    let additionsSum = 0;
-    state.additions.forEach(k => {
-      // try to find in DEFAULT_ADDITIONS
-      let a = DEFAULT_ADDITIONS.find(x => x.key === k);
-      if (a) additionsSum += toNumber(a.price);
-    });
-
-    let total = basePrice + containerExtra + wickExtra + additionsSum;
-    // show price
-    $('#custom-price').text('$' + total.toFixed(2));
-  }
-
-  // Render UI controls for colors
-  function renderColorControls() {
-    let $root = $('#colors');
-    if (!$root.length) return;
-    $root.empty();
-
-    COLORS.forEach(c => {
-      let $btn = $('<button type="button" class="color-option" aria-pressed="false"></button>');
-      $btn.attr('data-color', c.slug);
-      $btn.attr('title', c.name);
-      $btn.css({
-        display: 'inline-flex',
-        'align-items': 'center',
-        'justify-content': 'center',
-        gap: '0.5rem',
-        padding: '0.4rem',
-        margin: '0.25rem',
-        cursor: 'pointer',
-        border: '1px solid transparent',
-        'border-radius': '8px',
-        'min-width': '110px',
-        'background': 'var(--secondary-color)'
-      });
-      // inner content (color swatch + name)
-      let $sw = $('<span class="color-swatch"></span>');
-      $sw.css({
-        width: '28px',
-        height: '28px',
-        'border-radius': '6px',
-        display: 'inline-block',
-        'background-color': c.hex,
-        border: '1px solid rgba(0,0,0,0.06)'
-      });
-      let $lbl = $('<span class="color-name"></span>').text(c.name).css({ 'margin-left': '0.6rem' });
-      $btn.append($sw).append($lbl);
-      // attach
-      $root.append($btn);
-    });
-
-    // initial active
-    setActiveColorButton();
-  }
-
-  function setActiveColorButton() {
-    $('#colors .color-option').each(function () {
-      let $b = $(this);
-      if ($b.data('color') === state.color) {
-        $b.attr('aria-pressed', 'true').addClass('active');
-      } else {
-        $b.attr('aria-pressed', 'false').removeClass('active');
-      }
-    });
-  }
-
-  // Render label options
-  function renderLabelControls() {
-    let $root = $('#labels');
-    if (!$root.length) return;
-    $root.empty();
-
-    LABELS.forEach(l => {
-      let $btn = $('<button type="button" class="label-option" aria-pressed="false"></button>');
-      $btn.attr('data-label', l.slug);
-      $btn.text(l.name);
-      $btn.css({
-        padding: '0.4rem 0.6rem',
-        margin: '0.25rem',
-        cursor: 'pointer',
-        borderRadius: '8px',
-        background: 'var(--secondary-color)'
-      });
-      $root.append($btn);
-    });
-
-    setActiveLabelButton();
-  }
-
-  function setActiveLabelButton() {
-    $('#labels .label-option').each(function () {
-      let $b = $(this);
-      if ($b.data('label') === state.label) {
-        $b.attr('aria-pressed', 'true').addClass('active');
-      } else {
-        $b.attr('aria-pressed', 'false').removeClass('active');
-      }
-    });
-  }
-
-  
-  function renderAdditionsControls() {
-  let $root = $('#additions');
-  if (!$root.length) return;
-  $root.empty();
-
-  DEFAULT_ADDITIONS.forEach(a => {
-    // build the button and icon
-    let $btn = $('<button type="button" class="addition-toggle" aria-pressed="false"></button>');
-    $btn.attr('data-key', a.key);
-    $btn.attr('data-price', a.price);
-
-    // image element: try svg first, fall back to png if needed
-    // note: you may need to remove leading slash if your site is served from a subdirectory
-    let svgPath = '/media/custom/additions/' + a.key + '.svg';
-    let pngPath = '/media/custom/additions/' + a.key + '.png';
-    let $img = $('<img class="addition-icon" alt="' + a.name + ' icon">')
-      .attr('src', svgPath)
-      .on('error', function () {
-        // on error, try png
-        if ($(this).attr('src') !== pngPath) $(this).attr('src', pngPath);
-      })
-      .css({
-        width: '28px',
-        height: '28px',
-        'vertical-align': 'middle',
-        'margin-right': '0.5rem'
-      });
-
-    let $labelSpan = $('<span class="add-label"></span>').text(a.name);
-    let $priceSpan = $('<span class="add-price"></span>').text(' + $' + toNumber(a.price).toFixed(2)).css({'margin-left':'0.5rem','opacity':0.9});
-
-    // assemble button content
-    $btn.append($img).append($labelSpan).append($priceSpan);
-
-    // style the button (you can keep your existing styles)
-    $btn.css({
-      display: 'inline-flex',
-      'align-items': 'center',
-      gap: '0.6rem',
-      padding: '0.35rem 0.6rem',
-      margin: '0.25rem',
-      cursor: 'pointer',
-      borderRadius: '8px',
-      background: 'var(--secondary-color)'
-    });
-
-    $root.append($btn);
-  });
-
-function renderAdditionsControls() {
-  let $root = $('#additions');
-  if (!$root.length) return;
-  $root.empty();
-
-  DEFAULT_ADDITIONS.forEach(a => {
-    // build the button and icon
-    let $btn = $('<button type="button" class="addition-toggle" aria-pressed="false"></button>');
-    $btn.attr('data-key', a.key);
-    $btn.attr('data-price', a.price);
-
-    // image element: try svg first, fall back to png if needed
-    // note: you may need to remove leading slash if your site is served from a subdirectory
-    let svgPath = '/media/custom/additions/' + a.key + '.svg';
-    let pngPath = '/media/custom/additions/' + a.key + '.png';
-    let $img = $('<img class="addition-icon" alt="' + a.name + ' icon">')
-      .attr('src', svgPath)
-      .on('error', function () {
-        // on error, try png
-        if ($(this).attr('src') !== pngPath) $(this).attr('src', pngPath);
-      })
-      .css({
-        width: '28px',
-        height: '28px',
-        'vertical-align': 'middle',
-        'margin-right': '0.5rem'
-      });
-
-    let $labelSpan = $('<span class="add-label"></span>').text(a.name);
-    let $priceSpan = $('<span class="add-price"></span>').text(' + $' + toNumber(a.price).toFixed(2)).css({'margin-left':'0.5rem','opacity':0.9});
-
-    // assemble button content
-    $btn.append($img).append($labelSpan).append($priceSpan);
-
-    // style the button (you can keep your existing styles)
-    $btn.css({
-      display: 'inline-flex',
-      'align-items': 'center',
-      gap: '0.6rem',
-      padding: '0.35rem 0.6rem',
-      margin: '0.25rem',
-      cursor: 'pointer',
-      borderRadius: '8px',
-      background: 'var(--secondary-color)'
-    });
-
-    $root.append($btn);
-  });
-
-  // set active for preselected
-  $('#additions .addition-toggle').each(function () {
-    let k = $(this).data('key');
-    if (state.additions.has(k)) $(this).attr('aria-pressed', 'true');
-  });
-}
-
-
-
-    DEFAULT_ADDITIONS.forEach(a => {
-      let $btn = $('<button type="button" class="addition-toggle" aria-pressed="false"></button>');
-      $btn.attr('data-key', a.key);
-      $btn.attr('data-price', a.price);
-      $btn.html('<span class="add-label">' + a.name + '</span> <span class="add-price">+ $' + toNumber(a.price).toFixed(2) + '</span>');
-      $btn.css({
-        display: 'inline-flex',
-        gap: '0.6rem',
-        padding: '0.35rem 0.6rem',
-        margin: '0.25rem',
-        cursor: 'pointer',
-        borderRadius: '8px',
-        background: 'var(--secondary-color)'
-      });
-      $root.append($btn);
-    });
-
-    // set active for preselected
-    $('#additions .addition-toggle').each(function () {
-      let k = $(this).data('key');
-      if (state.additions.has(k)) $(this).attr('aria-pressed', 'true');
-    });
-  }
-
-  // Render sizes/containers/wicks selects from app.data if present
-  function renderOtherControls() {
-    // sizes into #sizes (radio list)
-    let $sizesRoot = $('#sizes');
-    if ($sizesRoot.length && sizesList.length) {
-      $sizesRoot.empty();
-      sizesList.forEach(sz => {
-        let id = 'size-' + sz.id;
-        let $label = $('<label style="display:block;margin:0.35rem 0;cursor:pointer"></label>');
-        let $radio = $('<input type="radio" name="size-select">').val(sz.id).attr('data-price', sz.price || 0);
-        $label.append($radio).append(' ' + (sz.name || sz.id) + ' — $' + toNumber(sz.price).toFixed(2));
-        $sizesRoot.append($label);
-      });
-    }
-
-    // containers
-    let $containersRoot = $('#containers');
-    if ($containersRoot.length && containersList.length) {
-      $containersRoot.empty();
-      containersList.forEach(c => {
-        let $label = $('<label style="display:block;margin:0.35rem 0;cursor:pointer"></label>');
-        let $radio = $('<input type="radio" name="container-select">').val(c.id).attr('data-price', c.price_modifier || c.price || 0);
-        $label.append($radio).append(' ' + (c.name || c.id) + (c.price_modifier ? (' — +' + '$' + toNumber(c.price_modifier).toFixed(2)) : ''));
-        $containersRoot.append($label);
-      });
-    }
-
-    // wicks
-    let $wicksRoot = $('#wicks');
-    if ($wicksRoot.length && wicksList.length) {
-      $wicksRoot.empty();
-      wicksList.forEach(w => {
-        let $label = $('<label style="display:block;margin:0.35rem 0;cursor:pointer"></label>');
-        let $radio = $('<input type="radio" name="wick-select">').val(w.id).attr('data-price', w.price_modifier || w.price || 0);
-        $label.append($radio).append(' ' + (w.name || w.id) + (w.price_modifier ? (' — +' + '$' + toNumber(w.price_modifier).toFixed(2)) : ''));
-        $wicksRoot.append($label);
-      });
-    }
-
-    // scents into select
-    let $scentSelect = $('#scent-select');
-    if ($scentSelect.length && scentsList.length) {
-      $scentSelect.empty();
-      $scentSelect.append($('<option value="">Choose scent</option>'));
-      scentsList.forEach(s => {
-        $scentSelect.append($('<option></option>').val(s.id).text(s.name));
-      });
-    }
-  }
-
-  // --- Event wiring ---
-
-  // color click (delegated)
-  $(document).on('click', '#colors .color-option', function () {
-    let $btn = $(this);
-    let selected = $btn.data('color');
-    if (!selected) return;
-    state.color = selected;
-    setActiveColorButton();
-    updatePreviewImage();
-  });
-
-  // label click
-  $(document).on('click', '#labels .label-option', function () {
-    let $btn = $(this);
-    let selectedLabel = $btn.data('label');
-    if (!selectedLabel) return;
-
-    // if label chosen and color not explicitly chosen different than pure-white AND user hasn't chosen a color yet,
-    // requirement: if label chosen before color then auto-select pure-white
-    if (!state.color || state.color === '') {
-      state.color = 'pure-white';
-    }
-
-    state.label = selectedLabel;
-    setActiveLabelButton();
-    // if label selected before color and color wasn't chosen -> set pure-white active visually
-    setActiveColorButton();
-    updatePreviewImage();
-  });
-
-  // additions toggle
-  $(document).on('click', '#additions .addition-toggle', function () {
-    let $btn = $(this);
-    let key = $btn.data('key');
-    if (!key) return;
-    let pressed = $btn.attr('aria-pressed') === 'true';
-    if (pressed) {
-      $btn.attr('aria-pressed', 'false');
-      state.additions.delete(key);
-    } else {
-      $btn.attr('aria-pressed', 'true');
-      state.additions.add(key);
-    }
-    updatePriceDisplay();
-    renderSelectedAdditionsText();
-  });
-
-  // sizes radio change
-  $(document).on('change', 'input[name="size-select"]', function () {
-    state.sizeId = $(this).val();
-    updatePriceDisplay();
-  });
-
-  // container radio change
-  $(document).on('change', 'input[name="container-select"]', function () {
-    state.containerId = $(this).val();
-    updatePriceDisplay();
-  });
-
-  // wick radio change
-  $(document).on('change', 'input[name="wick-select"]', function () {
-    state.wickId = $(this).val();
-    updatePriceDisplay();
-  });
-
-  // scent select change
-  $(document).on('change', '#scent-select', function () {
-    let v = $(this).val();
-    state.scentId = v ? Number(v) : null;
-    updatePreviewImage();
-  });
-
-  // add-to-cart click
-  $(document).on('click', '#add-to-cart', function (e) {
-    e.preventDefault();
-
-    // require user to choose a label before adding — per your request
-    if (!state.label || state.label === 'no-label') {
-      // show inline warning inside preview-details
-      let $warn = $('#customize-warning');
-      if (!$warn.length) {
-        $warn = $('<div id="customize-warning" style="color:var(--error-color);margin-top:.5rem;font-weight:700">Please choose a label before adding to cart.</div>');
-        $('.preview-details').append($warn);
-      }
-      // flash or focus label area
-      $('#labels').get(0)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      return;
-    } else {
-      // remove warning if present
-      $('#customize-warning').remove();
-    }
-
-    // calculate price to include in item record
-    let priceText = $('#custom-price').text().replace(/[^0-9\.\-]/g, '');
-    let price = toNumber(priceText);
-
-    // determine image (the photo representing this configuration)
-    let imgPath = candleImagePath(state.color, state.label);
-
-    // build cart item
-    let cartItem = {
-      id: 'custom-' + Date.now(),
-      name: (capitalizeWords(state.color.replace(/-/g,' ')) + (state.label !== 'no-label' ? (' — ' + LABELS.find(l => l.slug === state.label).name) : '')),
-      price: price,
-      qty: 1,
-      image: imgPath,
-      custom: {
-        color: state.color,
-        label: state.label,
-        scentId: state.scentId,
-        sizeId: state.sizeId,
-        containerId: state.containerId,
-        wickId: state.wickId,
-        additions: Array.from(state.additions)
-      }
+    // --- State ---
+    let state = {
+        color: 'pure-white',
+        label: 'no-label',
+        scentId: null,
+        sizeId: null,
+        containerId: null,
+        wickId: null,
+        additions: new Set()
     };
 
-    // push to localStorage cart
-    let cart = [];
-    try {
-      cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      if (!Array.isArray(cart)) cart = [];
-    } catch (err) {
-      cart = [];
-    }
-    cart.push(cartItem);
-    localStorage.setItem('cart', JSON.stringify(cart));
+    // Data lists (filled from app.data)
+    let sizesList = [];
+    let containersList = [];
+    let wicksList = [];
+    let scentsList = [];
 
-    // simple user feedback
-    alert('Added to cart: ' + cartItem.name + ' — $' + price.toFixed(2));
-    // optionally redirect to cart or update cart counter
-    try { $(document).trigger('cart:updated'); } catch (e) {}
-  });
-
-  // show selected additions text under preview
-  function renderSelectedAdditionsText() {
-    let $list = $('#preview-selected-additions');
-    if (!$list.length) {
-      $list = $('<div id="preview-selected-additions" class="preview-selected-additions"></div>');
-      $('.preview-details').append($list);
+    function toNumber(v) {
+        let n = Number(v);
+        return Number.isFinite(n) ? n : 0;
     }
-    let names = Array.from(state.additions).map(k => {
-      let a = DEFAULT_ADDITIONS.find(x => x.key === k);
-      return a ? a.name : k;
+
+    // --- Preview updates ---
+    function updatePreviewImage() {
+        let path = candleImagePath(state.color, state.label);
+        let $base = $('#layer-base');
+        let $combined = $('#layer-combined');
+
+        // try to load requested combined image (color+label). If loads, show it; otherwise show base.
+        let testImg = new Image();
+        testImg.onload = function () {
+            $combined.attr('src', path).removeClass('hidden').fadeIn(120);
+            $base.addClass('hidden');
+        };
+        testImg.onerror = function () {
+            // fallback: try color + no-label
+            let fallback = '/media/custom/candles/' + state.color + '-no-label.png';
+            let fb = new Image();
+            fb.onload = function () {
+                $combined.attr('src', fallback).removeClass('hidden').fadeIn(120);
+                $base.addClass('hidden');
+            };
+            fb.onerror = function () {
+                // ultimate: show base
+                $combined.addClass('hidden');
+                $base.removeClass('hidden');
+            };
+            fb.src = fallback;
+        };
+        testImg.src = path;
+
+        // text updates
+        let labelName = (state.label === 'no-label') ? '' : (' — ' + (LABELS.find(l => l.slug === state.label) || {}).name || '');
+        $('#preview-name').text(capitalizeWords(state.color.replace(/-/g, ' ')) + labelName);
+        let s = scentsList.find(x => x.id === state.scentId);
+        $('#preview-scent').text(s ? s.name : 'Choose a scent');
+
+        // update receipt visuals
+        updateReceipt();
+    }
+
+    function capitalizeWords(s) {
+        return (s || '').toString().replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+    }
+
+    // --- Price logic ---
+    function updatePriceDisplay() {
+        // size base price
+        let basePrice = 0;
+        let sizeObj = sizesList.find(sz => String(sz.id) === String(state.sizeId));
+        if (sizeObj) basePrice = toNumber(sizeObj.price || 0);
+
+        // container extra
+        let containerExtra = 0;
+        let containerObj = containersList.find(c => String(c.id) === String(state.containerId));
+        if (containerObj) containerExtra = toNumber(containerObj.price_modifier || containerObj.price || 0);
+
+        // wick extra
+        let wickExtra = 0;
+        let wickObj = wicksList.find(w => String(w.id) === String(state.wickId));
+        if (wickObj) wickExtra = toNumber(wickObj.price_modifier || wickObj.price || 0);
+
+        // additions sum
+        let additionsSum = 0;
+        state.additions.forEach(k => {
+            let a = DEFAULT_ADDITIONS.find(x => x.key === k);
+            if (a) additionsSum += toNumber(a.price);
+        });
+
+        let total = basePrice + containerExtra + wickExtra + additionsSum;
+        $('#custom-price').text('$' + total.toFixed(2));
+        $('#rc-total').text('$' + total.toFixed(2));
+    }
+
+    // --- Render controls ---
+    function renderColorControls() {
+        let $root = $('#colors');
+        if (!$root.length) return;
+        $root.empty();
+
+        COLORS.forEach(c => {
+            let $b = $('<button type="button" class="color-option" aria-pressed="false"></button>');
+            $b.attr('data-color', c.slug).attr('title', c.name);
+            $b.append($('<span class="swatch" />').css('background-color', c.hex));
+            $b.append($('<span class="cname" />').text(c.name));
+            $root.append($b);
+        });
+        setActiveColorButton();
+    }
+
+    function setActiveColorButton() {
+        $('#colors .color-option').each(function () {
+            let $t = $(this);
+            if ($t.data('color') === state.color) {
+                $t.addClass('active').attr('aria-pressed', 'true');
+            } else {
+                $t.removeClass('active').attr('aria-pressed', 'false');
+            }
+        });
+    }
+
+    function renderLabelControls() {
+        let $root = $('#labels');
+        if (!$root.length) return;
+        $root.empty();
+        LABELS.forEach(l => {
+            let $b = $('<button type="button" class="label-option" aria-pressed="false"></button>');
+            $b.attr('data-label', l.slug).text(l.name);
+            $root.append($b);
+        });
+        setActiveLabelButton();
+    }
+
+    function setActiveLabelButton() {
+        $('#labels .label-option').each(function () {
+            let $t = $(this);
+            if ($t.data('label') === state.label) $t.addClass('active').attr('aria-pressed', 'true');
+            else $t.removeClass('active').attr('aria-pressed', 'false');
+        });
+    }
+
+    function renderAdditionsControls() {
+        let $root = $('#additions');
+        if (!$root.length) return;
+        $root.empty();
+
+        let PLACEHOLDER_SVG = '/media/custom/additions/placeholder.svg';
+
+        DEFAULT_ADDITIONS.forEach(a => {
+            let $btn = $('<button type="button" class="addition-toggle" aria-pressed="false"></button>');
+            $btn.attr('data-key', a.key).attr('data-price', a.price).attr('title', a.name + ' (+$' + toNumber(a.price).toFixed(2) + ')');
+
+            let svgPath = '/media/custom/additions/' + a.key + '.svg';
+            let $img = $('<img class="addition-icon" alt="">').attr('src', svgPath).on('error', function () {
+                // fallback to png if svg missing
+                let png = '/media/custom/additions/' + a.key + '.png';
+                if ($(this).attr('src') !== png) $(this).attr('src', png);
+            });
+
+            $btn.append($img).append($('<span class="add-label" />').text(a.name));
+            $btn.append($('<span class="add-price" />').text(' + $' + toNumber(a.price).toFixed(2)));
+
+            $root.append($btn);
+        });
+
+        // restore pressed state if already in state
+        $root.find('.addition-toggle').each(function () {
+            let k = $(this).data('key');
+            if (state.additions.has(k)) $(this).addClass('active').attr('aria-pressed', 'true');
+        });
+    }
+
+    function renderOtherControls() {
+        // --- Sizes ---
+        let $sizes = $('#sizes');
+        if ($sizes.length) {
+            $sizes.empty();
+            sizesList.forEach(sz => {
+                let $b = $('<label class="size-item"></label>');
+                let $radio = $('<input type="radio" name="size-select">')
+                    .val(sz.id)
+                    .attr('data-price', sz.price || 0);
+                let $title = $('<div class="size-title" />').text(sz.name + ' ');
+                let $meta = $('<div class="size-meta small muted" />')
+                    .text('$' + toNumber(sz.price).toFixed(2) + ' • ' + (sz.volume || ''));
+                $b.append($radio).append($title).append($meta);
+                $sizes.append($b);
+
+                if (/small/i.test(sz.name)) $radio.prop('checked', true);
+            });
+        }
+
+        // containers
+        let $containers = $('#containers');
+        if ($containers.length) {
+            $containers.empty();
+            containersList.forEach(c => {
+                let $b = $('<label class="container-item"></label>');
+                let priceText = c.price_modifier ? (' + $' + toNumber(c.price_modifier).toFixed(2)) : '';
+                let $radio = $('<input type="radio" name="container-select">')
+                    .val(c.id)
+                    .attr('data-price', c.price_modifier || c.price || 0);
+                let $title = $('<div class="container-title" />').text(c.name + (priceText ? (' — ' + priceText) : ''));
+                $b.append($radio).append($title);
+                $containers.append($b);
+
+                // Default selection
+                if (/classic/i.test(c.name)) $radio.prop('checked', true);
+            });
+        }
+
+        // wicks (creative display with description)
+        let $wicks = $('#wicks');
+        if ($wicks.length) {
+            $wicks.empty();
+            wicksList.forEach((w, idx) => {
+                let $b = $('<label class="wick-item"></label>');
+                let $radio = $('<input type="radio" name="wick-select">')
+                    .val(w.id)
+                    .attr('data-price', w.price_modifier || w.price || 0);
+                let $wrap = $('<div class="wick-wrap"></div>');
+                let $title = $('<div class="wick-title" />')
+                    .text(w.name + (w.price_modifier ? (' • +$' + toNumber(w.price_modifier).toFixed(2)) : ''));
+                let $desc = $('<div class="wick-desc small muted" />')
+                    .text(w.description || ('Burn quality: ' + (w.burn_quality || 'standard')));
+                $wrap.append($title).append($desc);
+                $b.append($radio).append($wrap);
+                $wicks.append($b);
+
+                // Default selection: first wick
+                if (idx === 0) $radio.prop('checked', true);
+            });
+        }
+
+        // scents select already handled in renderOtherControls caller
+    }
+
+    // Trigger initial state update
+    // state.sizeId = $('input[name="size-select"]:checked').val();
+    // state.containerId = $('input[name="container-select"]:checked').val();
+    // state.wickId = $('input[name="wick-select"]:checked').val();
+    // updatePriceDisplay();
+    // updatePreviewBurnTime();
+    // updateReceipt();
+
+    // --- Events ---
+    $(document).on('click', '#colors .color-option', function () {
+        let selected = $(this).data('color');
+        if (!selected) return;
+        state.color = selected;
+        setActiveColorButton();
+        updatePreviewImage();
     });
-    $list.text(names.length ? ('Additions: ' + names.join(', ')) : 'No additions selected');
-  }
 
-  // --- Initialization: load data (app) and render controls ---
-  $(function () {
-    // ensure app exists and is loaded
-    if (typeof app === 'undefined' || typeof app.loadData !== 'function') {
-      console.error('Global `app` object missing — customize.js requires main.js to be loaded first.');
-      // still render static color/label/additions controls
-      sizesList = [];
-      containersList = [];
-      wicksList = [];
-      scentsList = [];
-      renderColorControls();
-      renderLabelControls();
-      renderAdditionsControls();
-      renderOtherControls();
-      updatePreviewImage();
-      updatePriceDisplay();
-      renderSelectedAdditionsText();
-      return;
+    $(document).on('click', '#labels .label-option', function () {
+        let selected = $(this).data('label');
+        if (!selected) return;
+        // if label chosen before color, ensure color default stays pure-white
+        if (!state.color) state.color = 'pure-white';
+        state.label = selected;
+        setActiveLabelButton();
+        setActiveColorButton();
+        updatePreviewImage();
+    });
+
+    $(document).on('click', '#additions .addition-toggle', function () {
+        let key = $(this).data('key');
+        if (!key) return;
+        let pressed = $(this).attr('aria-pressed') === 'true' || $(this).hasClass('active');
+        if (pressed) {
+            $(this).removeClass('active').attr('aria-pressed', 'false');
+            state.additions.delete(key);
+        } else {
+            $(this).addClass('active').attr('aria-pressed', 'true');
+            state.additions.add(key);
+        }
+        updatePriceDisplay();
+        updateReceipt();
+    });
+
+    $(document).on('change', 'input[name="size-select"]', function () {
+        state.sizeId = $(this).val();
+        // update preview meta (burn time)
+        updatePreviewBurnTime();
+        updatePriceDisplay();
+        updateReceipt();
+    });
+
+    $(document).on('change', 'input[name="container-select"]', function () {
+        state.containerId = $(this).val();
+        updatePriceDisplay();
+        updateReceipt();
+    });
+
+    $(document).on('change', 'input[name="wick-select"]', function () {
+        state.wickId = $(this).val();
+        updatePriceDisplay();
+        updateReceipt();
+    });
+
+    $(document).on('change', '#scent-select', function () {
+        let v = $(this).val();
+        state.scentId = v ? Number(v) : null;
+        updatePreviewImage();
+    });
+
+    // Add-to-cart (top and bottom buttons)
+    $(document).on('click', '#add-to-cart, #add-to-cart-bottom', function (e) {
+        e.preventDefault();
+        // require label
+        if (!state.label || state.label === 'no-label') {
+            $('#label-warning').removeClass('hidden').text('Please choose a label before adding to cart.');
+            $('#labels').get(0)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        } else {
+            $('#label-warning').addClass('hidden').text('');
+        }
+
+        // compute price and build item
+        let priceText = $('#custom-price').text().replace(/[^0-9\.]/g, '');
+        let price = toNumber(priceText);
+        let img = candleImagePath(state.color, state.label);
+
+        let name = capitalizeWords(state.color.replace(/-/g, ' ')) + (state.label !== 'no-label' ? (' — ' + (LABELS.find(l => l.slug === state.label) || {}).name) : '');
+
+        let cartItem = {
+            id: 'custom-' + Date.now(),
+            name: name,
+            price: price,
+            qty: 1,
+            image: img,
+            custom: {
+                color: state.color,
+                label: state.label,
+                scentId: state.scentId,
+                sizeId: state.sizeId,
+                containerId: state.containerId,
+                wickId: state.wickId,
+                additions: Array.from(state.additions)
+            }
+        };
+
+        let cart = [];
+        try { cart = JSON.parse(localStorage.getItem('cart') || '[]'); if (!Array.isArray(cart)) cart = []; } catch (err) { cart = []; }
+        cart.push(cartItem);
+        localStorage.setItem('cart', JSON.stringify(cart));
+
+        alert('Added to cart: ' + cartItem.name + ' — $' + price.toFixed(2));
+        try { $(document).trigger('cart:updated'); } catch (e) { }
+    });
+
+    // --- Receipt & preview burn time helpers ---
+    function updatePreviewBurnTime() {
+        let s = sizesList.find(x => String(x.id) === String(state.sizeId));
+        if (s) {
+            $('#preview-size-text').text((s.name || 'Size') + ' • ' + (s.volume || ''));
+            $('#preview-burning').text('Burn time: ' + (s.burn_time || '—'));
+            $('#rc-size').text((s.name || '—'));
+        } else {
+            $('#preview-size-text').text('Size: —');
+            $('#preview-burning').text('Burn time: —');
+            $('#rc-size').text('—');
+        }
     }
 
-    // load data then render UI
-    app.loadData().then(function () {
-      // read lists from app.data (if available)
-      sizesList = (app.data && Array.isArray(app.data.size)) ? app.data.size : (app.data && app.size ? app.size : []);
-      containersList = (app.data && Array.isArray(app.data.container)) ? app.data.container : (app.data && app.container ? app.container : []);
-      wicksList = (app.data && Array.isArray(app.data.wick)) ? app.data.wick : (app.data && app.wick ? app.wick : []);
-      scentsList = Array.isArray(app.scents) ? app.scents : [];
+    function updateReceipt() {
+        // size
+        let s = sizesList.find(x => String(x.id) === String(state.sizeId));
+        $('#rc-size').text(s ? s.name : '—');
 
-      // default state selections (try to pick sensible defaults)
-      if (!state.sizeId && sizesList.length) state.sizeId = sizesList[0].id;
-      if (!state.containerId && containersList.length) state.containerId = containersList[0].id;
-      if (!state.wickId && wicksList.length) state.wickId = wicksList[0].id;
-      if (!state.scentId && scentsList.length) state.scentId = scentsList[0].id;
+        // container
+        let c = containersList.find(x => String(x.id) === String(state.containerId));
+        $('#rc-container').text(c ? c.name : '—');
 
-      // render controls
-      renderColorControls();
-      renderLabelControls();
-      renderAdditionsControls();
-      renderOtherControls();
+        // wick
+        let w = wicksList.find(x => String(x.id) === String(state.wickId));
+        $('#rc-wick').text(w ? w.name : '—');
 
-      // pre-check radio inputs by state values
-      if (state.sizeId) $('input[name="size-select"][value="' + state.sizeId + '"]').prop('checked', true);
-      if (state.containerId) $('input[name="container-select"][value="' + state.containerId + '"]').prop('checked', true);
-      if (state.wickId) $('input[name="wick-select"][value="' + state.wickId + '"]').prop('checked', true);
-      if (state.scentId) $('#scent-select').val(state.scentId);
+        // additions
+        let names = Array.from(state.additions).map(k => {
+            let a = DEFAULT_ADDITIONS.find(x => x.key === k);
+            return a ? a.name : k;
+        });
+        $('#rc-additions').text(names.length ? names.join(', ') : 'None');
 
-      // initial UI updates
-      updatePreviewImage();
-      updatePriceDisplay();
-      renderSelectedAdditionsText();
-    }).catch(function (err) {
-      console.error('app.loadData() failed in customize.js', err);
-      // still render minimal UI so dev can continue
-      renderColorControls();
-      renderLabelControls();
-      renderAdditionsControls();
-      renderOtherControls();
-      updatePreviewImage();
-      updatePriceDisplay();
-      renderSelectedAdditionsText();
+        // total already updated by updatePriceDisplay
+    }
+
+    // --- Init: load data from app ====
+    $(function () {
+        // fallback render if app isn't there
+        if (typeof app === 'undefined' || typeof app.loadData !== 'function') {
+            sizesList = [];
+            containersList = [];
+            wicksList = [];
+            scentsList = [];
+            renderColorControls();
+            renderLabelControls();
+            renderAdditionsControls();
+            renderOtherControls();
+            updatePreviewImage();
+            updatePriceDisplay();
+            return;
+        }
+
+        app.loadData().then(function () {
+            // load lists from app.data
+            sizesList = Array.isArray(app.sizes) ? app.sizes : [];
+            containersList = Array.isArray(app.containers) ? app.containers : [];
+            wicksList = Array.isArray(app.wicks) ? app.wicks : [];
+            scentsList = Array.isArray(app.scents) ? app.scents : [];
+
+            let $scent = $('#scent-select');
+            if ($scent.length && scentsList.length) {
+                $scent.empty();
+                scentsList.forEach(s => {
+                    $scent.append($('<option/>').val(s.id).text(s.name));
+                });
+                state.scentId = state.scentId || scentsList[0].id;
+                $scent.val(state.scentId);
+            }
+
+            if (!state.sizeId && sizesList.length) {
+                let small = sizesList.find(x => String(x.name || '').toLowerCase().includes('small'));
+                if (small) state.sizeId = small.id;
+                else {
+                    // fallback choose smallest price
+                    let sorted = sizesList.slice().sort((a, b) => (toNumber(a.price) - toNumber(b.price)));
+                    state.sizeId = sorted[0].id;
+                }
+            }
+
+            // container default: prefer 'Classic Glass Jar' or first
+            if (!state.containerId && containersList.length) {
+                let classic = containersList.find(x => /classic/i.test(x.name || ''));
+                state.containerId = classic ? classic.id : containersList[0].id;
+            }
+
+            // wick default: first available
+            if (!state.wickId && wicksList.length) state.wickId = wicksList[0].id;
+
+            // scent default: first available
+            if (!state.scentId && scentsList.length) state.scentId = scentsList[0].id;
+
+            // render UI
+            renderColorControls();
+            renderLabelControls();
+            renderAdditionsControls();
+            renderOtherControls();
+
+            // pre-select radio inputs visually
+            if (state.sizeId) $('input[name="size-select"][value="' + state.sizeId + '"]').prop('checked', true);
+            if (state.containerId) $('input[name="container-select"][value="' + state.containerId + '"]').prop('checked', true);
+            if (state.wickId) $('input[name="wick-select"][value="' + state.wickId + '"]').prop('checked', true);
+            if (state.scentId) $('#scent-select').val(state.scentId);
+
+            // initial updates
+            updatePreviewImage();
+            updatePreviewBurnTime();
+            updatePriceDisplay();
+            updateReceipt();
+        }).catch(function (err) {
+            console.error('app.loadData() failed in customize.js', err);
+            // still render minimal interface
+            renderColorControls();
+            renderLabelControls();
+            renderAdditionsControls();
+            renderOtherControls();
+            updatePreviewImage();
+            updatePriceDisplay();
+            updateReceipt();
+        });
     });
-  });
 
-  // Expose some helpers for debugging / integration
-  window.customizeState = state;
-  window.getCustomizePrice = function () {
-    // return numeric price currently displayed
-    let raw = $('#custom-price').text().replace(/[^0-9\.]/g, '');
-    return toNumber(raw);
-  };
+    // expose for debugging
+    window.customizeState = state;
+    window.getCustomizePrice = function () {
+        let raw = $('#custom-price').text().replace(/[^0-9\.]/g, '');
+        return toNumber(raw);
+    };
 
 })(jQuery);
