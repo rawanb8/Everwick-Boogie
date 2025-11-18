@@ -5,18 +5,14 @@ let app = {
   cart: [],
   colors: [],
   sizes: [],
-  containers: [],
-  wicks:[],
+  wicks: [],
 
-  // Utility: debounce for search
-  debounce(fn, delay) {
-    let timeout;
-    return function(...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => fn.apply(this, args), delay);
-    };
+  getSizes() {
+    return this.sizes || [];
   },
-
+  getColors() { return this.colors || []; },
+  getContainers() { return this.containers || []; },
+  getWicks() { return this.wicks || []; },
   getSizes() {
     return this.sizes || [];
   },
@@ -277,41 +273,56 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // AFTER nav.html is loaded
-document.addEventListener("click", (e) => {
-  let loginModal = document.querySelector(".login-modal-wrapper");
-  let closeBtn = document.querySelector(".login-modal-close");
+  const loginModal = document.querySelector(".login-modal-wrapper"); // updated
+  const closeBtn = document.querySelector(".login-modal-close");     // updated
+  const loginTriggers = document.querySelectorAll(".open-login");     // stays the same
 
-  if (!loginModal) return; // exit if modal not in DOM
+  loginTriggers.forEach(btn => {
+    btn.addEventListener("click", () => {
+      loginModal.style.display = "flex";
+    });
+  });
+  const loginModal = document.querySelector(".login-modal-wrapper"); // updated
+  const closeBtn = document.querySelector(".login-modal-close");     // updated
+  const loginTriggers = document.querySelectorAll(".open-login");     // stays the same
 
-  // Open modal if button clicked
-  if (e.target.closest(".open-login")) {
-    loginModal.style.display = "flex";
-  }
+  loginTriggers.forEach(btn => {
+    btn.addEventListener("click", () => {
+      loginModal.style.display = "flex";
+    });
+  });
 
-  // Close modal if clicking close button
-  if (e.target === closeBtn) {
+  closeBtn?.addEventListener("click", () => {
+  closeBtn?.addEventListener("click", () => {
     loginModal.style.display = "none";
-  }
+  });
+  });
 
-  // Close modal if clicking outside modal content (on overlay)
-  if (e.target === loginModal) {
-    loginModal.style.display = "none";
-  }
-});
+  // Close modal if clicking outside the content
+  window.addEventListener("click", e => {
+    if (e.target === loginModal) loginModal.style.display = "none";
+  });
+  // Close modal if clicking outside the content
+  window.addEventListener("click", e => {
+    if (e.target === loginModal) loginModal.style.display = "none";
+  });
 
-// Close on Escape key
-document.addEventListener("keydown", (e) => {
-  let loginModal = document.querySelector(".login-modal-wrapper");
-  if (!loginModal) return;
+  // Optional: close on Escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && loginModal.style.display === "flex") {
+      loginModal.style.display = "none";
+    }
+  });
+  // Optional: close on Escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && loginModal.style.display === "flex") {
+      loginModal.style.display = "none";
+    }
+  });
 
-  if (e.key === "Escape" && loginModal.style.display === "flex") {
-    loginModal.style.display = "none";
-  }
-});
 
-
-
-  let footerContainer = document.getElementById('footer');
+  const footerContainer = document.getElementById('footer');
+  const footerContainer = document.getElementById('footer');
 
   if (footerContainer) {
     try {
@@ -408,22 +419,27 @@ function initNewsletterForm() {
   });
 }
 
-let loginForm = document.getElementById("loginForm");
+const loginForm = document.getElementById("loginForm");
+const loginForm = document.getElementById("loginForm");
 
 loginForm.addEventListener("submit", (e) => {
   e.preventDefault(); // prevent page reload
 
-  let username = document.getElementById("username").value.trim();
-  let password = document.getElementById("password").value.trim();
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
 
   let loginModal = document.querySelector('.login-modal-wrapper')
-  let allowedUsers = [
+  const allowedUsers = [
+  const allowedUsers = [
     { username: "rama", password: "12345" },
     { username: "maryam", password: "6789" },
     { username: "rawan", password: "1011" }
   ];
   // check if entered credentials match any user in the array
-  let user = allowedUsers.find(u => u.username === username && u.password === password);
+  const user = allowedUsers.find(u => u.username === username && u.password === password);
+  const user = allowedUsers.find(u => u.username === username && u.password === password);
 
   if (user) {
     alert(`Login successful! Welcome, ${user.username}`);
