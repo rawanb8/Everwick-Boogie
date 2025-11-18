@@ -952,7 +952,24 @@ body.modal-open {
 
 /*=================== END OF FOOTER STYLING=======================*/
 /* ========== LOGIN MODAL ========== */
+/* ========== LOGIN MODAL ========== */
 
+/* Modal wrapper */
+.login-modal-wrapper {
+    display: none; /* hidden by default */
+    position: fixed;
+    inset: 0;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    font-family: 'TAN Meringue', serif;
+    backdrop-filter: blur(4px); /* blur the page behind */
+    background: rgba(0,0,0,0.4);
+}
+
+
+/* Modal content (centered login box) */
+.login-modal-content {
 /* Modal wrapper */
 .login-modal-wrapper {
     display: none; /* hidden by default */
@@ -976,6 +993,7 @@ body.modal-open {
     display: flex;
     flex-direction: column;
     gap: 2rem;
+    gap: 2rem;
     align-items: center;
     padding: 3rem 2rem;
     background: rgba(255, 255, 255, 0.15);
@@ -984,6 +1002,8 @@ body.modal-open {
     animation: fadeInUp 0.8s ease forwards;
 }
 
+/* Modal heading */
+.login-modal-content h3 {
 /* Modal heading */
 .login-modal-content h3 {
     font-size: 2.5rem;
@@ -1001,7 +1021,16 @@ body.modal-open {
     gap: 1.5rem;
 }
 
+/* Form */
+.login-modal-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
 /* Inputs */
+.login-modal-form input {
 .login-modal-form input {
     width: 100%;
     padding: 1.2rem 1.5rem;
@@ -1015,9 +1044,11 @@ body.modal-open {
 }
 
 .login-modal-form input::placeholder {
+.login-modal-form input::placeholder {
     color: rgba(255, 255, 255, 0.8);
 }
 
+.login-modal-form input:focus {
 .login-modal-form input:focus {
     outline: none;
     border-color: #d4a574;
@@ -1026,6 +1057,7 @@ body.modal-open {
 }
 
 /* Button */
+.login-modal-form button {
 .login-modal-form button {
     width: 100%;
     padding: 1.2rem;
@@ -1041,12 +1073,14 @@ body.modal-open {
 }
 
 .login-modal-form button:hover {
+.login-modal-form button:hover {
     background: rgba(212, 165, 116, 1);
     transform: translateY(-2px);
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* Close button */
+.login-modal-close {
 .login-modal-close {
     position: absolute;
     top: 1rem;
@@ -1073,12 +1107,16 @@ body.modal-open {
 /* Responsive adjustments */
 @media (max-width: 480px) {
     .login-modal-content {
+    .login-modal-content {
         padding: 2rem 1.5rem;
         gap: 1.5rem;
     }
     .login-modal-content h3 {
+    .login-modal-content h3 {
         font-size: 2rem;
     }
+    .login-modal-form input,
+    .login-modal-form button {
     .login-modal-form input,
     .login-modal-form button {
         font-size: 1rem;

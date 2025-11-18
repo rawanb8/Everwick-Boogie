@@ -281,10 +281,45 @@ document.addEventListener('DOMContentLoaded', async () => {
     loginModal.style.display = "none";
   });
 
-  // Close modal if clicking outside the content
-  window.addEventListener("click", e => {
-    if (e.target === loginModal) loginModal.style.display = "none";
-  });
+  // Close modal if clicking outside modal content (on overlay)
+  if (e.target === loginModal) {
+    loginModal.style.display = "none";
+  }
+});
+
+// Close on Escape key
+document.addEventListener("keydown", (e) => {
+  let loginModal = document.querySelector(".login-modal-wrapper");
+  if (!loginModal) return;
+
+  if (e.key === "Escape" && loginModal.style.display === "flex") {
+    loginModal.style.display = "none";
+  }
+});
+
+
+  // AFTER nav.html is loaded
+document.addEventListener("click", (e) => {
+  let loginModal = document.querySelector(".login-modal-wrapper");
+  let closeBtn = document.querySelector(".login-modal-close");
+
+  if (!loginModal) return; // exit if modal not in DOM
+
+  // Open modal if button clicked
+  if (e.target.closest(".open-login")) {
+    loginModal.style.display = "flex";
+  }
+
+  // Close modal if clicking close button
+  if (e.target === closeBtn) {
+    loginModal.style.display = "none";
+  }
+
+  // Close modal if clicking outside modal content (on overlay)
+  if (e.target === loginModal) {
+    loginModal.style.display = "none";
+  }
+});
 
   // Optional: close on Escape key
   document.addEventListener("keydown", (e) => {
@@ -340,6 +375,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // ----------------- NEW: Load scents data for quiz -----------------
   await app.loadData();
+
 
 
 });
