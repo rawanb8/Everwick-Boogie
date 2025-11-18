@@ -949,3 +949,167 @@ body.modal-open {
 }
 
 /*=================== END OF FOOTER STYLING=======================*/
+
+/* ==========LOGIN MODAL ============*/
+
+/* ========== LOGIN MODAL ============ */
+
+/* Modal container */
+/* Modal content (centered login form) */
+#login-modal .login-wrap {
+    position: relative;
+    z-index: 2; /* above overlay */
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem; /* more space between children */
+    align-items: center;
+    padding: 3rem 2rem;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    border-radius: 1rem;
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+/* Form groups to separate inputs and button */
+#login-modal .login-form .form-group {
+    width: 100%;
+    margin-bottom: 1.5rem; /* extra spacing between fields */
+}
+
+/* Optional: remove bottom margin on last group (button) */
+#login-modal .login-form .form-group:last-child {
+    margin-bottom: 0;
+}
+
+
+/* Background image behind modal with subtle blur */
+#login-modal::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url('/media/inpage/login.image.jpg') no-repeat center center/cover;
+    filter: blur(5px);
+    z-index: 0;
+}
+
+/* Dark overlay on top of background image */
+#login-modal .overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.4); /* slightly darker overlay for visibility */
+    z-index: 1;
+}
+
+/* Modal content (centered login form) */
+#login-modal .login-wrap {
+    position: relative;
+    z-index: 2; /* above overlay and background */
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem; /* space between elements */
+    align-items: center;
+    padding: 3rem 2rem; /* more breathing room */
+    background: rgba(255, 255, 255, 0.15); /* slightly visible for testing */
+    backdrop-filter: blur(8px); /* glass effect */
+    border-radius: 1rem;
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+/* Heading */
+#login-modal .login-wrap h3 {
+    font-family: "TAN Meringue", serif;
+    font-size: 2.5rem;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+/* Inputs */
+#login-modal .login-form input {
+    width: 100%;
+    padding: 1.2rem 1.5rem;
+    font-size: 1.2rem;
+    border-radius: 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.25);
+    color: #fff;
+    backdrop-filter: blur(6px);
+    transition: all 0.3s ease;
+}
+
+#login-modal .login-form input::placeholder {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+#login-modal .login-form input:focus {
+    outline: none;
+    border-color: #d4a574;
+    background: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.2);
+}
+
+/* Button */
+#login-modal .login-form button {
+    width: 100%;
+    padding: 1.2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    background: rgba(212, 165, 116, 0.85);
+    color: #fff;
+    border-radius: 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+#login-modal .login-form button:hover {
+    background: rgba(212, 165, 116, 1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Close button */
+#login-modal .modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.8rem;
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* Fade-in animation */
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    #login-modal .login-wrap {
+        padding: 2rem 1.5rem;
+        gap: 1.5rem;
+    }
+    #login-modal .login-wrap h3 {
+        font-size: 2rem;
+    }
+    #login-modal .login-form input,
+    #login-modal .login-form button {
+        font-size: 1rem;
+        padding: 1rem 1.2rem;
+    }
+}
