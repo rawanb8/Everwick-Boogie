@@ -5,14 +5,14 @@ const app = {
   cart: [],
   colors: [],
   sizes: [],
-  wicks:[],
+  wicks: [],
 
-getSizes() {
-  return this.sizes || [];
-},
-getColors() { return this.colors || []; },
-getContainers() { return this.containers || []; },
-getWicks() { return this.wicks || []; },
+  getSizes() {
+    return this.sizes || [];
+  },
+  getColors() { return this.colors || []; },
+  getContainers() { return this.containers || []; },
+  getWicks() { return this.wicks || []; },
   getScents() { return this.scents; },
   getScentById(id) { return this.scents.find(s => s.id === id) || null; },
   formatPrice(price) { return `$${Number(price).toFixed(2)}`; },
@@ -180,6 +180,34 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  // AFTER nav.html is loaded
+  const loginModal = document.querySelector(".login-modal-wrapper"); // updated
+  const closeBtn = document.querySelector(".login-modal-close");     // updated
+  const loginTriggers = document.querySelectorAll(".open-login");     // stays the same
+
+  loginTriggers.forEach(btn => {
+    btn.addEventListener("click", () => {
+      loginModal.style.display = "flex";
+    });
+  });
+
+  closeBtn?.addEventListener("click", () => {
+    loginModal.style.display = "none";
+  });
+
+  // Close modal if clicking outside the content
+  window.addEventListener("click", e => {
+    if (e.target === loginModal) loginModal.style.display = "none";
+  });
+
+  // Optional: close on Escape key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && loginModal.style.display === "flex") {
+      loginModal.style.display = "none";
+    }
+  });
+
+
   const footerContainer = document.getElementById('footer');
 
   if (footerContainer) {
@@ -198,6 +226,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // ----------------- NEW: Load scents data for quiz -----------------
   await app.loadData();
+
 });
 
 /*================== NEWSLETTER in footer ==================*/
@@ -275,65 +304,28 @@ function initNewsletterForm() {
   });
 }
 
-let modalLoaded = false;
+const loginForm = document.getElementById("loginForm");
 
-// Load login modal from login.html
-async function loadLoginModal() {
-  const response = await fetch('/html/login.html');
-  const modalHTML = await response.text();
+loginForm.addEventListener("submit", (e) => {
+  e.preventDefault(); // prevent page reload
 
-  // Create a wrapper div
-  const modalContainer = document.createElement('div');
-  modalContainer.innerHTML = modalHTML;
-  document.body.appendChild(modalContainer);
+  const username = document.getElementById("username").value.trim();
+  const password = document.getElementById("password").value.trim();
 
-  modalLoaded = true;
+  let loginModal = document.querySelector('.login-modal-wrapper')
+  const allowedUsers = [
+    { username: "rama", password: "12345" },
+    { username: "maryam", password: "6789" },
+    { username: "rawan", password: "1011" }
+  ];
+  // check if entered credentials match any user in the array
+  const user = allowedUsers.find(u => u.username === username && u.password === password);
 
-  // Attach close functionality to close button & overlay
-  document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('modal-close') || e.target.classList.contains('modal-overlay')) {
-      closeLoginModal();
-    }
-  });
-
-  // Attach form submission
-  const loginForm = document.getElementById('loginForm');
-  if (loginForm) {
-    loginForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      // Handle login logic here
-      console.log('Login submitted', {
-        username: document.getElementById('username').value,
-        password: document.getElementById('password').value
-      });
-      closeLoginModal();
-    });
+  if (user) {
+    alert(`Login successful! Welcome, ${user.username}`);
+    loginModal.style.display = "none"; // hide modal
+    loginForm.reset(); // clear form inputs
+  } else {
+    alert("Incorrect username or password.");
   }
-}
-
-// Show modal
-function openLoginModal() {
-  if (!modalLoaded) {
-    console.warn('Modal not loaded yet!');
-    return;
-  }
-  const modal = document.getElementById('login-modal');
-  if (modal) modal.style.display = 'flex';
-}
-
-// Hide modal
-function closeLoginModal() {
-  const modal = document.getElementById('login-modal');
-  if (modal) modal.style.display = 'none';
-}
-
-// Load modal on page load
-window.addEventListener('DOMContentLoaded', loadLoginModal);
-
-// Optional: attach "Proceed to Payment" dynamically after modal loaded
-window.addEventListener('DOMContentLoaded', async () => {
-  await loadLoginModal();
-
-  const proceedBtn = document.getElementById('proceed-to-payment');
-  if (proceedBtn) proceedBtn.addEventListener('click', openLoginModal);
 });
