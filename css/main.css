@@ -153,7 +153,7 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Poppins','Gill Sans' sans-serif;
     line-height: 1.2;
     margin-bottom: var(--space-md);
 }
@@ -988,8 +988,6 @@ body.modal-open {
     color: #fff;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     margin-bottom: 1rem;
-<<<<<<< HEAD
-=======
     text-align: center;
 }
 
@@ -1064,10 +1062,6 @@ body.modal-open {
         opacity: 0;
         transform: translateY(30px);
     }
-<<<<<<< HEAD
-
-=======
->>>>>>> 48cb015 (login modal)
     100% {
         opacity: 1;
         transform: translateY(0);
@@ -1088,8 +1082,4 @@ body.modal-open {
         font-size: 1rem;
         padding: 1rem 1.2rem;
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 48cb015 (login modal)
