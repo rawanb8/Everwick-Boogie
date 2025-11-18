@@ -952,6 +952,7 @@ body.modal-open {
 
 /* ==========LOGIN MODAL ============*/
 
+<<<<<<< HEAD
 /* Modal container */
 #login-modal {
     display: none;
@@ -964,6 +965,40 @@ body.modal-open {
     flex-direction: column;
 }
 
+=======
+/* ========== LOGIN MODAL ============ */
+
+/* Modal container */
+/* Modal content (centered login form) */
+#login-modal .login-wrap {
+    position: relative;
+    z-index: 2; /* above overlay */
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem; /* more space between children */
+    align-items: center;
+    padding: 3rem 2rem;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    border-radius: 1rem;
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+/* Form groups to separate inputs and button */
+#login-modal .login-form .form-group {
+    width: 100%;
+    margin-bottom: 1.5rem; /* extra spacing between fields */
+}
+
+/* Optional: remove bottom margin on last group (button) */
+#login-modal .login-form .form-group:last-child {
+    margin-bottom: 0;
+}
+
+
+>>>>>>> 48cb015 (login modal)
 /* Background image behind modal with subtle blur */
 #login-modal::before {
     content: "";
@@ -971,7 +1006,10 @@ body.modal-open {
     inset: 0;
     background: url('/media/inpage/login.image.jpg') no-repeat center center/cover;
     filter: blur(5px);
+<<<<<<< HEAD
     /* blur effect */
+=======
+>>>>>>> 48cb015 (login modal)
     z-index: 0;
 }
 
@@ -979,20 +1017,29 @@ body.modal-open {
 #login-modal .overlay {
     position: absolute;
     inset: 0;
+<<<<<<< HEAD
     background: rgba(0, 0, 0, 0.3);
     /* subtle dark tint */
+=======
+    background: rgba(0, 0, 0, 0.4); /* slightly darker overlay for visibility */
+>>>>>>> 48cb015 (login modal)
     z-index: 1;
 }
 
 /* Modal content (centered login form) */
 #login-modal .login-wrap {
     position: relative;
+<<<<<<< HEAD
     z-index: 2;
     /* above overlay and background */
+=======
+    z-index: 2; /* above overlay and background */
+>>>>>>> 48cb015 (login modal)
     width: 100%;
     max-width: 450px;
     display: flex;
     flex-direction: column;
+<<<<<<< HEAD
     gap: 1.5rem;
     align-items: center;
     padding: 2rem;
@@ -1000,6 +1047,13 @@ body.modal-open {
     /* subtle transparent */
     backdrop-filter: blur(8px);
     /* glass effect */
+=======
+    gap: 2rem; /* space between elements */
+    align-items: center;
+    padding: 3rem 2rem; /* more breathing room */
+    background: rgba(255, 255, 255, 0.15); /* slightly visible for testing */
+    backdrop-filter: blur(8px); /* glass effect */
+>>>>>>> 48cb015 (login modal)
     border-radius: 1rem;
     animation: fadeInUp 0.8s ease forwards;
 }
@@ -1011,6 +1065,10 @@ body.modal-open {
     color: #fff;
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     margin-bottom: 1rem;
+<<<<<<< HEAD
+=======
+    text-align: center;
+>>>>>>> 48cb015 (login modal)
 }
 
 /* Inputs */
@@ -1076,7 +1134,10 @@ body.modal-open {
         opacity: 0;
         transform: translateY(30px);
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 48cb015 (login modal)
     100% {
         opacity: 1;
         transform: translateY(0);
@@ -1085,13 +1146,27 @@ body.modal-open {
 
 /* Responsive adjustments */
 @media (max-width: 480px) {
+<<<<<<< HEAD
     #login-modal .login-wrap h3 {
         font-size: 2rem;
     }
 
+=======
+    #login-modal .login-wrap {
+        padding: 2rem 1.5rem;
+        gap: 1.5rem;
+    }
+    #login-modal .login-wrap h3 {
+        font-size: 2rem;
+    }
+>>>>>>> 48cb015 (login modal)
     #login-modal .login-form input,
     #login-modal .login-form button {
         font-size: 1rem;
         padding: 1rem 1.2rem;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 48cb015 (login modal)
