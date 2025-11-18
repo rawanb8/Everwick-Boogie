@@ -303,57 +303,57 @@ function updateResultsCount() {
   container.textContent = `Showing ${showing} of ${total} products`;
 }
 
-function setView(viewType) {
-  currentView = viewType;
-
-  // Update view buttons
-  document.querySelectorAll('.view-btn').forEach(btn => {
-    btn.classList.remove('active');
-  });
-  document.querySelector(`[data-view="${viewType}"]`).classList.add('active');
-
-  displayProducts();
-}
+    function setView(viewType) {
+      currentView = viewType;
+      
+      // Update view buttons
+      document.querySelectorAll('.view-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.querySelector(`[data-view="${viewType}"]`).classList.add('active');
+      
+      displayProducts();
+    }
 
 function toggleFilters() {
   const sidebar = document.getElementById('filters-sidebar');
   sidebar.classList.toggle('active');
 }
 
-function clearAllFilters() {
-  // Clear all checkboxes
-  document.querySelectorAll('.filter-checkbox input').forEach(cb => cb.checked = false);
+    function clearAllFilters() {
+      // Clear all checkboxes
+      document.querySelectorAll('.filter-checkbox input').forEach(cb => cb.checked = false);
+      
+      // Reset price sliders
+      document.getElementById('price-min').value = 0;
+      document.getElementById('price-max').value = 100;
+      updatePriceLabels();
+      
+      // Clear search
+      document.getElementById('search-input').value = '';
+      
+      // Reset sort
+      document.getElementById('sort-select').value = 'featured';
+      
+      // Reapply (which will show all products)
+      filteredProducts = [...allProducts];
+      currentPage = 1;
+      displayProducts();
+      updateResultsCount();
+    }
 
-  // Reset price sliders
-  document.getElementById('price-min').value = 0;
-  document.getElementById('price-max').value = 100;
-  updatePriceLabels();
-
-  // Clear search
-  document.getElementById('search-input').value = '';
-
-  // Reset sort
-  document.getElementById('sort-select').value = 'featured';
-
-  // Reapply (which will show all products)
-  filteredProducts = [...allProducts];
-  currentPage = 1;
-  displayProducts();
-  updateResultsCount();
-}
-
-function showProductDetails(productId) {
-  const product = app.getProductById(productId);
-  if (!product) return;
-
-  const scent = app.getScentById(product.scent_id);
-  const size = app.getSizeById(product.size_id);
-  const color = app.getColorById(product.color_id);
-  const container = app.getContainerById(product.container_id);
-  const wick = app.getWickById(product.wick_id);
-
-  document.getElementById('product-modal-title').textContent = product.name;
-  document.getElementById('product-modal-body').innerHTML = `
+    function showProductDetails(productId) {
+      const product = app.getProductById(productId);
+      if (!product) return;
+      
+      const scent = app.getScentById(product.scent_id);
+      const size = app.getSizeById(product.size_id);
+      const color = app.getColorById(product.color_id);
+      const container = app.getContainerById(product.container_id);
+      const wick = app.getWickById(product.wick_id);
+      
+      document.getElementById('product-modal-title').textContent = product.name;
+      document.getElementById('product-modal-body').innerHTML = `
         <div class="product-details-full">
           <div class="product-images">
             <img src="https://images.unsplash.com/photo-1602574968595-52bdc47de83c?w=400&h=300&fit=crop" 
@@ -413,21 +413,21 @@ function showProductDetails(productId) {
           </div>
         </div>
       `;
+      
+      app.openModal('product-modal');
+    }
 
-  app.openModal('product-modal');
-}
-
-function addProductToCart(productId, quantity = 1) {
-  const product = app.getProductById(productId);
-  if (!product || product.stock <= 0) {
-    app.showNotification('Product is out of stock', 'error');
-    return;
-  }
-
-  for (let i = 0; i < quantity; i++) {
-    app.addToCart(productId);
-  }
-}
+    function addProductToCart(productId, quantity = 1) {
+      const product = app.getProductById(productId);
+      if (!product || product.stock <= 0) {
+        app.showNotification('Product is out of stock', 'error');
+        return;
+      }
+      
+      for (let i = 0; i < quantity; i++) {
+        app.addToCart(productId);
+      }
+    }
 
 function openCartModal() {
   loadCartItems();
@@ -438,14 +438,14 @@ function loadCartItems() {
   const container = document.getElementById('cart-items');
   const totalElement = document.getElementById('cart-total');
 
-  if (app.cart.length === 0) {
-    container.innerHTML = '<p class="text-center">Your cart is empty</p>';
-  } else {
-    container.innerHTML = app.cart.map(item => {
-      const product = app.getProductById(item.productId);
-      const scent = app.getScentById(product.scent_id);
-
-      return `
+      if (app.cart.length === 0) {
+        container.innerHTML = '<p class="text-center">Your cart is empty</p>';
+      } else {
+        container.innerHTML = app.cart.map(item => {
+          const product = app.getProductById(item.productId);
+          const scent = app.getScentById(product.scent_id);
+          
+          return `
             <div class="cart-item flex">
               <div class="cart-item-info flex-1">
                 <h4>${product.name}</h4>
@@ -460,9 +460,8 @@ function loadCartItems() {
               </button>
             </div>
           `;
-    }).join('');
-  }
+        }).join('');
+      }
 
-  totalElement.textContent = app.formatPrice(app.getCartTotal());
-}
-console.log('Loaded products:', allProducts);
+      totalElement.textContent = app.formatPrice(app.getCartTotal());
+    }
