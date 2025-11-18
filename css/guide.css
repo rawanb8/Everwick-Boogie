@@ -509,6 +509,7 @@ input[type="range"]::-ms-thumb {
   display: block;
 }
 
+
 /* Make card content stretch to equalize height */
 .recommendation-card .card-content {
   flex: 1;
