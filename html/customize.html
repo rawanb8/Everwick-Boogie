@@ -2,126 +2,121 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Customize — Everwick Boogie</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Customize — Everwick Boogie</title>
 
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="stylesheet" href="/css/customize.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/customize.css">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <!-- Font Awesome (for flame icon) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-    <script src="/js/main.js" defer></script>
-    <script src="/js/customize.js" defer></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+  <script src="/js/main.js" defer></script>       
+  <script src="/js/customize.js" defer></script>   
 </head>
 
 <body>
-    <div id="navbar"></div>
-    <div class="page-spacer" aria-hidden="true"></div>
+  <div id="navbar"></div>
+  <div class="page-spacer" aria-hidden="true"></div>
 
-    <main class="container customize-page">
-        <section class="customize-hero section">
-            <h1 class="section-title">Customize your candle</h1>
-            <p class="muted">Pick color, label, size, container and extras — see changes live.</p>
-        </section>
+  <main class="container customize-page">
+    <section class="customize-hero section">
+      <h1 class="section-title">Customize your candle</h1>
+      <p class="muted">Pick color, label, size, container and extras — see changes live.</p>
+    </section>
 
-        <section class="customize-grid section">
-            <!-- Controls (left) -->
-            <div class="custom-controls">
-                <div class="control-group">
-                    <h3>Color</h3>
-                    <div id="colors" class="colors-root" role="toolbar" aria-label="Choose color"></div>
-                </div>
+    <section class="customize-grid section">
+      <!-- Controls (left) -->
+      <div class="custom-controls">
+        <div class="control-group">
+          <h3>Color</h3>
+          <div id="colors" class="colors-root" role="toolbar" aria-label="Choose color"></div>
+        </div>
 
-                <div class="control-group">
-                    <h3>Label</h3>
-                    <div id="labels" role="radiogroup" aria-label="Choose label">
-                        <!-- options filled by JS: No label, Label 1, Label 2 -->
-                    </div>
-                </div>
+        <div class="control-group">
+          <h3>Label</h3>
+          <div id="labels" role="radiogroup" aria-label="Choose label"></div>
+        </div>
 
-                <div class="control-group">
-                    <h3>Scent</h3>
-                    <select id="scent-select" aria-label="Choose scent"></select>
-                </div>
+        <div class="control-group">
+          <h3>Scent</h3>
+          <select id="scent-select" aria-label="Choose scent"></select>
+        </div>
 
-                <div class="control-group">
-                    <h3>Size</h3>
-                    <div id="sizes"></div>
-                </div>
+        <div class="control-group">
+          <h3>Size</h3>
+          <div id="sizes" class="options-root"></div>
+        </div>
 
-                <div class="control-group">
-                    <h3>Container</h3>
-                    <div id="containers"></div>
-                </div>
+        <div class="control-group">
+          <h3>Container</h3>
+          <div id="containers" class="options-root"></div>
+        </div>
 
-                <div class="control-group">
-                    <h3>Wick</h3>
-                    <div id="wicks"></div>
-                </div>
+        <div class="control-group">
+          <h3>Wick</h3>
+          <div id="wicks" class="wicks-root"></div>
+        </div>
 
-                <div class="control-group">
-                    <h3>Additions</h3>
-                    <div id="additions" class="additions-root" role="toolbar" aria-label="Add extras">
-                        <!-- Glitter -->
-                        <button class="addon-btn" data-addon="glitter" aria-pressed="false" title="Glitter (+$2)">
-                            <span class="addon-icon">
-                                <img src="/media/custom/additions/glitter.svg" alt="glitter icon">
-                            </span>
-                            <span class="addon-label">Glitter</span>
-                        </button>
+        <div class="control-group">
+          <h3>Additions</h3>
+          <div id="additions" class="additions-root" role="toolbar" aria-label="Add extras"></div>
+        </div>
 
-                        <!-- Gold Flecks -->
-                        <button class="addon-btn" data-addon="gold-flecks" aria-pressed="false"
-                            title="Gold Flecks (+$3)">
-                            <span class="addon-icon">
-                                <img src="/media/custom/additions/gold-flecks.svg" alt="gold icon">
-                            </span>
-                            <span class="addon-label">Gold Flecks</span>
-                        </button>
+        <div class="control-group price-and-cart">
+          <div class="price-row">
+            <div class="price-label">Price:</div>
+            <div id="custom-price" class="price-value">—</div>
+          </div>
 
-                        <!-- Dried Flowers -->
-                        <button class="addon-btn" data-addon="dried-flowers" aria-pressed="false"
-                            title="Dried Flowers (+$4)">
-                            <span class="addon-icon">
-                                <img src="/media/custom/additions/dried-flowers.svg" alt="flowers icon" >
-                            </span>
-                            <span class="addon-label">Dried Flowers</span>
-                        </button>
-                    </div>
-                </div>
+          <div id="label-warning" role="alert" aria-live="assertive" class="hidden warning">
+            Please choose a label before adding to cart.
+          </div>
 
-                <div class="control-group price-and-cart">
-                    <div class="price-row">
-                        <div>Price:</div>
-                        <div id="custom-price" class="price-value">—</div>
-                    </div>
+          <button id="add-to-cart" class="btn btn-primary">Add to cart</button>
+        </div>
+      </div>
 
-                    <div id="label-warning" role="alert" aria-live="assertive" class="hidden warning">
-                        Please choose a label before adding to cart.
-                    </div>
+      <!-- Live Preview (right) -->
+      <aside class="custom-preview" aria-label="Live preview">
+        <div class="preview-frame">
+          <img id="layer-base" src="/media/custom/base-candle.png" alt="Base candle" class="preview-base">
+          <img id="layer-combined" src="" alt="" class="preview-image hidden">
+        </div>
 
-                    <button id="add-to-cart" class="btn btn-primary">Add to cart</button>
-                </div>
+        <div class="preview-details">
+          <h3 id="preview-name">Custom Candle</h3>
+          <p id="preview-scent" class="muted">Choose a scent</p>
+
+          <div class="preview-meta">
+            <div class="meta-size">
+              <!-- <i class="fa-solid fa-fire flame-icon" aria-hidden="true"></i> -->
+              <span id="preview-size-text">Size: —</span>
             </div>
+            <i class="fa-solid fa-fire flame-icon" aria-hidden="true"></i>
+            <div id="preview-burning" class="muted small">Burn time: —</div>
+          </div>
 
-            <!-- Live Preview (right) -->
-            <aside class="custom-preview" aria-label="Live preview">
-                <div class="preview-frame">
-                    <img id="layer-base" src="/media/custom/base-candle.png" alt="Base candle">
-                    <img id="layer-combined" src="" alt="" class="preview-image hidden">
+          <div class="mock-receipt" aria-live="polite">
+            <div class="receipt-row"><span>Size:</span> <span id="rc-size">—</span></div>
+            <div class="receipt-row"><span>Container:</span> <span id="rc-container">—</span></div>
+            <div class="receipt-row"><span>Wick:</span> <span id="rc-wick">—</span></div>
+            <div class="receipt-row"><span>Additions:</span> <span id="rc-additions">None</span></div>
+            <div class="receipt-row total"><span>Total:</span> <span id="rc-total">—</span></div>
+            <div style="margin-top:0.75rem">
+              <button id="add-to-cart-bottom" class="btn btn-outline">Add to cart</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </section>
+  </main>
 
-                </div>
-
-                <div class="preview-details">
-                    <h3 id="preview-name">Custom Candle</h3>
-                    <p id="preview-scent" class="muted">Choose a scent</p>
-                </div>
-            </aside>
-        </section>
-    </main>
-
-    <div id="footer"></div>
+  <div id="footer"></div>
 </body>
 
 </html>

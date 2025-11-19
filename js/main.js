@@ -21,14 +21,14 @@ const app = {
     try {
       // fetch products/scents if not already loaded
       if (!this.scents.length) {
-        const response = await fetch('../json/products.json');
+        const response = await fetch('/json/products.json');
         const data = await response.json();
-        this.scents = data.scents.map(s => ({
-          ...s,
-          aggressiveness: s.aggressiveness || 2
-        }));
-        // optional: store products if your quiz uses them
+        this.data=data || {}; // assign the whole json for easier access
+        this.scents = (data.scents || data.scent || []) .map(s => ({ ...s, aggressiveness: s.aggressiveness || 2 }));
         this.products = data.products || [];
+        this.sizes = data.sizes || data.size || [];
+        this.wicks = data.wicks || data.wick || [];
+        this.containers = data.containers || data.container || [];
       }
     } catch (err) {
       console.error('Failed to load data in app.loadData():', err);
