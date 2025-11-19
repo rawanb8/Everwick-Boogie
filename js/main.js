@@ -24,8 +24,8 @@ const app = {
   async loadData() {
     try {
       // fetch products/scents if not already loaded
-      if (!this.scents.length) {
-        const response = await fetch('/json/products.json');
+      if (!this.scents.length || !this.products.length) {
+        const response = await fetch('../json/products.json');
         const data = await response.json();
         this.data=data || {}; // assign the whole json for easier access
         this.scents = (data.scents || data.scent || []) .map(s => ({ ...s, aggressiveness: s.aggressiveness || 2 }));
