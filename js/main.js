@@ -39,15 +39,13 @@ let app = {
     try {
       // fetch products/scents if not already loaded
       if (!this.scents.length || !this.products.length) {
-      if (!this.scents.length || !this.products.length) {
-        const response = await fetch('../json/products.json');
-      if (!this.scents.length || !this.products.length) {
         const response = await fetch('../json/products.json');
         const data = await response.json();
         this.scents = data.scents.map(s => ({
           ...s,
           aggressiveness: s.aggressiveness || 2
         }));
+        // store products for cart and shop
         this.products = data.products || [];
         this.colors = data.color || [];
         this.sizes = data.size || [];
@@ -107,19 +105,7 @@ let app = {
     return this.products.find(p => p.id === id) || null;
   },
 
-  // Search products by name or scent name
-  searchProducts(query) {
-    const q = query.toLowerCase();
-    return this.products.filter(product => {
-      const scent = this.getScentById(product.scentId);
-      return (
-        product.name.toLowerCase().includes(q) ||
-        (scent && scent.name.toLowerCase().includes(q))
-      );
-    });
-  },
-
-  // Add to cart (stored in localStorage)
+  // Cart management with localStorage
   addToCart(productId, quantity = 1) {
     try {
       let cart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -139,21 +125,78 @@ let app = {
     }
   },
 
-  // Get total price of cart
+  removeFromCart(itemId) {
+    try {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (!Array.isArray(cart)) cart = [];
+      
+      cart = cart.filter(item => item.id !== itemId);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      return true;
+    } catch (err) {
+      console.error('Failed to remove from cart:', err);
+      return false;
+    }
+  },
+
+  updateCartQuantity(itemId, quantity) {
+    try {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (!Array.isArray(cart)) cart = [];
+      
+      const item = cart.find(i => i.id === itemId);
+      if (item) {
+        item.quantity = Math.max(1, parseInt(quantity) || 1);
+      }
+      
+      localStorage.setItem('cart', JSON.stringify(cart));
+      return true;
+    } catch (err) {
+      console.error('Failed to update cart:', err);
+      return false;
+    }
+  },
+
+  getCart() {
+    try {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (!Array.isArray(cart)) return [];
+      
+      // Ensure all cart items have required properties with proper types
+      return cart.map(item => ({
+        id: item.id || 'item_' + Date.now(),
+        productId: item.productId,
+        quantity: parseInt(item.quantity) || 1,
+        price: parseFloat(item.price) || 0,
+        addedAt: item.addedAt || new Date().toISOString()
+      }));
+    } catch (err) {
+      console.error('Failed to get cart:', err);
+      return [];
+    }
+  },
+
   getCartTotal() {
     try {
       let cart = JSON.parse(localStorage.getItem('cart') || '[]');
       if (!Array.isArray(cart)) cart = [];
       
-      let total = 0;
-      cart.forEach(item => {
-        const product = this.getProductById(item.productId);
-        if (product) total += product.price;
-      });
-      return total;
+      return cart.reduce((total, item) => {
+        return total + (item.price * item.quantity);
+      }, 0);
     } catch (err) {
       console.error('Failed to calculate cart total:', err);
       return 0;
+    }
+  },
+
+  clearCart() {
+    try {
+      localStorage.setItem('cart', JSON.stringify([]));
+      return true;
+    } catch (err) {
+      console.error('Failed to clear cart:', err);
+      return false;
     }
   }
 
