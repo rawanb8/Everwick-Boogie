@@ -21,9 +21,9 @@ const app = {
     try {
       // fetch products/scents if not already loaded
       if (!this.scents.length) {
-        const response = await fetch('/json/products.json');
+        const response = await fetch('../json/products.json');
         const data = await response.json();
-        this.data=data || {}; // assign the whole json for easier access
+        this.data = { ...this.data, ...data }; // merge instead of overwrite
         this.scents = (data.scents || data.scent || []) .map(s => ({ ...s, aggressiveness: s.aggressiveness || 2 }));
         this.products = data.products || [];
         this.sizes = data.sizes || data.size || [];

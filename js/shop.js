@@ -342,18 +342,18 @@ function toggleFilters() {
       updateResultsCount();
     }
 
-    function showProductDetails(productId) {
-      const product = app.getProductById(productId);
-      if (!product) return;
-      
-      const scent = app.getScentById(product.scent_id);
-      const size = app.getSizeById(product.size_id);
-      const color = app.getColorById(product.color_id);
-      const container = app.getContainerById(product.container_id);
-      const wick = app.getWickById(product.wick_id);
-      
-      document.getElementById('product-modal-title').textContent = product.name;
-      document.getElementById('product-modal-body').innerHTML = `
+function showProductDetails(productId) {
+  const product = app.getProductById(productId);
+  if (!product) return;
+
+  const scent = app.getScentById(product.scent_id);
+  const size = app.getSizeById(product.size_id);
+  const color = app.getColorById(product.color_id);
+  const container = app.getContainerById(product.container_id);
+  const wick = app.getWickById(product.wick_id);
+
+  document.getElementById('product-modal-title').textContent = product.name;
+  document.getElementById('product-modal-body').innerHTML = `
         <div class="product-details-full">
           <div class="product-images">
             <img src="https://images.unsplash.com/photo-1602574968595-52bdc47de83c?w=400&h=300&fit=crop" 
@@ -413,9 +413,9 @@ function toggleFilters() {
           </div>
         </div>
       `;
-      
-      app.openModal('product-modal');
-    }
+
+  app.openModal('product-modal');
+}
 
     function addProductToCart(productId, quantity = 1) {
       const product = app.getProductById(productId);
@@ -463,5 +463,6 @@ function loadCartItems() {
         }).join('');
       }
 
-      totalElement.textContent = app.formatPrice(app.getCartTotal());
-    }
+  totalElement.textContent = app.formatPrice(app.getCartTotal());
+}
+console.log('Loaded products:', allProducts);

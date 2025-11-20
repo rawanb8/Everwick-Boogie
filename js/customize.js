@@ -1,7 +1,7 @@
 (function ($) {
     'use strict';
 
-    // --- Config / constants ---
+    // --- Config / letants ---
     let COLORS = [
         { slug: 'pure-white', name: 'Pure White', hex: '#FFFFFF' },
         { slug: 'soft-pink', name: 'Soft Pink', hex: '#FFB6C1' },

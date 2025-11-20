@@ -182,10 +182,19 @@ function applyFilters() {
   // update and re-render
   filteredScents = filtered;
   displayScents(filteredScents);
+
+  // SHOW / HIDE "COMING SOON" MESSAGE
+  let noResults = document.getElementById("no-results");
+  if (filteredScents.length === 0) {
+    noResults.style.display = "block";
+  } else {
+    noResults.style.display = "none";
+  }
+
 }
 
 function clearFilters() {
-  const ids = ['category-filter', 'mood-filter', 'season-filter', 'strength-filter'];
+  let ids = ['category-filter', 'mood-filter', 'season-filter', 'strength-filter'];
   ids.forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = '';
@@ -314,7 +323,7 @@ function nextQuestion() {
 
     updateQuizProgress();
     updateQuizButtons();
- 
+
   }
 }
 

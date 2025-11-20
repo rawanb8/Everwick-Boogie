@@ -1,6 +1,6 @@
 // Contact page functionality
 $(document).ready(async function () {
-    await app.loadData();
+    // await app.loadData();
     setupContactForm();
     animateStats();
 });
@@ -20,8 +20,10 @@ function handleContactSubmission() {
         'contact-subject',
         'contact-message'
     ];
+
     let isValid = true;
 
+    // Validate required fields
     requiredFields.forEach(function (fieldId) {
         const $field = $('#' + fieldId);
         if (!$field.val().trim()) {
@@ -37,6 +39,7 @@ function handleContactSubmission() {
         return;
     }
 
+    // Collect form data
     const formData = {
         firstName: $('#contact-first-name').val(),
         lastName: $('#contact-last-name').val(),
@@ -48,24 +51,33 @@ function handleContactSubmission() {
         timestamp: new Date().toISOString()
     };
 
-    app.showNotification('Sending message...', 'info');
+    // --- CLEAR INPUTS IMMEDIATELY ---
+    $('#contact-form')[0].reset();
 
+    // --- CHANGE BUTTON TEXT ---
+    const $btn = $('#contact-form button[type="submit"]');
+    $btn.text('Form Submitted Successfully!');
+    $btn.prop('disabled', true);
+
+    // --- REVERT BUTTON AFTER 2s ---
+    setTimeout(() => {
+        $btn.text('Send Message');
+        $btn.prop('disabled', false);
+    }, 2000);
+
+    // --- SAVE FORM DATA AFTER SHORT DELAY ---
     setTimeout(function () {
         let messages = app.getFromStorage('contact-messages') || [];
         messages.push(formData);
         app.saveToStorage('contact-messages', messages);
 
-        app.showNotification('Thank you! Your message has been sent. We\'ll get back to you within 24 hours.', 'success');
-
-        $('#contact-form')[0].reset();
-
+        // If newsletter checkbox was checked
         if (formData.newsletter) {
-            setTimeout(function () {
-                app.showNotification('You\'ve been subscribed to our newsletter!', 'success');
-            }, 1000);
+            app.showNotification("You've been subscribed to our newsletter!", 'success');
         }
-    }, 1500);
+    }, 500);
 }
+
 
 function toggleFAQ(questionElement) {
     const $faqItem = $(questionElement).parent();
