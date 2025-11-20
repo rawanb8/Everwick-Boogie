@@ -6,8 +6,24 @@ const app = {
   colors: [],
   sizes: [],
   containers: [],
+  containers: [],
   wicks:[],
 
+  // Utility: debounce for search
+  debounce(fn, delay) {
+    let timeout;
+    return function(...args) {
+      clearTimeout(timeout);
+      timeout = setTimeout(() => fn.apply(this, args), delay);
+    };
+  },
+
+  getSizes() {
+    return this.sizes || [];
+  },
+  getColors() { return this.colors || []; },
+  getContainers() { return this.containers || []; },
+  getWicks() { return this.wicks || []; },
   // Utility: debounce for search
   debounce(fn, delay) {
     let timeout;
@@ -29,17 +45,12 @@ const app = {
   getColorById(id) { return this.colors.find(c => c.id === id) || null; },
   getContainerById(id) { return this.containers.find(c => c.id === id) || null; },
   getWickById(id) { return this.wicks.find(w => w.id === id) || null; },
-  getSizeById(id) { return this.sizes.find(s => s.id === id) || null; },
-  getColorById(id) { return this.colors.find(c => c.id === id) || null; },
-  getContainerById(id) { return this.containers.find(c => c.id === id) || null; },
-  getWickById(id) { return this.wicks.find(w => w.id === id) || null; },
   formatPrice(price) { return `$${Number(price).toFixed(2)}`; },
 
   async loadData() {
     try {
       // fetch products/scents if not already loaded
-      if (!this.scents.length || !this.products.length) {
-      if (!this.scents.length || !this.products.length) {
+      if (!this.scents.length) {
         const response = await fetch('../json/products.json');
         const data = await response.json();
         this.scents = data.scents.map(s => ({
@@ -47,6 +58,10 @@ const app = {
           aggressiveness: s.aggressiveness || 2
         }));
         this.products = data.products || [];
+        this.colors = data.color || [];
+        this.sizes = data.size || [];
+        this.containers = data.container || [];
+        this.wicks = data.wick || [];
         this.colors = data.color || [];
         this.sizes = data.size || [];
         this.containers = data.container || [];
@@ -118,6 +133,19 @@ const app = {
   },
 
   // Add to cart (stored in localStorage)
+  // Search products by name or scent name
+  searchProducts(query) {
+    const q = query.toLowerCase();
+    return this.products.filter(product => {
+      const scent = this.getScentById(product.scentId);
+      return (
+        product.name.toLowerCase().includes(q) ||
+        (scent && scent.name.toLowerCase().includes(q))
+      );
+    });
+  },
+
+  // Add to cart (stored in localStorage)
   addToCart(productId, quantity = 1) {
     try {
       let cart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -126,6 +154,8 @@ const app = {
       const product = this.getProductById(productId);
       if (!product) return false;
       
+      for (let i = 0; i < quantity; i++) {
+        cart.push({ productId: productId, addedAt: new Date().toISOString() });
       for (let i = 0; i < quantity; i++) {
         cart.push({ productId: productId, addedAt: new Date().toISOString() });
       }
@@ -139,10 +169,18 @@ const app = {
 
   // Get total price of cart
   getCartTotal() {
+  // Get total price of cart
+  getCartTotal() {
     try {
       let cart = JSON.parse(localStorage.getItem('cart') || '[]');
       if (!Array.isArray(cart)) cart = [];
       
+      let total = 0;
+      cart.forEach(item => {
+        const product = this.getProductById(item.productId);
+        if (product) total += product.price;
+      });
+      return total;
       let total = 0;
       cart.forEach(item => {
         const product = this.getProductById(item.productId);
