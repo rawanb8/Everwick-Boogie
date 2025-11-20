@@ -320,7 +320,7 @@ function validatePaymentForm() {
   const cardNumberField = document.getElementById('card-number');
   if (cardNumberField) {
     const cardNumber = cardNumberField.value.replace(/\s/g, '');
-    if (cardNumber.length < 13 || cardNumber.length > 19) {
+    if (cardNumber.length < 3 || cardNumber.length > 22) {
       cardNumberField.classList.add('error');
       isValid = false;
     }
