@@ -34,7 +34,7 @@ const app = {
   async loadData() {
     try {
       // fetch products/scents if not already loaded
-      if (!this.scents.length || !this.products.length) {
+      if (!this.scents.length) {
         const response = await fetch('../json/products.json');
         const data = await response.json();
         this.scents = data.scents.map(s => ({
