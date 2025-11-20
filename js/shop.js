@@ -503,19 +503,19 @@ function showProductDetails(productId) {
 function addProductToCart(productId, quantity = 1) {
   const product = app.getProductById(productId);
   if (!product) {
-    alert('Product not found');
+    app.showNotification('Product not found');
     return;
   }
   
   if (product.stock <= 0) {
-    alert('Product is out of stock');
+    app.showNotification('Product is out of stock');
     return;
   }
   
   const qty = Math.min(parseInt(quantity) || 1, product.stock);
   
   if (app.addToCart(productId, qty)) {
-    alert(`Added ${qty} ${product.name} to cart`);
+    app.showNotification(`Added ${qty} ${product.name} to cart`);
     // Update cart count in navbar
     updateCartCountDisplay();
     // Close product modal if open
@@ -525,7 +525,7 @@ function addProductToCart(productId, quantity = 1) {
       document.body.classList.remove('modal-open');
     }
   } else {
-    alert('Failed to add to cart');
+    app.showNotification('Failed to add to cart');
   }
 }
 

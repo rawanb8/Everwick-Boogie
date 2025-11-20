@@ -53,7 +53,8 @@ function loadCartReview() {
     
     const scent = app.getScentById(product.scentId);
     const itemQuantity = parseInt(item.quantity) || 1;
-    const itemPrice = parseFloat(item.price) || 0;
+    // Use product price if item price is 0 or missing
+    const itemPrice = parseFloat(item.price) || parseFloat(product.price) || 0;
     const itemTotal = itemPrice * itemQuantity;
     
     return `
@@ -91,7 +92,8 @@ function loadOrderSummary() {
     if (!product) return '';
     
     const itemQuantity = parseInt(item.quantity) || 1;
-    const itemPrice = parseFloat(item.price) || 0;
+    // Use product price if item price is 0 or missing
+    const itemPrice = parseFloat(item.price) || parseFloat(product.price) || 0;
     const itemTotal = itemPrice * itemQuantity;
     
     return `
@@ -114,8 +116,7 @@ function updateOrderTotals() {
   
   const subtotal = app.getCartTotal();
   const shippingCost = calculateShippingCost(subtotal) || 0;
-  const tax = (subtotal || 0) * 0.08;
-  const total = (subtotal || 0) + shippingCost + tax;
+  const total = (subtotal || 0) + shippingCost;
   
   totalsContainer.innerHTML = `
     <div class="total-line">
@@ -125,10 +126,6 @@ function updateOrderTotals() {
     <div class="total-line">
       <span>Shipping:</span>
       <span>${shippingCost === 0 ? 'FREE' : app.formatPrice(shippingCost)}</span>
-    </div>
-    <div class="total-line">
-      <span>Tax:</span>
-      <span>${app.formatPrice(tax)}</span>
     </div>
     <div class="total-line total-final">
       <span>Total:</span>
@@ -286,7 +283,7 @@ function validateCurrentStep() {
 }
 
 function validateShippingForm() {
-  const requiredFields = ['first-name', 'last-name', 'email', 'address', 'city', 'state', 'zip'];
+  const requiredFields = ['first-name', 'last-name', 'email', 'address', 'city', 'zip'];
   let isValid = true;
   
   requiredFields.forEach(fieldId => {
@@ -342,15 +339,13 @@ function processOrder() {
   const cart = app.getCart();
   const subtotal = app.getCartTotal() || 0;
   const shippingCost = calculateShippingCost(subtotal) || 0;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shippingCost + tax;
+  const total = subtotal + shippingCost;
   
   orderData = {
     orderId: 'CW' + Date.now(),
     items: cart,
     subtotal: subtotal,
     shipping: shippingCost,
-    tax: tax,
     total: total,
     shippingAddress: getShippingAddress(),
     orderDate: new Date().toLocaleDateString()
@@ -374,7 +369,6 @@ function getShippingAddress() {
     address: document.getElementById('address')?.value || '',
     address2: document.getElementById('address2')?.value || '',
     city: document.getElementById('city')?.value || '',
-    state: document.getElementById('state')?.value || '',
     zip: document.getElementById('zip')?.value || ''
   };
 }
@@ -395,7 +389,8 @@ function displayOrderConfirmation() {
         ${orderData.items.map(item => {
           const product = app.getProductById(item.productId);
           if (!product) return '';
-          return `<div class="confirmation-item">${product.name} (Qty: ${item.quantity})</div>`;
+          const itemQuantity = parseInt(item.quantity) || 1;
+          return `<div class="confirmation-item">${product.name} (Qty: ${itemQuantity})</div>`;
         }).join('')}
       </div>
       
@@ -407,7 +402,7 @@ function displayOrderConfirmation() {
         <h4>Shipping To:</h4>
         <p>${orderData.shippingAddress.firstName} ${orderData.shippingAddress.lastName}</p>
         <p>${orderData.shippingAddress.address}</p>
-        <p>${orderData.shippingAddress.city}, ${orderData.shippingAddress.state} ${orderData.shippingAddress.zip}</p>
+        <p>${orderData.shippingAddress.city}, ${orderData.shippingAddress.zip}</p>
       </div>
       
       <div class="order-date">
