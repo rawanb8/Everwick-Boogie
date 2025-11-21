@@ -24,7 +24,7 @@
     </section>
 
     <!-- Guiding Tabs -->
-    <section class="tabs-section">
+    <section class="tabs-section" id="scent-lib">
         <div class="container">
             <div class="tabs">
                 <button class="tab-btn active" onclick="showTab('library')">Scents Library</button>
@@ -75,7 +75,6 @@
                                 <option value="summer">Summer</option>
                                 <option value="fall">Fall</option>
                                 <option value="winter">Winter</option>
-                                <option value="all-year">All year</option>
                             </select>
                         </div>
 
@@ -90,7 +89,7 @@
                             </select>
                         </div>
                     </div>
-                    <button class="btn btn-secondary clear" onclick="clearFilters()">Clear All</button>
+                    <button class="btn clear" onclick="clearFilters()">Clear All</button>
                 </div>
             </div>
         </section>
@@ -130,7 +129,7 @@
                     </div>
 
                     <div class="quiz-navigation">
-                        <button class=" btn btn-secondary" id="prev-btn" onclick="previousQuestion()"
+                        <button class=" btn btn-outline" id="prev-btn" onclick="previousQuestion()"
                             disabled>Previous</button>
                         <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()">Next</button>
                         <button class="btn btn-primary" id="submit-btn" onclick="submitQuiz()">Get Results</button>

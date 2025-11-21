@@ -127,6 +127,25 @@
     renderPage();
   })();
 
+  // Select all review cards
+const reviewCards = document.querySelectorAll('.review-card');
+
+const observerOptions = {
+  threshold: 0.1 // triggers when 10% of card is visible
+};
+
+const observer = new IntersectionObserver((entries, observer) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('animate');
+      observer.unobserve(entry.target); // only animate once
+    }
+  });
+}, observerOptions);
+
+reviewCards.forEach(card => observer.observe(card));
+
+
   /* ========== CATEGORY CARDS ========== */
   (function initCategories() {
     if (!categoryList) return;
@@ -219,15 +238,14 @@
     article.className = 'product-card';
     article.dataset.productId = p.id || '';
 
+    const imgWrap = document.createElement('div');
+    imgWrap.className = 'product-image';
+
+    // actual image
     const img = document.createElement('img');
-    img.className = 'product-image';
     img.alt = p.name || 'Product';
     img.loading = 'lazy';
     img.src = Array.isArray(p.images) && p.images.length ? p.images[0] : '/media/placeholder/product-placeholder.png';
-    // css handles sizing; inline fallback:
-    img.style.width = '100%';
-    img.style.height = '220px';
-    img.style.objectFit = 'cover';
 
     const title = document.createElement('h3');
     title.className = 'product-title';
@@ -258,7 +276,8 @@
     actions.appendChild(viewBtn);
     actions.appendChild(shopLink);
 
-    article.appendChild(img);
+    imgWrap.appendChild(img);
+    article.appendChild(imgWrap);
     article.appendChild(title);
     article.appendChild(price);
     article.appendChild(actions);

@@ -1,4 +1,4 @@
-const app = {
+let app = {
   data: {},
   scents: [],
   products: [],
@@ -6,12 +6,12 @@ const app = {
   colors: [],
   sizes: [],
   containers: [],
-  wicks:[],
+  wicks: [],
 
   // Utility: debounce for search
   debounce(fn, delay) {
     let timeout;
-    return function(...args) {
+    return function (...args) {
       clearTimeout(timeout);
       timeout = setTimeout(() => fn.apply(this, args), delay);
     };
@@ -35,8 +35,8 @@ const app = {
     try {
       // fetch products/scents if not already loaded
       if (!this.scents.length) {
-        const response = await fetch('../json/products.json');
-        const data = await response.json();
+        let response = await fetch('../json/products.json');
+        let data = await response.json();
         this.scents = data.scents.map(s => ({
           ...s,
           aggressiveness: s.aggressiveness || 2
@@ -53,12 +53,12 @@ const app = {
   },
 
   calculateQuizResults(answers) {
-    const scents = this.getScents();
-    const scores = scents.map(scent => ({ scent, score: 0 }));
+    let scents = this.getScents();
+    let scores = scents.map(scent => ({ scent, score: 0 }));
 
     answers.forEach((answer, questionIndex) => {
       scores.forEach(item => {
-        const scent = item.scent;
+        let scent = item.scent;
         switch (questionIndex) {
           case 0: // Mood
             if (scent.mood === answer) item.score += 3;
@@ -67,7 +67,7 @@ const app = {
             if (scent.family === answer) item.score += 3;
             break;
           case 2: // Strength
-            const strengthDiff = Math.abs(scent.aggressiveness - parseInt(answer));
+            let strengthDiff = Math.abs(scent.aggressiveness - parseInt(answer));
             item.score += Math.max(3 - strengthDiff, 0);
             break;
           case 3: // Season
@@ -102,9 +102,9 @@ const app = {
 
   // Search products by name or scent name
   searchProducts(query) {
-    const q = query.toLowerCase();
+    let q = query.toLowerCase();
     return this.products.filter(product => {
-      const scent = this.getScentById(product.scentId);
+      let scent = this.getScentById(product.scentId);
       return (
         product.name.toLowerCase().includes(q) ||
         (scent && scent.name.toLowerCase().includes(q))
@@ -117,12 +117,12 @@ const app = {
     try {
       let cart = JSON.parse(localStorage.getItem('cart') || '[]');
       if (!Array.isArray(cart)) cart = [];
-      
-      const product = this.getProductById(productId);
+
+      let product = this.getProductById(productId);
       if (!product) return false;
-      
+
       // Check if product already in cart, if so increment quantity
-      const existingItem = cart.find(item => item.productId === productId);
+      let existingItem = cart.find(item => item.productId === productId);
       if (existingItem) {
         existingItem.quantity = (existingItem.quantity || 1) + quantity;
       } else {
@@ -135,7 +135,7 @@ const app = {
           addedAt: new Date().toISOString()
         });
       }
-      
+
       localStorage.setItem('cart', JSON.stringify(cart));
       return true;
     } catch (err) {
@@ -148,7 +148,7 @@ const app = {
     try {
       let cart = JSON.parse(localStorage.getItem('cart') || '[]');
       if (!Array.isArray(cart)) return [];
-      
+
       // Ensure all cart items have required properties with proper types
       return cart.map(item => ({
         id: item.id || 'item_' + Date.now(),
@@ -167,7 +167,7 @@ const app = {
     try {
       let cart = JSON.parse(localStorage.getItem('cart') || '[]');
       if (!Array.isArray(cart)) cart = [];
-      
+
       cart = cart.filter(item => item.id !== itemId);
       localStorage.setItem('cart', JSON.stringify(cart));
       return true;
@@ -181,12 +181,12 @@ const app = {
     try {
       let cart = JSON.parse(localStorage.getItem('cart') || '[]');
       if (!Array.isArray(cart)) cart = [];
-      
-      const item = cart.find(i => i.id === itemId);
+
+      let item = cart.find(i => i.id === itemId);
       if (item) {
         item.quantity = Math.max(1, parseInt(quantity) || 1);
       }
-      
+
       localStorage.setItem('cart', JSON.stringify(cart));
       return true;
     } catch (err) {
@@ -210,18 +210,36 @@ const app = {
     try {
       let cart = JSON.parse(localStorage.getItem('cart') || '[]');
       if (!Array.isArray(cart)) return 0;
-      
+
       return cart.reduce((total, item) => {
-        const itemQuantity = parseInt(item.quantity) || 1;
+        let itemQuantity = parseInt(item.quantity) || 1;
         // Use product price if item price is 0 or missing
-        const itemPrice = parseFloat(item.price) || parseFloat(this.getProductById(item.productId)?.price) || 0;
+        let itemPrice = parseFloat(item.price) || parseFloat(this.getProductById(item.productId)?.price) || 0;
         return total + (itemPrice * itemQuantity);
       }, 0);
     } catch (err) {
       console.error('Failed to calculate cart total:', err);
       return 0;
     }
-  }
+  },
+
+  getFromStorage(key) {
+    try {
+      return JSON.parse(localStorage.getItem(key) || 'null');
+    } catch (e) {
+      console.error('Failed to get from storage:', e);
+      return null;
+    }
+  },
+
+  saveToStorage(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (e) {
+      console.error('Failed to save to storage:', e);
+    }
+  },
+
 
 };
 
@@ -296,30 +314,30 @@ const app = {
   function updateCartCount() {
     try {
       let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-       
-      setTimeout(()=>{
+
+      setTimeout(() => {
         // set timout to ensure navbar is loaded 
-      let els = document.querySelectorAll('#cart-count, #mobile-cart-count');
-   
-      els.forEach(e => { 
-        const count = Array.isArray(cart) ? cart.length : 0; 
-        e.textContent = count; 
-      });
-      },1000)
+        let els = document.querySelectorAll('#cart-count, #mobile-cart-count');
+
+        els.forEach(e => {
+          let count = Array.isArray(cart) ? cart.length : 0;
+          e.textContent = count;
+        });
+      }, 1000)
     } catch (err) {
       console.error('Failed to read cart from localStorage', err);
     }
-  } 
+  }
 
 })();
 
 document.addEventListener('DOMContentLoaded', async () => {
-  const navbarContainer = document.getElementById('navbar');
+  let navbarContainer = document.getElementById('navbar');
 
   if (navbarContainer) {
     try {
-      const response = await fetch('nav.html');
-      const navbarHTML = await response.text();
+      let response = await fetch('nav.html');
+      let navbarHTML = await response.text();
 
       navbarContainer.innerHTML = navbarHTML;
     } catch (error) {
@@ -328,39 +346,46 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   // AFTER nav.html is loaded
-  const loginModal = document.querySelector(".login-modal-wrapper"); // updated
-  const closeBtn = document.querySelector(".login-modal-close");     // updated
-  const loginTriggers = document.querySelectorAll(".open-login");     // stays the same
+document.addEventListener("click", (e) => {
+  let loginModal = document.querySelector(".login-modal-wrapper");
+  let closeBtn = document.querySelector(".login-modal-close");
 
-  loginTriggers.forEach(btn => {
-    btn.addEventListener("click", () => {
-      loginModal.style.display = "flex";
-    });
-  });
+  if (!loginModal) return; // exit if modal not in DOM
 
-  closeBtn?.addEventListener("click", () => {
+  // Open modal if button clicked
+  if (e.target.closest(".open-login")) {
+    loginModal.style.display = "flex";
+  }
+
+  // Close modal if clicking close button
+  if (e.target === closeBtn) {
     loginModal.style.display = "none";
-  });
+  }
 
-  // Close modal if clicking outside the content
-  window.addEventListener("click", e => {
-    if (e.target === loginModal) loginModal.style.display = "none";
-  });
+  // Close modal if clicking outside modal content (on overlay)
+  if (e.target === loginModal) {
+    loginModal.style.display = "none";
+  }
+});
 
-  // Optional: close on Escape key
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && loginModal.style.display === "flex") {
-      loginModal.style.display = "none";
-    }
-  });
+// Close on Escape key
+document.addEventListener("keydown", (e) => {
+  let loginModal = document.querySelector(".login-modal-wrapper");
+  if (!loginModal) return;
+
+  if (e.key === "Escape" && loginModal.style.display === "flex") {
+    loginModal.style.display = "none";
+  }
+});
 
 
-  const footerContainer = document.getElementById('footer');
+
+  let footerContainer = document.getElementById('footer');
 
   if (footerContainer) {
     try {
-      const response = await fetch('footer.html');
-      const footerHTML = await response.text();
+      let response = await fetch('footer.html');
+      let footerHTML = await response.text();
       footerContainer.innerHTML = footerHTML;
 
       // Optional: initialize footer JS (newsletter form)
@@ -451,22 +476,22 @@ function initNewsletterForm() {
   });
 }
 
-const loginForm = document.getElementById("loginForm");
+let loginForm = document.getElementById("loginForm");
 
 loginForm.addEventListener("submit", (e) => {
   e.preventDefault(); // prevent page reload
 
-  const username = document.getElementById("username").value.trim();
-  const password = document.getElementById("password").value.trim();
+  let username = document.getElementById("username").value.trim();
+  let password = document.getElementById("password").value.trim();
 
   let loginModal = document.querySelector('.login-modal-wrapper')
-  const allowedUsers = [
+  let allowedUsers = [
     { username: "rama", password: "12345" },
     { username: "maryam", password: "6789" },
     { username: "rawan", password: "1011" }
   ];
   // check if entered credentials match any user in the array
-  const user = allowedUsers.find(u => u.username === username && u.password === password);
+  let user = allowedUsers.find(u => u.username === username && u.password === password);
 
   if (user) {
     alert(`Login successful! Welcome, ${user.username}`);

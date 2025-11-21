@@ -215,6 +215,7 @@ h3 {
     flex-wrap: wrap;
     gap: var(--space-2xl);
     align-items: stretch;
+    justify-content: center;
 }
 
 .text-center {
@@ -230,6 +231,9 @@ h3 {
     padding: var(--space-2xl);
     border-radius: var(--radius-lg);
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
     transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
 }
 
@@ -241,12 +245,12 @@ h3 {
 
 /* Icon */
 .value-icon {
-    font-size: 3rem;
+    font-size: var(--font-size-5x1);
     margin-bottom: var(--space-lg);
 }
 
 .value-icon i {
-    font-size: 3rem;
+    font-size: var(--font-size-5x1);
     color: var(--primary-color);
     border: 3px solid var(--primary-color);
     border-radius: 50%;
@@ -277,11 +281,13 @@ h3 {
 
 .value-card p {
     margin-bottom: var(--space-lg);
+    flex-grow: 1;
 }
 
 .value-details {
     list-style: none;
-    text-align: left;
+    
+    margin-top: auto;
 }
 
 .value-details li {
@@ -637,15 +643,6 @@ select:focus {
         text-align: center;
     }
 
-    .timeline-item {
-        flex-direction: column;
-        gap: var(--space-md);
-    }
-
-    .timeline-item:not(:last-child):before {
-        display: none;
-    }
-
     .stats-grid {
         flex-wrap: wrap;
     }
@@ -663,11 +660,6 @@ select:focus {
     }
 }
 
-@media (max-width: 360px) {
-    .timeline-item {
-        gap: var(--space-sm);
-    }
-}
 
 @media (max-width: 570px) {
     .contact-form-section,
@@ -688,17 +680,6 @@ select:focus {
         flex-direction: column;
         gap: var(--space-lg);
         text-align: center;
-    }
-
-    .timeline-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: var(--space-sm);
-        position: relative;
-    }
-
-    .timeline-item:not(:last-child):before {
-        display: none;
     }
 
     .timeline-marker {

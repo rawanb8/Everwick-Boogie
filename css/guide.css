@@ -59,7 +59,6 @@
   transition: all var(--transition-fast);
   font-weight: 500;
 }
-
 .tab-btn.active {
   border-bottom-color: var(--primary-color);
   color: var(--primary-color);
@@ -127,7 +126,8 @@
   display: block;
   background-color: #8a9a5b;
   /* olive-green */
-   margin: var(--space-lg) auto 0 auto; /* top margin, horizontal auto centers it */
+  margin: var(--space-lg) auto 0 auto;
+  /* top margin, horizontal auto centers it */
   color: #fff;
   font-weight: 600;
   border: none;
@@ -175,7 +175,36 @@
     width: 100%;
     padding: var(--space-md);
   }
+
+  .tabs {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .filter-grid,
+  .scent-details-full {
+    grid-template-columns: 1fr;
+  }
+
+  .quiz-navigation {
+    flex-direction: column;
+    display: flex;
+    gap: var(--space-md);
+  }
+
+  .recommendation-actions {
+    flex-direction: column;
+  }
+
+  .scent-image {
+    aspect-ratio: 1;
+    /* make it square on tablets */
+  }
+
 }
+
+
+@media (max-width: 768px) {}
 
 .scent-card {
   display: flex;
@@ -195,11 +224,13 @@
 
 #scents-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 250px));
   gap: var(--space-md);
-  justify-content: center;  /* centers items if row is not full */
-  max-width: 1200px;        /* optional: prevents row from stretching too wide */
-  margin: 0 auto;          
+  justify-content: center;
+  /* centers items if row is not full */
+  max-width: 1200px;
+  /* optional: prevents row from stretching too wide */
+  margin: 0 auto;
 }
 
 
@@ -347,6 +378,12 @@
   font-weight: 100;
 }
 
+.quiz-question h3 {
+    color: var(--text-light);
+   font-family: "Lora";
+   text-align: center;
+}
+
 .quiz-question.active {
   display: block;
 }
@@ -371,47 +408,11 @@
 
 }
 
-.quiz-header h2{
+.quiz-header h2 {
   color: #7e894c;
+  font: "Lora";
+  text-align: center;
 }
-
-.no-results {
-    margin-top: 40px;
-    padding: 35px 20px;
-    text-align: center;
-    font-size: 1.8rem;
-    font-weight: 600;
-    letter-spacing: 3px;
-    color: #444;
-    background: linear-gradient(135deg, #f7f7f7, #ffffff);
-    border-radius: 18px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeUp 0.5s ease forwards;
-}
-
-.no-results i {
-    font-size: 1.5rem;
-    margin: 10px;
-
-    /* Gradient text from palette */
-    background: linear-gradient(45deg, #d4a574, #b8935f, #8b4513);
-    --webkit-background-clip: text;
-    --webkit-text-fill-color: transparent;
-    /* Icon rotation */
-    animation: rotateIcon 2s linear infinite;
-}
-
-
-@keyframes fadeUp {
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-
 
 .quiz-option:hover {
   border-color: var(--primary-color);
@@ -428,6 +429,10 @@
 input[type="range"] {
   accent-color: var(--accent-color);
   flex: 1;
+}
+
+.quiz-options:has(input[type="radio"]:checked) .quiz-option:has(input[type="radio"]:checked) {
+  border: 2px solid var(--accent-color)
 }
 
 /* Chrome / Safari track */
@@ -505,6 +510,43 @@ input[type="range"]::-ms-thumb {
   margin-bottom: var(--space-sm);
 }
 
+.no-results {
+  margin-top: 40px;
+  padding: 35px 20px;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: 3px;
+  color: #444;
+  background:#f7f6ec;
+  border-radius: 18px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.5s ease forwards;
+}
+
+.no-results i {
+  font-size: 1.5rem;
+  margin: 10px;
+
+  /* Gradient text from palette */
+  background: linear-gradient(45deg, #d4a574, #b8935f, #8b4513);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  /* Icon rotation */
+  animation: rotateIcon 2s linear infinite;
+}
+
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .recommendation-card {
   position: relative;
 }
@@ -545,32 +587,6 @@ input[type="range"]::-ms-thumb {
 
 .quiz-actions {
   margin-top: var(--space-2xl);
-}
-
-@media (max-width: 768px) {
-  .tabs {
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .filter-grid,
-  .scent-details-full {
-    grid-template-columns: 1fr;
-  }
-
-  .quiz-navigation {
-    flex-direction: column;
-    gap: var(--space-md);
-  }
-
-  .recommendation-actions {
-    flex-direction: column;
-  }
-
-  .scent-image {
-    aspect-ratio: 1;
-    /* make it square on tablets */
-  }
 }
 
 @media (max-width: 480px) {

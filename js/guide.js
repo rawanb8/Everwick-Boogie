@@ -6,9 +6,9 @@ let filteredScents = [];
 document.addEventListener('DOMContentLoaded', async () => {
   try {
     // Fetch quiz.json
-    const response = await fetch('../json/quiz.json');
+    let response = await fetch('../json/quiz.json');
     if (!response.ok) throw new Error('Failed to load quiz.json');
-    const quizData = await response.json();
+    let quizData = await response.json();
 
     // store data
     app.data = app.data || {};
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateQuizButtons();
 
     // automatically switch to the quiz tab when page loads if hash is present
-    const hashTab = window.location.hash.slice(1);
+    let hashTab = window.location.hash.slice(1);
     if (hashTab && document.getElementById(`${hashTab}-tab`)) {
       showTab(hashTab);
     }
@@ -46,8 +46,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 function initTabs() {
   // allow both data-tab and existing onclick handlers
   document.querySelectorAll('.tab-btn').forEach(btn => {
-    const attr = btn.dataset.tab;
-    const tabName = attr || (btn.getAttribute('onclick') || '').match(/showTab\('([^']+)'/)?.[1];
+    let attr = btn.dataset.tab;
+    let tabName = attr || (btn.getAttribute('onclick') || '').match(/showTab\('([^']+)'/)?.[1];
     if (tabName) {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -69,11 +69,11 @@ function showTab(tabName) {
   });
 
   // show selected tab if exists
-  const tabEl = document.getElementById(`${tabName}-tab`);
+  let tabEl = document.getElementById(`${tabName}-tab`);
   if (tabEl) tabEl.classList.add('active');
 
   // add active to the associated button (data-tab preferred)
-  const btn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`) ||
+  let btn = document.querySelector(`.tab-btn[data-tab="${tabName}"]`) ||
     document.querySelector(`[onclick="showTab('${tabName}')"]`);
   if (btn) btn.classList.add('active');
 
@@ -83,7 +83,7 @@ function showTab(tabName) {
 }
 
 function loadScentsLibrary() {
-  const scents = app.getScents() || []; // returns the full scents array
+  let scents = app.getScents() || []; // returns the full scents array
   // normalize data for consistent filtering (lowercase keys used by filters)
   scents.forEach(s => {
     s.season = s.season?.toLowerCase() || '';
@@ -98,20 +98,20 @@ function loadScentsLibrary() {
 
 function getScentImage(scentId) {
   // Main.js already has product images handling; just ensure fallback here
-  const product = app.products?.find(p => p.scentId === scentId);
+  let product = app.products?.find(p => p.scentId === scentId);
   return product ? product.images[0] : '/media/products/placeholder.png';
 }
 
 
 function displayScents(scents) {
-  const container = document.getElementById('scents-grid');
+  let container = document.getElementById('scents-grid');
   if (!container) return;
 
   container.innerHTML = scents.map(scent => {
-    const displayCategory = scent.category || scent.season || '';
-    const strengthDots = '●'.repeat(Math.min(10, scent.aggressiveness)) + '○'.repeat(10 - Math.min(10, scent.aggressiveness));
-   const product = app.products?.find(p => p.scentId === scent.id);
-    const priceHtml = product ? app.formatPrice(product.price) : '$0.00';
+    let displayCategory = scent.category || scent.season || '';
+    let strengthDots = '●'.repeat(Math.min(10, scent.aggressiveness)) + '○'.repeat(10 - Math.min(10, scent.aggressiveness));
+   let product = app.products?.find(p => p.scentId === scent.id);
+    let priceHtml = product ? app.formatPrice(product.price) : '$0.00';
 
     return `
       <div class="scent-card card" role="button" tabindex="0" onclick="showScentDetails(${scent.id})"
@@ -145,37 +145,36 @@ function escapeHtml(str) {
 
 // when the user changes a filter the applyFilters() runs
 function setupFilters() {
-  const filters = ['category-filter', 'mood-filter', 'season-filter', 'strength-filter'];
+  let filters = ['category-filter', 'mood-filter', 'season-filter', 'strength-filter'];
 
   filters.forEach(filterId => {
-    const el = document.getElementById(filterId);
+    let el = document.getElementById(filterId);
     if (el) el.addEventListener('change', applyFilters);
   });
 }
 
 function applyFilters() {
-  // get all elements + use const since they're not reassigned
-  const category = document.getElementById('category-filter')?.value.toLowerCase() || '';
-  const mood = document.getElementById('mood-filter')?.value.toLowerCase() || '';
-  const season = document.getElementById('season-filter')?.value.toLowerCase() || '';
-  const strength = document.getElementById('strength-filter')?.value || '';
+  let category = document.getElementById('category-filter')?.value.toLowerCase() || '';
+  let mood = document.getElementById('mood-filter')?.value.toLowerCase() || '';
+  let season = document.getElementById('season-filter')?.value.toLowerCase() || '';
+  let strength = document.getElementById('strength-filter')?.value || '';
 
   let filtered = app.getScents() || [];
 
   // normalize scents before filtering (ensure lowercase for comparisons)
   filtered.forEach(s => {
-    s.category = s.category.toLowerCase();
+    s.family = s.family.toLowerCase();
     s.mood = s.mood.toLowerCase();
     s.season = s.season.toLowerCase();
     s.aggressiveness = Number(s.aggressiveness) || 0;
   });
 
   // apply filters if the values do exist
-  if (category) filtered = filtered.filter(s => s.category === category);
+  if (category) filtered = filtered.filter(s => s.family === category);
   if (mood) filtered = filtered.filter(s => s.mood === mood);
   if (season) filtered = filtered.filter(s => s.season === season);
   if (strength) {
-    const [min,max] = strength.split('-').map(Number);
+    let [min,max] = strength.split('-').map(Number);
     if (!isNaN(min) && !isNaN(max)) filtered = filtered.filter(s => s.aggressiveness >= min && s.aggressiveness <= max);
   }
 
@@ -196,26 +195,28 @@ function applyFilters() {
 function clearFilters() {
   let ids = ['category-filter', 'mood-filter', 'season-filter', 'strength-filter'];
   ids.forEach(id => {
-    const el = document.getElementById(id);
+    let el = document.getElementById(id);
     if (el) el.value = '';
   });
   loadScentsLibrary();
+
+   document.getElementById("no-results").style.display = "none";
 }
 
 function showScentDetails(scentId) {
-  const scent = app.getScentById ? app.getScentById(scentId) : (app.getScents() || []).find(s => s.id === scentId);
+  let scent = app.getScentById ? app.getScentById(scentId) : (app.getScents() || []).find(s => s.id === scentId);
   if (!scent) return;
 
-  const scentName = escapeHtml(scent.name || '');
-  const scentDescription = escapeHtml(scent.description || '');
-  const displayCategory = escapeHtml(scent.category || scent.season || '');
-  const mood = escapeHtml(scent.mood || '');
-  const season = escapeHtml(scent.season || '');
-  const priceHtml = app.formatPrice ? app.formatPrice(scent.price) : `$${scent.price}`;
+  let scentName = escapeHtml(scent.name || '');
+  let scentDescription = escapeHtml(scent.description || '');
+  let displayCategory = escapeHtml(scent.category || scent.season || '');
+  let mood = escapeHtml(scent.mood || '');
+  let season = escapeHtml(scent.season || '');
+  let priceHtml = app.formatPrice ? app.formatPrice(scent.price) : `$${scent.price}`;
 
-  const notesHtml = Array.isArray(scent.notes) ? scent.notes.map(note => `<span class="note-tag">${escapeHtml(note)}</span>`).join('') : '';
+  let notesHtml = Array.isArray(scent.notes) ? scent.notes.map(note => `<span class="note-tag">${escapeHtml(note)}</span>`).join('') : '';
 
-  const modalBody = `
+  let modalBody = `
     <div class="scent-details-full">
       <img src="" alt="${scentName}" class="scent-detail-image">
       <div class="scent-info">
@@ -240,8 +241,8 @@ function showScentDetails(scentId) {
     </div>
   `;
 
-  const titleEl = document.getElementById('scent-modal-title');
-  const bodyEl = document.getElementById('scent-modal-body');
+  let titleEl = document.getElementById('scent-modal-title');
+  let bodyEl = document.getElementById('scent-modal-body');
   if (titleEl) titleEl.textContent = scent.name || '';
   if (bodyEl) bodyEl.innerHTML = modalBody;
 
@@ -249,13 +250,13 @@ function showScentDetails(scentId) {
 }
 
 function loadQuizQuestions() {
-  const questions = app.data.quiz_question || [];
-  const container = document.getElementById('quiz-questions');
+  let questions = app.data.quiz_question || [];
+  let container = document.getElementById('quiz-questions');
   if (!container) return;
 
   container.innerHTML = questions.map((question, index) => {
     if (question.type === 'single_choice') {
-      const optionsHtml = (question.options || []).map((option) => `
+      let optionsHtml = (question.options || []).map((option) => `
         <label class="quiz-option">
           <input type="radio" name="question-${index}" value="${escapeHtml(option.value)}">
           <span class="option-text">${escapeHtml(option.label)}</span>
@@ -268,7 +269,7 @@ function loadQuizQuestions() {
         </div>
       `;
     } else if (question.type === 'scale') {
-      const defaultValue = (question.default && Number(question.default)) || Math.round(((question.min || 1) + (question.max || 10)) / 2);
+      let defaultValue = (question.default && Number(question.default)) || Math.round(((question.min || 1) + (question.max || 10)) / 2);
       return `
         <div class="quiz-question ${index === 0 ? 'active' : ''}" id="question-${index}">
           <h3>${escapeHtml(question.question)}</h3>
@@ -295,8 +296,8 @@ function loadQuizQuestions() {
   // setup the scale inputs AFTER rendering
   questions.forEach((question, index) => {
     if (question.type === 'scale') {
-      const scaleInput = document.querySelector(`input[name="question-${index}"]`);
-      const valueDisplay = document.getElementById(`scale-value-${index}`);
+      let scaleInput = document.querySelector(`input[name="question-${index}"]`);
+      let valueDisplay = document.getElementById(`scale-value-${index}`);
       if (scaleInput && valueDisplay) {
         valueDisplay.textContent = scaleInput.value;
         scaleInput.addEventListener('input', (e) => {
@@ -308,7 +309,7 @@ function loadQuizQuestions() {
 }
 
 function nextQuestion() {
-  const currentAnswer = getCurrentAnswer();
+  let currentAnswer = getCurrentAnswer();
   if (!currentAnswer && currentAnswer !== 0 && currentAnswer !== '0') {
     app.showNotification?.('Please select an answer', 'warning');
     return;
@@ -339,14 +340,14 @@ function previousQuestion() {
 }
 
 function getCurrentAnswer() {
-  const question = app.data.quiz_question[currentQuizQuestion];
+  let question = app.data.quiz_question[currentQuizQuestion];
   if (!question) return null;
 
   if (question.type === 'single_choice') {
-    const selected = document.querySelector(`input[name="question-${currentQuizQuestion}"]:checked`);
+    let selected = document.querySelector(`input[name="question-${currentQuizQuestion}"]:checked`);
     return selected ? selected.value : null;
   } else if (question.type === 'scale') {
-    const scaleInput = document.querySelector(`input[name="question-${currentQuizQuestion}"]`);
+    let scaleInput = document.querySelector(`input[name="question-${currentQuizQuestion}"]`);
     return scaleInput ? Number(scaleInput.value) : null; // FIXED: convert to number immediately
   }
 
@@ -355,21 +356,30 @@ function getCurrentAnswer() {
 
 // updates the progress bar width & textual progress
 function updateQuizProgress() {
-  const total = app.data.quiz_question.length || 1;
-  const progress = ((currentQuizQuestion + 1) / total) * 100;
-  const fillEl = document.getElementById('progress-fill');
-  const textEl = document.getElementById('progress-text');
+  let total = app.data.quiz_question.length || 1;
+  let progress = ((currentQuizQuestion + 1) / total) * 100;
+  let fillEl = document.getElementById('progress-fill');
+  let textEl = document.getElementById('progress-text');
   if (fillEl) fillEl.style.width = `${progress}%`;
   if (textEl) textEl.textContent = `Question ${currentQuizQuestion + 1} of ${total}`;
 }
 
 // disables the prevbtn on first question & hides nextbtn + shows submitbtn on last question
 function updateQuizButtons() {
-  const prevBtn = document.getElementById('prev-btn');
-  const nextBtn = document.getElementById('next-btn');
-  const submitBtn = document.getElementById('submit-btn');
+  let prevBtn = document.getElementById('prev-btn');
+  let nextBtn = document.getElementById('next-btn');
+  let submitBtn = document.getElementById('submit-btn');
 
-  if (prevBtn) prevBtn.disabled = currentQuizQuestion === 0;
+   if (prevBtn) {
+    // Hide on first question, show otherwise
+    if (currentQuizQuestion === 0) {
+      prevBtn.style.visibility = 'hidden';
+      prevBtn.disabled = true; // keep it disabled for safety
+    } else {
+      prevBtn.style.visibility = 'visible';
+      prevBtn.disabled = false;
+    }
+  }
 
   if (nextBtn && submitBtn) {
     if (currentQuizQuestion === app.data.quiz_question.length - 1) {
@@ -384,7 +394,7 @@ function updateQuizButtons() {
 
 // make sure all quiz questions are answered
 function submitQuiz() {
-  const currentAnswer = getCurrentAnswer();
+  let currentAnswer = getCurrentAnswer();
   if (!currentAnswer && currentAnswer !== 0 && currentAnswer !== '0') {
     app.showNotification?.('Please select an answer', 'warning');
     return;
@@ -398,17 +408,17 @@ function submitQuiz() {
     return;
   }
 
-  const recommendations = app.calculateQuizResults(quizAnswers) || [];
+  let recommendations = app.calculateQuizResults(quizAnswers) || [];
   displayQuizResults(recommendations);
 
   // Show results tab
-  const resultTabBtn = document.getElementById('result-tab');
+  let resultTabBtn = document.getElementById('result-tab');
   if (resultTabBtn) resultTabBtn.style.display = 'inline-block';
   showTab('results');
 }
 
 function displayQuizResults(recommendations) {
-  const container = document.getElementById('quiz-results');
+  let container = document.getElementById('quiz-results');
   if (!container) return;
 
   container.innerHTML = `
@@ -418,13 +428,13 @@ function displayQuizResults(recommendations) {
     </div>
   `;
 
-  const productGrid = document.createElement('div');
+  let productGrid = document.createElement('div');
   productGrid.className = 'recommendations grid grid-3';
 
   recommendations.forEach(scent => {
-    const matchingProducts = app.products.filter(p => p.scentId === scent.id);
+    let matchingProducts = app.products.filter(p => p.scentId === scent.id);
     matchingProducts.forEach(product => {
-      const card = document.createElement('div');
+      let card = document.createElement('div');
       card.className = 'recommendation-card card';
       card.innerHTML = `
         <div class="recommendation-rank">#${scent.id}</div>
@@ -458,10 +468,10 @@ function retakeQuiz() {
 
   // reset scale inputs to midpoint
   document.querySelectorAll('input[type="range"]').forEach(input => {
-    const min = Number(input.min) || 1;
-    const max = Number(input.max) || 10;
+    let min = Number(input.min) || 1;
+    let max = Number(input.max) || 10;
     input.value = Math.round((min + max) / 2);
-    const valueDisplay = document.getElementById(`scale-value-${input.name.split('-')[1]}`);
+    let valueDisplay = document.getElementById(`scale-value-${input.name.split('-')[1]}`);
     if (valueDisplay) valueDisplay.textContent = input.value;
   });
 
