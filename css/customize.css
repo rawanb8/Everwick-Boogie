@@ -100,4 +100,12 @@
 }
 
 /* small animations */
-button { transition: transform .12s ease, box-shadow .12s ease; }
+button { 
+  transition: transform .12s ease, box-shadow .12s ease; }
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
