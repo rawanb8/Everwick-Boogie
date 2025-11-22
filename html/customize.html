@@ -9,75 +9,70 @@
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/customize.css">
 
-  <!-- Font Awesome (for flame icon) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-  <script src="/js/main.js" defer></script>       
-  <script src="/js/customize.js" defer></script>   
+  <script src="/js/main.js" defer></script>
+  <script src="/js/customize.js" defer></script>
 </head>
 
 <body>
   <div id="navbar"></div>
   <div class="page-spacer" aria-hidden="true"></div>
 
-  <main class="container customize-page">
-    <section class="customize-hero section">
-      <h1 class="section-title">Customize your candle</h1>
-      <p class="muted">Pick color, label, size, container and extras — see changes live.</p>
+  <main class="customize-page">
+    <section class="customize-hero">
+      <h1 class="section-title">Craft a candle that feels like you</h1>
+
+      <p class="muted customize-paragraph">Choose your colors, scents, jars, wicks, and finishing touches — and watch your creation come
+        alive in real time.</p>
     </section>
 
-    <section class="customize-grid section">
+    <section class="customize-grid">
       <!-- Controls (left) -->
       <div class="custom-controls">
         <div class="control-group">
-          <h3>Color</h3>
+          <h3 class="custom-title">Color</h3>
           <div id="colors" class="colors-root" role="toolbar" aria-label="Choose color"></div>
         </div>
 
         <div class="control-group">
-          <h3>Label</h3>
+          <h3 class="custom-title">Label</h3>
           <div id="labels" role="radiogroup" aria-label="Choose label"></div>
         </div>
 
         <div class="control-group">
-          <h3>Scent</h3>
+          <h3 class="custom-title">Scent</h3>
           <select id="scent-select" aria-label="Choose scent"></select>
         </div>
 
         <div class="control-group">
-          <h3>Size</h3>
+          <h3 class="custom-title">Size</h3>
           <div id="sizes" class="options-root"></div>
         </div>
 
         <div class="control-group">
-          <h3>Container</h3>
+          <h3 class="custom-title">Container</h3>
           <div id="containers" class="options-root"></div>
         </div>
 
         <div class="control-group">
-          <h3>Wick</h3>
+          <h3 class="custom-title">Wick</h3>
           <div id="wicks" class="wicks-root"></div>
         </div>
 
         <div class="control-group">
-          <h3>Additions</h3>
+          <h3 class="custom-title">Additions</h3>
           <div id="additions" class="additions-root" role="toolbar" aria-label="Add extras"></div>
         </div>
 
-        <div class="control-group price-and-cart">
-          <div class="price-row">
-            <div class="price-label">Price:</div>
-            <div id="custom-price" class="price-value">—</div>
-          </div>
-
+  
           <div id="label-warning" role="alert" aria-live="assertive" class="hidden warning">
             Please choose a label before adding to cart.
           </div>
 
-          <button id="add-to-cart" class="btn btn-primary">Add to cart</button>
+
         </div>
       </div>
 
@@ -94,11 +89,13 @@
 
           <div class="preview-meta">
             <div class="meta-size">
-              <!-- <i class="fa-solid fa-fire flame-icon" aria-hidden="true"></i> -->
               <span id="preview-size-text">Size: —</span>
             </div>
-            <i class="fa-solid fa-fire flame-icon" aria-hidden="true"></i>
-            <div id="preview-burning" class="muted small">Burn time: —</div>
+
+            <span class="burn-inline">
+              <i class="fa-solid fa-fire flame-icon" aria-hidden="true"></i>
+              <span id="preview-burning" class="muted small">Burn time: —</span>
+            </span>
           </div>
 
           <div class="mock-receipt" aria-live="polite">

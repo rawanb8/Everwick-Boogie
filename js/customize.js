@@ -223,59 +223,75 @@
             });
         }
 
-        // containers
         let $containers = $('#containers');
         if ($containers.length) {
             $containers.empty();
             containersList.forEach(c => {
                 let $b = $('<label class="container-item"></label>');
-                let priceText = c.price_modifier ? (' + $' + toNumber(c.price_modifier).toFixed(2)) : '';
+
                 let $radio = $('<input type="radio" name="container-select">')
                     .val(c.id)
                     .attr('data-price', c.price_modifier || c.price || 0);
-                let $title = $('<div class="container-title" />').text(c.name + (priceText ? (' — ' + priceText) : ''));
-                $b.append($radio).append($title);
+
+                let $title = $('<div class="container-title" />').text(c.name);
+
+                // meta — small faded price and optional short description
+                let priceText = (c.price_modifier || c.price || 0);
+                // show "+ $X.XX" only if non-zero, otherwise empty string
+                let priceLabel = priceText ? ('+ $' + toNumber(priceText).toFixed(2)) : '';
+                let descText = c.description ? (' • ' + c.description) : '';
+
+                // put price and short description in a small muted meta line (to style faded)
+                let $meta = $('<div class="container-meta small muted" />')
+                    .text((priceLabel + (descText ? (descText) : '')).trim());
+
+                $b.append($radio).append($title).append($meta);
                 $containers.append($b);
 
-                // Default selection
+                // Default selection classic glass jar
                 if (/classic/i.test(c.name)) $radio.prop('checked', true);
             });
         }
 
-        // wicks (creative display with description)
+
+        // --- WICKS (grid / card style with price + description) ---
         let $wicks = $('#wicks');
         if ($wicks.length) {
             $wicks.empty();
             wicksList.forEach((w, idx) => {
                 let $b = $('<label class="wick-item"></label>');
-                let $radio = $('<input type="radio" name="wick-select">')
+
+                // radio with data-price for price calc
+                let $radio = $('<input type="radio" name="wick-select" aria-label="' + (w.name || 'Wick') + '">')
                     .val(w.id)
                     .attr('data-price', w.price_modifier || w.price || 0);
-                let $wrap = $('<div class="wick-wrap"></div>');
-                let $title = $('<div class="wick-title" />')
-                    .text(w.name + (w.price_modifier ? (' • +$' + toNumber(w.price_modifier).toFixed(2)) : ''));
-                let $desc = $('<div class="wick-desc small muted" />')
-                    .text(w.description || ('Burn quality: ' + (w.burn_quality || 'standard')));
-                $wrap.append($title).append($desc);
-                $b.append($radio).append($wrap);
+
+                // visible title
+                let $title = $('<div class="wick-title" />').text(w.name);
+
+                // price label (show +$X only if non-zero)
+                let priceVal = (w.price_modifier || w.price || 0);
+                let priceLabel = priceVal ? ('+ $' + toNumber(priceVal).toFixed(2)) : '';
+
+                // description (short muted text)
+                let descText = w.description || ('Burn quality: ' + (w.burn_quality || 'standard'));
+
+                // meta line (price and description)
+                let $meta = $('<div class="container-meta small muted wick-meta" />').text(
+                    (priceLabel ? (priceLabel + (descText ? (' • ' + descText) : '')) : descText)
+                );
+
+                // assemble
+                $b.append($radio).append($title).append($meta);
                 $wicks.append($b);
 
-                // Default selection: first wick
+                // default selection: first wick
                 if (idx === 0) $radio.prop('checked', true);
             });
         }
 
-        // scents select already handled in renderOtherControls caller
+
     }
-
-    // Trigger initial state update
-    // state.sizeId = $('input[name="size-select"]:checked').val();
-    // state.containerId = $('input[name="container-select"]:checked').val();
-    // state.wickId = $('input[name="wick-select"]:checked').val();
-    // updatePriceDisplay();
-    // updatePreviewBurnTime();
-    // updateReceipt();
-
     // --- Events ---
     $(document).on('click', '#colors .color-option', function () {
         let selected = $(this).data('color');
