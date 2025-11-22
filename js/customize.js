@@ -23,24 +23,26 @@
         { key: 'dried-flowers', name: 'Dried flowers', price: 4 }
     ];
 
-    function candleImagePath(colorSlug, labelSlug) {
-        colorSlug = (colorSlug || 'pure-white').toString();
-        labelSlug = (labelSlug || 'no-label').toString();
-        return '/media/custom/candles/' + colorSlug + '-' + labelSlug + '.png';
-    }
+  // Image path pattern 
+  // filenames: /media/custom/candles/{colorSlug}-{labelSlug}.png
+  function candleImagePath(colorSlug, labelSlug) {
+    colorSlug = (colorSlug || 'pure-white').toString();
+    labelSlug = (labelSlug || 'no-label').toString();
+    return '/media/custom/candles/' + colorSlug + '-' + labelSlug + '.png';
+  }
 
     let BASE_IMAGE = '/media/custom/base-candle.png';
 
-    // --- State ---
-    let state = {
-        color: 'pure-white',
-        label: 'no-label',
-        scentId: null,
-        sizeId: null,
-        containerId: null,
-        wickId: null,
-        additions: new Set()
-    };
+  // --- State ---
+  let state = {
+    color: 'pure-white',      // selected color slug
+    label: 'no-label',            // 'no-label' | 'label1' | 'label2'
+    scentId: null,
+    sizeId: null,
+    containerId: null,
+    wickId: null,
+    additions: new Set()
+  };
 
     // Data lists (filled from app.data)
     let sizesList = [];
@@ -53,48 +55,44 @@
         return Number.isFinite(n) ? n : 0;
     }
 
-    // --- Preview updates ---
-    function updatePreviewImage() {
-        let path = candleImagePath(state.color, state.label);
-        let $base = $('#layer-base');
-        let $combined = $('#layer-combined');
-
-        // try to load requested combined image (color+label). If loads, show it; otherwise show base.
-        let testImg = new Image();
-        testImg.onload = function () {
-            $combined.attr('src', path).removeClass('hidden').fadeIn(120);
-            $base.addClass('hidden');
+  // Update preview image: picks file by color + label
+  function updatePreviewImage() {
+    let path = candleImagePath(state.color, state.label);
+    // set the main preview image (replace base candle with image we want)
+    let $layerBase = $('#layer-base');
+    if ($layerBase.length) {
+      // attempt to load file and fallback to base image if missing
+      // create temporary image to test existence
+      let testImg = new Image();
+      testImg.onload = function () {
+        $layerBase.attr('src', path);
+      };
+      testImg.onerror = function () {
+        // fallback: try color-no-label variant
+        let fallback = '/media/custom/candles/' + state.color + '-no-label.png';
+        let fb = new Image();
+        fb.onload = function () {
+          $layerBase.attr('src', fallback);
         };
-        testImg.onerror = function () {
-            // fallback: try color + no-label
-            let fallback = '/media/custom/candles/' + state.color + '-no-label.png';
-            let fb = new Image();
-            fb.onload = function () {
-                $combined.attr('src', fallback).removeClass('hidden').fadeIn(120);
-                $base.addClass('hidden');
-            };
-            fb.onerror = function () {
-                // ultimate: show base
-                $combined.addClass('hidden');
-                $base.removeClass('hidden');
-            };
-            fb.src = fallback;
+        fb.onerror = function () {
+          // ultimate fallback
+          $layerBase.attr('src', BASE_IMAGE);
         };
-        testImg.src = path;
-
-        // text updates
-        let labelName = (state.label === 'no-label') ? '' : (' — ' + (LABELS.find(l => l.slug === state.label) || {}).name || '');
-        $('#preview-name').text(capitalizeWords(state.color.replace(/-/g, ' ')) + labelName);
-        let s = scentsList.find(x => x.id === state.scentId);
-        $('#preview-scent').text(s ? s.name : 'Choose a scent');
-
-        // update receipt visuals
-        updateReceipt();
+        fb.src = fallback;
+      };
+      testImg.src = path;
     }
 
-    function capitalizeWords(s) {
-        return (s || '').toString().replace(/\b\w/g, function (c) { return c.toUpperCase(); });
-    }
+    // update preview text (name + scent)
+    $('#preview-name').text((state.label === 'no-label' ? capitalizeWords(state.color.replace(/-/g,' ')) : (capitalizeWords(state.color.replace(/-/g,' ')) + ' — ' + LABELS.find(l=>l.slug===state.label).name)));
+    let scentObj = scentsList.find(s => s.id === state.scentId) || null;
+    $('#preview-scent').text(scentObj ? scentObj.name : 'Choose a scent');
+  }
+
+  // Capitalize helper
+  function capitalizeWords(s) {
+    return (s || '').toString().replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+  }
 
     // --- Price logic ---
     function updatePriceDisplay() {
@@ -172,12 +170,113 @@
         });
     }
 
-    function renderAdditionsControls() {
-        let $root = $('#additions');
-        if (!$root.length) return;
-        $root.empty();
+  
+  function renderAdditionsControls() {
+  let $root = $('#additions');
+  if (!$root.length) return;
+  $root.empty();
 
-        let PLACEHOLDER_SVG = '/media/custom/additions/placeholder.svg';
+  DEFAULT_ADDITIONS.forEach(a => {
+    // build the button and icon
+    let $btn = $('<button type="button" class="addition-toggle" aria-pressed="false"></button>');
+    $btn.attr('data-key', a.key);
+    $btn.attr('data-price', a.price);
+
+    // image element: try svg first, fall back to png if needed
+    // note: you may need to remove leading slash if your site is served from a subdirectory
+    let svgPath = '/media/custom/additions/' + a.key + '.svg';
+    let pngPath = '/media/custom/additions/' + a.key + '.png';
+    let $img = $('<img class="addition-icon" alt="' + a.name + ' icon">')
+      .attr('src', svgPath)
+      .on('error', function () {
+        // on error, try png
+        if ($(this).attr('src') !== pngPath) $(this).attr('src', pngPath);
+      })
+      .css({
+        width: '28px',
+        height: '28px',
+        'vertical-align': 'middle',
+        'margin-right': '0.5rem'
+      });
+
+    let $labelSpan = $('<span class="add-label"></span>').text(a.name);
+    let $priceSpan = $('<span class="add-price"></span>').text(' + $' + toNumber(a.price).toFixed(2)).css({'margin-left':'0.5rem','opacity':0.9});
+
+    // assemble button content
+    $btn.append($img).append($labelSpan).append($priceSpan);
+
+    // style the button (you can keep your existing styles)
+    $btn.css({
+      display: 'inline-flex',
+      'align-items': 'center',
+      gap: '0.6rem',
+      padding: '0.35rem 0.6rem',
+      margin: '0.25rem',
+      cursor: 'pointer',
+      borderRadius: '8px',
+      background: 'var(--secondary-color)'
+    });
+
+    $root.append($btn);
+  });
+
+function renderAdditionsControls() {
+  let $root = $('#additions');
+  if (!$root.length) return;
+  $root.empty();
+
+  DEFAULT_ADDITIONS.forEach(a => {
+    // build the button and icon
+    let $btn = $('<button type="button" class="addition-toggle" aria-pressed="false"></button>');
+    $btn.attr('data-key', a.key);
+    $btn.attr('data-price', a.price);
+
+    // image element: try svg first, fall back to png if needed
+    // note: you may need to remove leading slash if your site is served from a subdirectory
+    let svgPath = '/media/custom/additions/' + a.key + '.svg';
+    let pngPath = '/media/custom/additions/' + a.key + '.png';
+    let $img = $('<img class="addition-icon" alt="' + a.name + ' icon">')
+      .attr('src', svgPath)
+      .on('error', function () {
+        // on error, try png
+        if ($(this).attr('src') !== pngPath) $(this).attr('src', pngPath);
+      })
+      .css({
+        width: '28px',
+        height: '28px',
+        'vertical-align': 'middle',
+        'margin-right': '0.5rem'
+      });
+
+    let $labelSpan = $('<span class="add-label"></span>').text(a.name);
+    let $priceSpan = $('<span class="add-price"></span>').text(' + $' + toNumber(a.price).toFixed(2)).css({'margin-left':'0.5rem','opacity':0.9});
+
+    // assemble button content
+    $btn.append($img).append($labelSpan).append($priceSpan);
+
+    // style the button (you can keep your existing styles)
+    $btn.css({
+      display: 'inline-flex',
+      'align-items': 'center',
+      gap: '0.6rem',
+      padding: '0.35rem 0.6rem',
+      margin: '0.25rem',
+      cursor: 'pointer',
+      borderRadius: '8px',
+      background: 'var(--secondary-color)'
+    });
+
+    $root.append($btn);
+  });
+
+  // set active for preselected
+  $('#additions .addition-toggle').each(function () {
+    let k = $(this).data('key');
+    if (state.additions.has(k)) $(this).attr('aria-pressed', 'true');
+  });
+}
+
+
 
         DEFAULT_ADDITIONS.forEach(a => {
             let $btn = $('<button type="button" class="addition-toggle" aria-pressed="false"></button>');
@@ -353,17 +452,25 @@
         updatePreviewImage();
     });
 
-    // Add-to-cart (top and bottom buttons)
-    $(document).on('click', '#add-to-cart, #add-to-cart-bottom', function (e) {
-        e.preventDefault();
-        // require label
-        if (!state.label || state.label === 'no-label') {
-            $('#label-warning').removeClass('hidden').text('Please choose a label before adding to cart.');
-            $('#labels').get(0)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            return;
-        } else {
-            $('#label-warning').addClass('hidden').text('');
-        }
+  // add-to-cart click
+  $(document).on('click', '#add-to-cart', function (e) {
+    e.preventDefault();
+
+    // require user to choose a label before adding — per your request
+    if (!state.label || state.label === 'no-label') {
+      // show inline warning inside preview-details
+      let $warn = $('#customize-warning');
+      if (!$warn.length) {
+        $warn = $('<div id="customize-warning" style="color:var(--error-color);margin-top:.5rem;font-weight:700">Please choose a label before adding to cart.</div>');
+        $('.preview-details').append($warn);
+      }
+      // flash or focus label area
+      $('#labels').get(0)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    } else {
+      // remove warning if present
+      $('#customize-warning').remove();
+    }
 
         // compute price and build item
         let priceText = $('#custom-price').text().replace(/[^0-9\.]/g, '');
@@ -372,22 +479,23 @@
 
         let name = capitalizeWords(state.color.replace(/-/g, ' ')) + (state.label !== 'no-label' ? (' — ' + (LABELS.find(l => l.slug === state.label) || {}).name) : '');
 
-        let cartItem = {
-            id: 'custom-' + Date.now(),
-            name: name,
-            price: price,
-            qty: 1,
-            image: img,
-            custom: {
-                color: state.color,
-                label: state.label,
-                scentId: state.scentId,
-                sizeId: state.sizeId,
-                containerId: state.containerId,
-                wickId: state.wickId,
-                additions: Array.from(state.additions)
-            }
-        };
+    // build cart item
+    let cartItem = {
+      id: 'custom-' + Date.now(),
+      name: (capitalizeWords(state.color.replace(/-/g,' ')) + (state.label !== 'no-label' ? (' — ' + LABELS.find(l => l.slug === state.label).name) : '')),
+      price: price,
+      qty: 1,
+      image: imgPath,
+      custom: {
+        color: state.color,
+        label: state.label,
+        scentId: state.scentId,
+        sizeId: state.sizeId,
+        containerId: state.containerId,
+        wickId: state.wickId,
+        additions: Array.from(state.additions)
+      }
+    };
 
         let cart = [];
         try { cart = JSON.parse(localStorage.getItem('cart') || '[]'); if (!Array.isArray(cart)) cart = []; } catch (err) { cart = []; }
