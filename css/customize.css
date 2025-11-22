@@ -38,7 +38,7 @@
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 0.5rem;
-  background: #fff;
+  background: #f9faf9;
   cursor: pointer;
 
 }
@@ -312,22 +312,6 @@
   gap: .75rem;
 }
 
-/* .size-item,
-.container-item,
-.wick-item {
-  border: 1px solid rgba(0,0,0,0.15);
-  border-radius: 12px;
-  padding: .75rem;
-  background: #cfd9cc;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: .35rem;
-
-  cursor: pointer;
-  transition: all .15s ease;
-  position: relative;   /* needed for fake radio */
-} */
 
 /* Remove the real radio */
 .size-item input,
