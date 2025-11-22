@@ -29,7 +29,6 @@ const app = {
     try {
       // fetch products/scents if not already loaded
       if (!this.scents.length || !this.products.length) {
-      if (!this.scents.length || !this.products.length) {
         const response = await fetch('../json/products.json');
         const data = await response.json();
         this.scents = data.scents.map(s => ({
@@ -143,7 +142,25 @@ const app = {
       console.error('Failed to calculate cart total:', err);
       return 0;
     }
-  }
+  },
+
+  getFromStorage(key) {
+    try {
+      return JSON.parse(localStorage.getItem(key) || 'null');
+    } catch (e) {
+      console.error('Failed to get from storage:', e);
+      return null;
+    }
+  },
+
+  saveToStorage(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (e) {
+      console.error('Failed to save to storage:', e);
+    }
+  },
+
 
 };
 
