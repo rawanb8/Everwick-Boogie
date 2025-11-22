@@ -1,435 +1,435 @@
-let app = {
-  data: {},
-  scents: [],
-  products: [],
-  cart: [],
-  colors: [],
-  sizes: [],
-  containers: [],
-  wicks: [],
+  let app = {
+    data: {},
+    scents: [],
+    products: [],
+    cart: [],
+    colors: [],
+    sizes: [],
+    containers: [],
+    wicks: [],
 
-  // Utility: debounce for search
-  debounce(fn, delay) {
-    let timeout;
-    return function (...args) {
-      clearTimeout(timeout);
-      timeout = setTimeout(() => fn.apply(this, args), delay);
-    };
-  },
+    // Utility: debounce for search
+    debounce(fn, delay) {
+      let timeout;
+      return function (...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => fn.apply(this, args), delay);
+      };
+    },
 
-  getSizes() {
-    return this.sizes || [];
-  },
-  getColors() { return this.colors || []; },
-  getContainers() { return this.containers || []; },
-  getWicks() { return this.wicks || []; },
-  getScents() { return this.scents; },
-  getScentById(id) { return this.scents.find(s => s.id === id) || null; },
-  getSizeById(id) { return this.sizes.find(s => s.id === id) || null; },
-  getColorById(id) { return this.colors.find(c => c.id === id) || null; },
-  getContainerById(id) { return this.containers.find(c => c.id === id) || null; },
-  getWickById(id) { return this.wicks.find(w => w.id === id) || null; },
-  getSizeById(id) { return this.sizes.find(s => s.id === id) || null; },
-  getColorById(id) { return this.colors.find(c => c.id === id) || null; },
-  getContainerById(id) { return this.containers.find(c => c.id === id) || null; },
-  getWickById(id) { return this.wicks.find(w => w.id === id) || null; },
-  formatPrice(price) { return `$${Number(price).toFixed(2)}`; },
+    getSizes() {
+      return this.sizes || [];
+    },
+    getColors() { return this.colors || []; },
+    getContainers() { return this.containers || []; },
+    getWicks() { return this.wicks || []; },
+    getScents() { return this.scents; },
+    getScentById(id) { return this.scents.find(s => s.id === id) || null; },
+    getSizeById(id) { return this.sizes.find(s => s.id === id) || null; },
+    getColorById(id) { return this.colors.find(c => c.id === id) || null; },
+    getContainerById(id) { return this.containers.find(c => c.id === id) || null; },
+    getWickById(id) { return this.wicks.find(w => w.id === id) || null; },
+    getSizeById(id) { return this.sizes.find(s => s.id === id) || null; },
+    getColorById(id) { return this.colors.find(c => c.id === id) || null; },
+    getContainerById(id) { return this.containers.find(c => c.id === id) || null; },
+    getWickById(id) { return this.wicks.find(w => w.id === id) || null; },
+    formatPrice(price) { return `$${Number(price).toFixed(2)}`; },
 
-  async loadData() {
-    try {
-      // fetch products/scents if not already loaded
-      if (!this.scents.length || !this.products.length) {
-        const response = await fetch('../json/products.json');
-        const data = await response.json();
-        this.scents = data.scents.map(s => ({
-          ...s,
-          aggressiveness: s.aggressiveness || 2
-        }));
-        this.products = data.products || [];
-        this.colors = data.color || [];
-        this.sizes = data.size || [];
-        this.containers = data.container || [];
-        this.wicks = data.wick || [];
+    async loadData() {
+      try {
+        // fetch products/scents if not already loaded
+        if (!this.scents.length || !this.products.length) {
+          const response = await fetch('../json/products.json');
+          const data = await response.json();
+          this.scents = data.scents.map(s => ({
+            ...s,
+            aggressiveness: s.aggressiveness || 2
+          }));
+          this.products = data.products || [];
+          this.colors = data.color || [];
+          this.sizes = data.size || [];
+          this.containers = data.container || [];
+          this.wicks = data.wick || [];
+        }
+      } catch (err) {
+        console.error('Failed to load data in app.loadData():', err);
       }
-    } catch (err) {
-      console.error('Failed to load data in app.loadData():', err);
-    }
-  },
+    },
 
-  calculateQuizResults(answers) {
-    let scents = this.getScents();
-    let scores = scents.map(scent => ({ scent, score: 0 }));
+    calculateQuizResults(answers) {
+      let scents = this.getScents();
+      let scores = scents.map(scent => ({ scent, score: 0 }));
 
-    answers.forEach((answer, questionIndex) => {
-      scores.forEach(item => {
-        let scent = item.scent;
-        switch (questionIndex) {
-          case 0: // Mood
-            if (scent.mood === answer) item.score += 3;
-            break;
-          case 1: // Category / family
-            if (scent.family === answer) item.score += 3;
-            break;
-          case 2: // Strength
-            let strengthDiff = Math.abs(scent.aggressiveness - parseInt(answer));
-            item.score += Math.max(3 - strengthDiff, 0);
-            break;
-          case 3: // Season
-            if (scent.season === answer || scent.season === 'all-year') {
-              item.score += scent.season === answer ? 2 : 1;
-            }
-            break;
+      answers.forEach((answer, questionIndex) => {
+        scores.forEach(item => {
+          let scent = item.scent;
+          switch (questionIndex) {
+            case 0: // Mood
+              if (scent.mood === answer) item.score += 3;
+              break;
+            case 1: // Category / family
+              if (scent.family === answer) item.score += 3;
+              break;
+            case 2: // Strength
+              let strengthDiff = Math.abs(scent.aggressiveness - parseInt(answer));
+              item.score += Math.max(3 - strengthDiff, 0);
+              break;
+            case 3: // Season
+              if (scent.season === answer || scent.season === 'all-year') {
+                item.score += scent.season === answer ? 2 : 1;
+              }
+              break;
+          }
+        });
+      });
+
+      // Return **only the top 3 scoring scents**, sorted by score
+      return scores
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 3)         // top 3
+        .map(item => item.scent);
+    },
+
+
+    openModal(id) { document.getElementById(id).style.display = 'block'; },
+    closeModal(id) { document.getElementById(id).style.display = 'none'; },
+    showNotification(msg, type) { alert(msg); },
+
+
+    getProducts() {
+      return this.products || [];
+    },
+
+    getProductById(id) {
+      return this.products.find(p => p.id === id) || null;
+    },
+
+    // Search products by name or scent name
+    searchProducts(query) {
+      let q = query.toLowerCase();
+      return this.products.filter(product => {
+        let scent = this.getScentById(product.scentId);
+        return (
+          product.name.toLowerCase().includes(q) ||
+          (scent && scent.name.toLowerCase().includes(q))
+        );
+      });
+    },
+
+    // Add to cart (stored in localStorage)
+    addToCart(productId, quantity = 1) {
+      try {
+        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        if (!Array.isArray(cart)) cart = [];
+
+        let product = this.getProductById(productId);
+        if (!product) return false;
+        
+        for (let i = 0; i < quantity; i++) {
+          cart.push({ productId: productId, addedAt: new Date().toISOString() });
+        }
+        localStorage.setItem('cart', JSON.stringify(cart));
+        return true;
+      } catch (err) {
+        console.error('Failed to add to cart:', err);
+        return false;
+      }
+    },
+
+    // Get total price of cart
+    getCartTotal() {
+      try {
+        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        if (!Array.isArray(cart)) cart = [];
+        
+        let total = 0;
+        cart.forEach(item => {
+          const product = this.getProductById(item.productId);
+          if (product) total += product.price;
+        });
+        return total;
+      } catch (err) {
+        console.error('Failed to calculate cart total:', err);
+        return 0;
+      }
+    },
+
+    getFromStorage(key) {
+      try {
+        return JSON.parse(localStorage.getItem(key) || 'null');
+      } catch (e) {
+        console.error('Failed to get from storage:', e);
+        return null;
+      }
+    },
+
+    saveToStorage(key, value) {
+      try {
+        localStorage.setItem(key, JSON.stringify(value));
+      } catch (e) {
+        console.error('Failed to save to storage:', e);
+      }
+    },
+
+
+  };
+
+  (function () {
+    // Run when DOM is ready
+    document.addEventListener('DOMContentLoaded', () => {
+      initNavbar();
+      updateCartCount(); // keep cart count in sync across tabs
+      initNewsletterForm(); //initialize footer newsletter
+      window.addEventListener('storage', (e) => {
+        if (e.key === 'cart') updateCartCount();
+      });
+    });
+
+    /*================== NAVBAR ==================*/
+    function initNavbar() {
+      let siteNav = document.querySelector('.site-nav');
+      let hamburger = document.getElementById('hamburger-btn');
+      let mobileMenu = document.getElementById('mobile-menu');
+      let mobileClose = document.getElementById('mobile-close');
+      let mobileBackdrop = document.getElementById('mobile-backdrop');
+
+      if (!siteNav || !hamburger || !mobileMenu) return;
+
+      // ensure dataset initial state
+      mobileMenu.dataset.open = mobileMenu.dataset.open || "false";
+
+      function openMenu() {
+        mobileMenu.dataset.open = "true";
+        // prevent background scrolling
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+        // focus first interactive item
+        let first = mobileMenu.querySelector('a, button');
+        if (first) first.focus();
+      }
+
+      function closeMenu() {
+        mobileMenu.dataset.open = "false";
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+        // return focus to hamburger if it exists
+        if (hamburger.focus) hamburger.focus();
+      }
+
+      // toggle on click
+      hamburger.addEventListener('click', (e) => {
+        let isOpen = mobileMenu.dataset.open === "true";
+        isOpen ? closeMenu() : openMenu();
+      });
+
+      if (mobileClose) mobileClose.addEventListener('click', closeMenu);
+      if (mobileBackdrop) mobileBackdrop.addEventListener('click', closeMenu);
+
+      // close on Escape key
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && mobileMenu.dataset.open === "true") {
+          closeMenu();
         }
       });
-    });
 
-    // Return **only the top 3 scoring scents**, sorted by score
-    return scores
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 3)         // top 3
-      .map(item => item.scent);
-  },
-
-
-  openModal(id) { document.getElementById(id).style.display = 'block'; },
-  closeModal(id) { document.getElementById(id).style.display = 'none'; },
-  showNotification(msg, type) { alert(msg); },
-
-
-  getProducts() {
-    return this.products || [];
-  },
-
-  getProductById(id) {
-    return this.products.find(p => p.id === id) || null;
-  },
-
-  // Search products by name or scent name
-  searchProducts(query) {
-    let q = query.toLowerCase();
-    return this.products.filter(product => {
-      let scent = this.getScentById(product.scentId);
-      return (
-        product.name.toLowerCase().includes(q) ||
-        (scent && scent.name.toLowerCase().includes(q))
-      );
-    });
-  },
-
-  // Add to cart (stored in localStorage)
-  addToCart(productId, quantity = 1) {
-    try {
-      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      if (!Array.isArray(cart)) cart = [];
-
-      let product = this.getProductById(productId);
-      if (!product) return false;
-      
-      for (let i = 0; i < quantity; i++) {
-        cart.push({ productId: productId, addedAt: new Date().toISOString() });
-      }
-      localStorage.setItem('cart', JSON.stringify(cart));
-      return true;
-    } catch (err) {
-      console.error('Failed to add to cart:', err);
-      return false;
-    }
-  },
-
-  // Get total price of cart
-  getCartTotal() {
-    try {
-      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      if (!Array.isArray(cart)) cart = [];
-      
-      let total = 0;
-      cart.forEach(item => {
-        const product = this.getProductById(item.productId);
-        if (product) total += product.price;
+      // scroll behaviour: add class .scrolled when past threshold
+      // when scrolling past 60px -> add a CSS class .scrolled that changes styling
+      let threshold = 60;
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > threshold) siteNav.classList.add('scrolled');
+        else siteNav.classList.remove('scrolled');
       });
-      return total;
-    } catch (err) {
-      console.error('Failed to calculate cart total:', err);
-      return 0;
-    }
-  },
-
-  getFromStorage(key) {
-    try {
-      return JSON.parse(localStorage.getItem(key) || 'null');
-    } catch (e) {
-      console.error('Failed to get from storage:', e);
-      return null;
-    }
-  },
-
-  saveToStorage(key, value) {
-    try {
-      localStorage.setItem(key, JSON.stringify(value));
-    } catch (e) {
-      console.error('Failed to save to storage:', e);
-    }
-  },
-
-
-};
-
-(function () {
-  // Run when DOM is ready
-  document.addEventListener('DOMContentLoaded', () => {
-    initNavbar();
-    updateCartCount(); // keep cart count in sync across tabs
-    initNewsletterForm(); //initialize footer newsletter
-    window.addEventListener('storage', (e) => {
-      if (e.key === 'cart') updateCartCount();
-    });
-  });
-
-  /*================== NAVBAR ==================*/
-  function initNavbar() {
-    let siteNav = document.querySelector('.site-nav');
-    let hamburger = document.getElementById('hamburger-btn');
-    let mobileMenu = document.getElementById('mobile-menu');
-    let mobileClose = document.getElementById('mobile-close');
-    let mobileBackdrop = document.getElementById('mobile-backdrop');
-
-    if (!siteNav || !hamburger || !mobileMenu) return;
-
-    // ensure dataset initial state
-    mobileMenu.dataset.open = mobileMenu.dataset.open || "false";
-
-    function openMenu() {
-      mobileMenu.dataset.open = "true";
-      // prevent background scrolling
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.overflow = 'hidden';
-      // focus first interactive item
-      let first = mobileMenu.querySelector('a, button');
-      if (first) first.focus();
     }
 
-    function closeMenu() {
-      mobileMenu.dataset.open = "false";
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
-      // return focus to hamburger if it exists
-      if (hamburger.focus) hamburger.focus();
-    }
+    /*================== CART COUNT ==================*/
+    function updateCartCount() {
+      try {
+        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
 
-    // toggle on click
-    hamburger.addEventListener('click', (e) => {
-      let isOpen = mobileMenu.dataset.open === "true";
-      isOpen ? closeMenu() : openMenu();
-    });
+        setTimeout(() => {
+          // set timout to ensure navbar is loaded 
+          let els = document.querySelectorAll('#cart-count, #mobile-cart-count');
 
-    if (mobileClose) mobileClose.addEventListener('click', closeMenu);
-    if (mobileBackdrop) mobileBackdrop.addEventListener('click', closeMenu);
-
-    // close on Escape key
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && mobileMenu.dataset.open === "true") {
-        closeMenu();
+          els.forEach(e => {
+            let count = Array.isArray(cart) ? cart.length : 0;
+            e.textContent = count;
+          });
+        }, 1000)
+      } catch (err) {
+        console.error('Failed to read cart from localStorage', err);
       }
-    });
-
-    // scroll behaviour: add class .scrolled when past threshold
-    // when scrolling past 60px -> add a CSS class .scrolled that changes styling
-    let threshold = 60;
-    window.addEventListener('scroll', () => {
-      if (window.scrollY > threshold) siteNav.classList.add('scrolled');
-      else siteNav.classList.remove('scrolled');
-    });
-  }
-
-  /*================== CART COUNT ==================*/
-  function updateCartCount() {
-    try {
-      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-
-      setTimeout(() => {
-        // set timout to ensure navbar is loaded 
-        let els = document.querySelectorAll('#cart-count, #mobile-cart-count');
-
-        els.forEach(e => {
-          let count = Array.isArray(cart) ? cart.length : 0;
-          e.textContent = count;
-        });
-      }, 1000)
-    } catch (err) {
-      console.error('Failed to read cart from localStorage', err);
-    }
-  }
-
-})();
-
-document.addEventListener('DOMContentLoaded', async () => {
-  let navbarContainer = document.getElementById('navbar');
-
-  if (navbarContainer) {
-    try {
-      let response = await fetch('nav.html');
-      let navbarHTML = await response.text();
-
-      navbarContainer.innerHTML = navbarHTML;
-    } catch (error) {
-      console.error('Error loading navbar:', error);
-    }
-  }
-
-  // AFTER nav.html is loaded
-document.addEventListener("click", (e) => {
-  let loginModal = document.querySelector(".login-modal-wrapper");
-  let closeBtn = document.querySelector(".login-modal-close");
-
-  if (!loginModal) return; // exit if modal not in DOM
-
-  // Open modal if button clicked
-  if (e.target.closest(".open-login")) {
-    loginModal.style.display = "flex";
-  }
-
-  // Close modal if clicking close button
-  if (e.target === closeBtn) {
-    loginModal.style.display = "none";
-  }
-
-  // Close modal if clicking outside modal content (on overlay)
-  if (e.target === loginModal) {
-    loginModal.style.display = "none";
-  }
-});
-
-// Close on Escape key
-document.addEventListener("keydown", (e) => {
-  let loginModal = document.querySelector(".login-modal-wrapper");
-  if (!loginModal) return;
-
-  if (e.key === "Escape" && loginModal.style.display === "flex") {
-    loginModal.style.display = "none";
-  }
-});
-
-
-
-  let footerContainer = document.getElementById('footer');
-
-  if (footerContainer) {
-    try {
-      let response = await fetch('footer.html');
-      let footerHTML = await response.text();
-      footerContainer.innerHTML = footerHTML;
-
-      // Optional: initialize footer JS (newsletter form)
-      initNewsletterForm();
-
-    } catch (error) {
-      console.error('Error loading footer:', error);
-    }
-  }
-
-  // ----------------- NEW: Load scents data for quiz -----------------
-  await app.loadData();
-
-
-});
-
-/*================== NEWSLETTER in footer ==================*/
-function initNewsletterForm() {
-  let form = document.getElementById('newsletter-form');
-  if (!form) return;
-
-  let input = document.getElementById('newsletter-email');
-  let submitBtn = document.getElementById('newsletter-submit');
-  let msgRegion = document.getElementById('newsletter-msg-region');
-
-  // Create aria-live region if not in DOM
-  if (!msgRegion) {
-    msgRegion = document.createElement('div');
-    msgRegion.id = 'newsletter-msg-region';
-    msgRegion.setAttribute('aria-live', 'polite');
-    msgRegion.setAttribute('aria-atomic', 'true');
-    msgRegion.style.marginTop = '0.5rem';
-    form.parentNode.insertBefore(msgRegion, form.nextSibling);
-  }
-
-  // Helper to show success or error messages
-  function showMessage(type, text) {
-    msgRegion.innerHTML = '';
-    let d = document.createElement('div');
-    d.className = `newsletter-msg newsletter-msg--${type}`;
-    d.textContent = text;
-    msgRegion.appendChild(d);
-
-    if (type === 'error') {
-      setTimeout(() => {
-        if (msgRegion.contains(d)) msgRegion.removeChild(d);
-      }, 4000);
-    }
-  }
-
-  // Email validation
-  function isValidEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  }
-
-  // Handle form submission
-  form.addEventListener('submit', (e) => {
-    e.preventDefault();
-    if (!input) return;
-
-    let email = (input.value || '').trim();
-    if (!email) {
-      showMessage('error', 'Please enter your email address.');
-      input.focus();
-      return;
     }
 
-    if (!isValidEmail(email)) {
-      showMessage('error', 'Please enter a valid email address.');
-      input.focus();
-      return;
+  })();
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    let navbarContainer = document.getElementById('navbar');
+
+    if (navbarContainer) {
+      try {
+        let response = await fetch('nav.html');
+        let navbarHTML = await response.text();
+
+        navbarContainer.innerHTML = navbarHTML;
+      } catch (error) {
+        console.error('Error loading navbar:', error);
+      }
     }
 
-    // Simulate sending
-    submitBtn.disabled = true;
-    submitBtn.setAttribute('aria-disabled', 'true');
-    let prevText = submitBtn.textContent;
-    submitBtn.textContent = 'Sending...';
+    // AFTER nav.html is loaded
+  document.addEventListener("click", (e) => {
+    let loginModal = document.querySelector(".login-modal-wrapper");
+    let closeBtn = document.querySelector(".login-modal-close");
 
-    // Short simulated delay
-    setTimeout(() => {
-      showMessage('success', 'Thank you for subscribing to our newsletter!');
-      submitBtn.textContent = prevText;
-      submitBtn.disabled = false;
-      submitBtn.removeAttribute('aria-disabled'); // restore button text
-      input.value = '';
-      input.focus();
-    }, 800);
+    if (!loginModal) return; // exit if modal not in DOM
+
+    // Open modal if button clicked
+    if (e.target.closest(".open-login")) {
+      loginModal.style.display = "flex";
+    }
+
+    // Close modal if clicking close button
+    if (e.target === closeBtn) {
+      loginModal.style.display = "none";
+    }
+
+    // Close modal if clicking outside modal content (on overlay)
+    if (e.target === loginModal) {
+      loginModal.style.display = "none";
+    }
   });
-}
 
-let loginForm = document.getElementById("loginForm");
+  // Close on Escape key
+  document.addEventListener("keydown", (e) => {
+    let loginModal = document.querySelector(".login-modal-wrapper");
+    if (!loginModal) return;
 
-loginForm.addEventListener("submit", (e) => {
-  e.preventDefault(); // prevent page reload
+    if (e.key === "Escape" && loginModal.style.display === "flex") {
+      loginModal.style.display = "none";
+    }
+  });
 
-  let username = document.getElementById("username").value.trim();
-  let password = document.getElementById("password").value.trim();
 
-  let loginModal = document.querySelector('.login-modal-wrapper')
-  let allowedUsers = [
-    { username: "rama", password: "12345" },
-    { username: "maryam", password: "6789" },
-    { username: "rawan", password: "1011" }
-  ];
-  // check if entered credentials match any user in the array
-  let user = allowedUsers.find(u => u.username === username && u.password === password);
 
-  if (user) {
-    alert(`Login successful! Welcome, ${user.username}`);
-    loginModal.style.display = "none"; // hide modal
-    loginForm.reset(); // clear form inputs
-  } else {
-    alert("Incorrect username or password.");
+    let footerContainer = document.getElementById('footer');
+
+    if (footerContainer) {
+      try {
+        let response = await fetch('footer.html');
+        let footerHTML = await response.text();
+        footerContainer.innerHTML = footerHTML;
+
+        // Optional: initialize footer JS (newsletter form)
+        initNewsletterForm();
+
+      } catch (error) {
+        console.error('Error loading footer:', error);
+      }
+    }
+
+    // ----------------- NEW: Load scents data for quiz -----------------
+    await app.loadData();
+
+
+  });
+
+  /*================== NEWSLETTER in footer ==================*/
+  function initNewsletterForm() {
+    let form = document.getElementById('newsletter-form');
+    if (!form) return;
+
+    let input = document.getElementById('newsletter-email');
+    let submitBtn = document.getElementById('newsletter-submit');
+    let msgRegion = document.getElementById('newsletter-msg-region');
+
+    // Create aria-live region if not in DOM
+    if (!msgRegion) {
+      msgRegion = document.createElement('div');
+      msgRegion.id = 'newsletter-msg-region';
+      msgRegion.setAttribute('aria-live', 'polite');
+      msgRegion.setAttribute('aria-atomic', 'true');
+      msgRegion.style.marginTop = '0.5rem';
+      form.parentNode.insertBefore(msgRegion, form.nextSibling);
+    }
+
+    // Helper to show success or error messages
+    function showMessage(type, text) {
+      msgRegion.innerHTML = '';
+      let d = document.createElement('div');
+      d.className = `newsletter-msg newsletter-msg--${type}`;
+      d.textContent = text;
+      msgRegion.appendChild(d);
+
+      if (type === 'error') {
+        setTimeout(() => {
+          if (msgRegion.contains(d)) msgRegion.removeChild(d);
+        }, 4000);
+      }
+    }
+
+    // Email validation
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    // Handle form submission
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!input) return;
+
+      let email = (input.value || '').trim();
+      if (!email) {
+        showMessage('error', 'Please enter your email address.');
+        input.focus();
+        return;
+      }
+
+      if (!isValidEmail(email)) {
+        showMessage('error', 'Please enter a valid email address.');
+        input.focus();
+        return;
+      }
+
+      // Simulate sending
+      submitBtn.disabled = true;
+      submitBtn.setAttribute('aria-disabled', 'true');
+      let prevText = submitBtn.textContent;
+      submitBtn.textContent = 'Sending...';
+
+      // Short simulated delay
+      setTimeout(() => {
+        showMessage('success', 'Thank you for subscribing to our newsletter!');
+        submitBtn.textContent = prevText;
+        submitBtn.disabled = false;
+        submitBtn.removeAttribute('aria-disabled'); // restore button text
+        input.value = '';
+        input.focus();
+      }, 800);
+    });
   }
-});
+
+  let loginForm = document.getElementById("loginForm");
+
+  loginForm.addEventListener("submit", (e) => {
+    e.preventDefault(); // prevent page reload
+
+    let username = document.getElementById("username").value.trim();
+    let password = document.getElementById("password").value.trim();
+
+    let loginModal = document.querySelector('.login-modal-wrapper')
+    let allowedUsers = [
+      { username: "rama", password: "12345" },
+      { username: "maryam", password: "6789" },
+      { username: "rawan", password: "1011" }
+    ];
+    // check if entered credentials match any user in the array
+    let user = allowedUsers.find(u => u.username === username && u.password === password);
+
+    if (user) {
+      alert(`Login successful! Welcome, ${user.username}`);
+      loginModal.style.display = "none"; // hide modal
+      loginForm.reset(); // clear form inputs
+    } else {
+      alert("Incorrect username or password.");
+    }
+  });

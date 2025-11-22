@@ -2,16 +2,6 @@
 let currentCheckoutStep = 0;
 let selectedShippingMethod = null;
 let orderData = {};
-let currentCheckoutStep = 0;
-let selectedShippingMethod = null;
-let orderData = {};
-
-const checkoutSteps = ['cart', 'shipping', 'payment', 'confirmation'];
-const shippingOptions = [
-  { id: 1, name: 'Standard Shipping', price: 5.99, time: '5-7 business days', freeThreshold: 50 },
-  { id: 2, name: 'Express Shipping', price: 12.99, time: '2-3 business days', freeThreshold: 100 },
-  { id: 3, name: 'Overnight Shipping', price: 24.99, time: 'Next business day', freeThreshold: 150 }
-];
 const checkoutSteps = ['cart', 'shipping', 'payment', 'confirmation'];
 const shippingOptions = [
   { id: 1, name: 'Standard Shipping', price: 5.99, time: '5-7 business days', freeThreshold: 50 },
@@ -31,18 +21,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   initializeCheckout();
 });
-document.addEventListener('DOMContentLoaded', async () => {
-  await app.loadData();
-  
-  // Check if cart is empty
-  const cart = app.getCart();
-  if (cart.length === 0) {
-    redirectToShop();
-    return;
-  }
-  
-  initializeCheckout();
-});
 
 function redirectToShop() {
   app.showNotification('Your cart is empty. Redirecting to shop...', 'info');
@@ -50,20 +28,7 @@ function redirectToShop() {
     window.location.href = 'shop.html';
   }, 2000);
 }
-function redirectToShop() {
-  app.showNotification('Your cart is empty. Redirecting to shop...', 'info');
-  setTimeout(() => {
-    window.location.href = 'shop.html';
-  }, 2000);
-}
 
-function initializeCheckout() {
-  loadCartReview();
-  loadOrderSummary();
-  loadShippingOptions();
-  setupFormValidation();
-  updateCheckoutProgress();
-}
 function initializeCheckout() {
   loadCartReview();
   loadOrderSummary();
@@ -164,10 +129,6 @@ function updateOrderTotals() {
       <span>Tax:</span>
       <span>${app.formatPrice(tax)}</span>
     </div>
-    <div class="total-line">
-      <span>Tax:</span>
-      <span>${app.formatPrice(tax)}</span>
-    </div>
     <div class="total-line total-final">
       <span>Total:</span>
       <span>${app.formatPrice(total)}</span>
@@ -203,34 +164,6 @@ function loadShippingOptions() {
   
   selectedShippingMethod = 1;
 }
-function loadShippingOptions() {
-  const container = document.getElementById('shipping-options');
-  if (!container) return;
-  
-  const subtotal = app.getCartTotal();
-  
-  container.innerHTML = shippingOptions.map(option => {
-    const isFree = subtotal >= option.freeThreshold;
-    const price = isFree ? 0 : option.price;
-    
-    return `
-      <div class="shipping-option" onclick="selectShippingMethod(${option.id})">
-        <input type="radio" name="shipping-method" value="${option.id}" 
-               ${option.id === 1 ? 'checked' : ''}>
-        <div class="shipping-details">
-          <div class="shipping-name">${option.name}</div>
-          <div class="shipping-time">${option.time}</div>
-          ${isFree ? '<div class="free-shipping">FREE</div>' : ''}
-        </div>
-        <div class="shipping-price">
-          ${isFree ? 'FREE' : app.formatPrice(price)}
-        </div>
-      </div>
-    `;
-  }).join('');
-  
-  selectedShippingMethod = 1;
-}
 
 function calculateShippingCost(subtotal) {
   if (!selectedShippingMethod || !subtotal) return 0;
@@ -240,23 +173,7 @@ function calculateShippingCost(subtotal) {
   
   return subtotal >= method.freeThreshold ? 0 : method.price;
 }
-function calculateShippingCost(subtotal) {
-  if (!selectedShippingMethod || !subtotal) return 0;
-  
-  const method = shippingOptions.find(opt => opt.id === selectedShippingMethod);
-  if (!method) return 0;
-  
-  return subtotal >= method.freeThreshold ? 0 : method.price;
-}
 
-function selectShippingMethod(methodId) {
-  selectedShippingMethod = methodId;
-  
-  const radioBtn = document.querySelector(`input[value="${methodId}"]`);
-  if (radioBtn) radioBtn.checked = true;
-  
-  updateOrderTotals();
-}
 function selectShippingMethod(methodId) {
   selectedShippingMethod = methodId;
   
@@ -275,7 +192,6 @@ function setupFormValidation() {
     });
   });
   
-  // Format card number
   const cardNumberInput = document.getElementById('card-number');
   if (cardNumberInput) {
     cardNumberInput.addEventListener('input', (e) => {
@@ -285,38 +201,6 @@ function setupFormValidation() {
     });
   }
   
-  // Format expiry date
-  const expiryInput = document.getElementById('expiry');
-  if (expiryInput) {
-    expiryInput.addEventListener('input', (e) => {
-      let value = e.target.value.replace(/\D/g, '');
-      if (value.length >= 2) {
-        value = value.substring(0, 2) + '/' + value.substring(2, 4);
-      }
-      e.target.value = value;
-    });
-  }
-}
-function setupFormValidation() {
-  const forms = document.querySelectorAll('form');
-  
-  forms.forEach(form => {
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-    });
-  });
-  
-  // Format card number
-  const cardNumberInput = document.getElementById('card-number');
-  if (cardNumberInput) {
-    cardNumberInput.addEventListener('input', (e) => {
-      let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-      let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
-      e.target.value = formattedValue;
-    });
-  }
-  
-  // Format expiry date
   const expiryInput = document.getElementById('expiry');
   if (expiryInput) {
     expiryInput.addEventListener('input', (e) => {
@@ -348,37 +232,7 @@ function nextCheckoutStep() {
     }
   }
 }
-function nextCheckoutStep() {
-  if (!validateCurrentStep()) {
-    return;
-  }
-  
-  if (currentCheckoutStep < checkoutSteps.length - 1) {
-    document.getElementById(`checkout-step-${checkoutSteps[currentCheckoutStep]}`).classList.remove('active');
-    
-    currentCheckoutStep++;
-    
-    document.getElementById(`checkout-step-${checkoutSteps[currentCheckoutStep]}`).classList.add('active');
-    
-    updateCheckoutProgress();
-    
-    if (checkoutSteps[currentCheckoutStep] === 'confirmation') {
-      processOrder();
-    }
-  }
-}
 
-function previousCheckoutStep() {
-  if (currentCheckoutStep > 0) {
-    document.getElementById(`checkout-step-${checkoutSteps[currentCheckoutStep]}`).classList.remove('active');
-    
-    currentCheckoutStep--;
-    
-    document.getElementById(`checkout-step-${checkoutSteps[currentCheckoutStep]}`).classList.add('active');
-    
-    updateCheckoutProgress();
-  }
-}
 function previousCheckoutStep() {
   if (currentCheckoutStep > 0) {
     document.getElementById(`checkout-step-${checkoutSteps[currentCheckoutStep]}`).classList.remove('active');
@@ -404,42 +258,7 @@ function updateCheckoutProgress() {
     }
   });
 }
-function updateCheckoutProgress() {
-  checkoutSteps.forEach((step, index) => {
-    const stepElement = document.getElementById(`step-${step}`);
-    
-    if (stepElement) {
-      if (index <= currentCheckoutStep) {
-        stepElement.classList.add('active');
-      } else {
-        stepElement.classList.remove('active');
-      }
-    }
-  });
-}
 
-function validateCurrentStep() {
-  const currentStep = checkoutSteps[currentCheckoutStep];
-  const cart = app.getCart();
-  
-  switch (currentStep) {
-    case 'cart':
-      if (cart.length === 0) {
-        app.showNotification('Your cart is empty', 'error');
-        return false;
-      }
-      return true;
-      
-    case 'shipping':
-      return validateShippingForm();
-      
-    case 'payment':
-      return validatePaymentForm();
-      
-    default:
-      return true;
-  }
-}
 function validateCurrentStep() {
   const currentStep = checkoutSteps[currentCheckoutStep];
   const cart = app.getCart();
@@ -501,35 +320,6 @@ function validatePaymentForm() {
   const cardNumberField = document.getElementById('card-number');
   if (cardNumberField) {
     const cardNumber = cardNumberField.value.replace(/\s/g, '');
-    if (cardNumber.length < 3 || cardNumber.length > 22) {
-      cardNumberField.classList.add('error');
-      isValid = false;
-    }
-  }
-  
-  if (!isValid) {
-    app.showNotification('Please check your payment information', 'error');
-  }
-  
-  return isValid;
-}
-function validatePaymentForm() {
-  const requiredFields = ['card-number', 'expiry', 'cvv', 'card-name'];
-  let isValid = true;
-  
-  requiredFields.forEach(fieldId => {
-    const field = document.getElementById(fieldId);
-    if (!field || !field.value.trim()) {
-      if (field) field.classList.add('error');
-      isValid = false;
-    } else {
-      field.classList.remove('error');
-    }
-  });
-  
-  const cardNumberField = document.getElementById('card-number');
-  if (cardNumberField) {
-    const cardNumber = cardNumberField.value.replace(/\s/g, '');
     if (cardNumber.length < 13 || cardNumber.length > 19) {
       cardNumberField.classList.add('error');
       isValid = false;
@@ -557,7 +347,6 @@ function processOrder() {
     items: cart,
     subtotal: subtotal,
     shipping: shippingCost,
-    tax: tax,
     tax: tax,
     total: total,
     shippingAddress: getShippingAddress(),
@@ -616,7 +405,6 @@ function displayOrderConfirmation() {
         <p>${orderData.shippingAddress.firstName} ${orderData.shippingAddress.lastName}</p>
         <p>${orderData.shippingAddress.address}</p>
         <p>${orderData.shippingAddress.city}, ${orderData.shippingAddress.state} ${orderData.shippingAddress.zip}</p>
-        <p>${orderData.shippingAddress.city}, ${orderData.shippingAddress.state} ${orderData.shippingAddress.zip}</p>
       </div>
       
       <div class="order-date">
@@ -631,23 +419,7 @@ function updateCartItemQuantity(itemId, quantity) {
   loadCartReview();
   loadOrderSummary();
 }
-function updateCartItemQuantity(itemId, quantity) {
-  app.updateCartQuantity(itemId, parseInt(quantity));
-  loadCartReview();
-  loadOrderSummary();
-}
 
-function removeCartItem(itemId) {
-  app.removeFromCart(itemId);
-  const cart = app.getCart();
-  
-  if (cart.length === 0) {
-    redirectToShop();
-  } else {
-    loadCartReview();
-    loadOrderSummary();
-  }
-}
 function removeCartItem(itemId) {
   app.removeFromCart(itemId);
   const cart = app.getCart();
@@ -668,18 +440,7 @@ function toggleBillingAddress() {
     billingForm.style.display = checkbox.checked ? 'none' : 'block';
   }
 }
-function toggleBillingAddress() {
-  const checkbox = document.getElementById('same-as-shipping');
-  const billingForm = document.getElementById('billing-form');
-  
-  if (checkbox && billingForm) {
-    billingForm.style.display = checkbox.checked ? 'none' : 'block';
-  }
-}
 
-function printOrder() {
-  window.print();
-}
 function printOrder() {
   window.print();
 }
