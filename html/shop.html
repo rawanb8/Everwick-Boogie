@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Everwick Boogee | Shop Candles</title>
-  <link rel="stylesheet" href="/css/shop.css">
-  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="../css/shop.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 </head>
+
 
 <body>
 
@@ -30,11 +36,15 @@
       <div class="container">
         <div class="controls-layout">
 
+
           <!-- Search and Sort -->
           <div class="search-sort">
             <div class="search-box">
               <input type="text" id="search-input" class="form-input" placeholder="Search candles...">
-              <button class="search-btn" onclick="searchProducts()">🔍</button>
+              <button class="search-btn" onclick="searchProducts()">
+                <i class="fa fa-search"></i>
+
+              </button>
             </div>
             <div class="sort-controls">
               <label for="sort-select">Sort by:</label>
@@ -46,12 +56,7 @@
                 <option value="popularity">Popularity</option>
               </select>
             </div>
-          </div>
-
-          <!-- Filter Toggle (Mobile) -->
-          <button class="filter-toggle btn btn-outline" onclick="toggleFilters()">
-            Filters
-          </button>
+          </div> 
         </div>
       </div>
     </section>
@@ -61,31 +66,14 @@
       <div class="container">
         <div class="shop-layout">
 
+
           <!-- Filters Sidebar -->
           <div class="filters-sidebar" id="filters-sidebar">
             <div class="filters-header">
               <h3>Filters</h3>
               <button class="clear-filters-btn" onclick="clearAllFilters()">Clear All</button>
             </div>
-
-            <!-- Category Filter -->
-            <div class="filter-section">
-              <h4>Categories</h4>
-              <div class="filter-options" id="category-filters">
-                <label class="filter-checkbox">
-                  <input type="checkbox" value="best-sellers" onchange="applyFilters()">
-                  <span>Best Sellers</span>
-                </label>
-                <label class="filter-checkbox">
-                  <input type="checkbox" value="seasonal" onchange="applyFilters()">
-                  <span>Seasonal</span>
-                </label>
-                <label class="filter-checkbox">
-                  <input type="checkbox" value="custom" onchange="applyFilters()">
-                  <span>Custom</span>
-                </label>
-              </div>
-            </div>
+ 
 
             <!-- Scent Category Filter -->
             <div class="filter-section">
@@ -115,6 +103,7 @@
                 <!-- Will be populated dynamically -->
               </div>
             </div>
+            
             
 
             <!-- Mood Filter -->
@@ -188,7 +177,7 @@
             <strong>Total: <span id="cart-total">$0.00</span></strong>
           </div>
           <div class="cart-actions">
-            <button class="btn btn-secondary" onclick="app.closeModal()">Continue Shopping</button>
+            <button class="btn" onclick="app.closeModal()">Continue Shopping</button>
             <a href="checkout.html" class="btn btn-primary">Checkout</a>
           </div>
         </div>
@@ -199,10 +188,11 @@
 
   <!-- Footer moved OUTSIDE the container -->
   <div id="footer"></div>
-  <script src="/js/main.js"></script>
-  <script src="/js/shop.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/shop.js"></script>
 
 
 </body>
+
 
 </html>

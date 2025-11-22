@@ -59,7 +59,6 @@
   transition: all var(--transition-fast);
   font-weight: 500;
 }
-
 .tab-btn.active {
   border-bottom-color: var(--primary-color);
   color: var(--primary-color);
@@ -75,8 +74,20 @@
 }
 
 .filters-section {
-  background-color: #b1b999;
+  background-color: #bec6a6;
   padding: var(--space-xl) 0;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--space-xl);
+}
+
+.filters-section h3 {
+  font-family: 'Lora', serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #5a5a3f;
+  /* dark olive for elegance */
+  margin-bottom: var(--space-md);
+  text-align: center;
 }
 
 .filter-grid {
@@ -86,6 +97,114 @@
   margin: var(--space-md) 0;
   align-items: stretch;
 }
+
+.filter-group label {
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  color: #6e6e5c;
+  /* subtle text color */
+}
+
+.filter-group select {
+  padding: var(--space-sm);
+  border-radius: var(--radius-md);
+  border: 1px solid #c4c4b0;
+  background-color: #ffffff;
+  font-size: var(--font-size-base);
+  color: #333333;
+  transition: all 0.2s ease;
+}
+
+.filter-group select:focus {
+  outline: none;
+  border-color: #8a9a5b;
+  box-shadow: 0 0 5px rgba(138, 154, 91, 0.5);
+}
+
+/* Specific styling for the Clear button */
+.btn.clear {
+  display: block;
+  background-color: #8a9a5b;
+  /* olive-green */
+  margin: var(--space-lg) auto 0 auto;
+  /* top margin, horizontal auto centers it */
+  color: #fff;
+  font-weight: 600;
+  border: none;
+  border-radius: var(--radius-md);
+  padding: var(--space-md) var(--space-2xl);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+  font-size: var(--font-size-base);
+  line-height: 1.4;
+
+}
+
+.btn.clear:hover {
+  background-color: #a2b066;
+  /* lighter green on hover */
+  transform: translateY(-2px);
+}
+
+.btn.clear:focus {
+  outline: 2px solid #a2b066;
+  /* visible focus for accessibility */
+  outline-offset: 2px;
+}
+
+.btn.clear:disabled {
+  background-color: #c4c4b0;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  .filter-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-sm);
+  }
+
+  .filters-section h3 {
+    font-size: 1.5rem;
+  }
+
+  .btn.clear {
+    width: 100%;
+    padding: var(--space-md);
+  }
+
+  .tabs {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .filter-grid,
+  .scent-details-full {
+    grid-template-columns: 1fr;
+  }
+
+  .quiz-navigation {
+    flex-direction: column;
+    display: flex;
+    gap: var(--space-md);
+  }
+
+  .recommendation-actions {
+    flex-direction: column;
+  }
+
+  .scent-image {
+    aspect-ratio: 1;
+    /* make it square on tablets */
+  }
+
+}
+
+
+@media (max-width: 768px) {}
 
 .scent-card {
   display: flex;
@@ -99,7 +218,21 @@
   overflow: hidden;
   background: var(--white);
   height: 100%;
+  max-width: 300px;
+  margin: auto 0;
 }
+
+#scents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 250px));
+  gap: var(--space-md);
+  justify-content: center;
+  /* centers items if row is not full */
+  max-width: 1200px;
+  /* optional: prevents row from stretching too wide */
+  margin: 0 auto;
+}
+
 
 .scent-card .card-content {
   flex: 1;
@@ -242,6 +375,13 @@
 
 .quiz-question {
   display: none;
+  font-weight: 100;
+}
+
+.quiz-question h3 {
+    color: var(--text-light);
+   font-family: "Lora";
+   text-align: center;
 }
 
 .quiz-question.active {
@@ -268,6 +408,12 @@
 
 }
 
+.quiz-header h2 {
+  color: #7e894c;
+  font: "Lora";
+  text-align: center;
+}
+
 .quiz-option:hover {
   border-color: var(--primary-color);
   background: var(--secondary-color);
@@ -283,6 +429,10 @@
 input[type="range"] {
   accent-color: var(--accent-color);
   flex: 1;
+}
+
+.quiz-options:has(input[type="radio"]:checked) .quiz-option:has(input[type="radio"]:checked) {
+  border: 2px solid var(--accent-color)
 }
 
 /* Chrome / Safari track */
@@ -360,6 +510,43 @@ input[type="range"]::-ms-thumb {
   margin-bottom: var(--space-sm);
 }
 
+.no-results {
+  margin-top: 40px;
+  padding: 35px 20px;
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: 600;
+  letter-spacing: 3px;
+  color: #444;
+  background:#f7f6ec;
+  border-radius: 18px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.5s ease forwards;
+}
+
+.no-results i {
+  font-size: 1.5rem;
+  margin: 10px;
+
+  /* Gradient text from palette */
+  background: linear-gradient(45deg, #d4a574, #b8935f, #8b4513);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  /* Icon rotation */
+  animation: rotateIcon 2s linear infinite;
+}
+
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .recommendation-card {
   position: relative;
 }
@@ -400,32 +587,6 @@ input[type="range"]::-ms-thumb {
 
 .quiz-actions {
   margin-top: var(--space-2xl);
-}
-
-@media (max-width: 768px) {
-  .tabs {
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .filter-grid,
-  .scent-details-full {
-    grid-template-columns: 1fr;
-  }
-
-  .quiz-navigation {
-    flex-direction: column;
-    gap: var(--space-md);
-  }
-
-  .recommendation-actions {
-    flex-direction: column;
-  }
-
-  .scent-image {
-    aspect-ratio: 1;
-    /* make it square on tablets */
-  }
 }
 
 @media (max-width: 480px) {
@@ -550,5 +711,5 @@ input[type="range"]::-ms-thumb {
 }
 
 .quiz-results-header h2 {
-  font-family: "Lora" ;
+  font-family: "Lora";
 }

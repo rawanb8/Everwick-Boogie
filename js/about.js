@@ -1,8 +1,9 @@
 // Contact page functionality
 $(document).ready(async function () {
-    await app.loadData();
+    // await app.loadData();
     setupContactForm();
     animateStats();
+    setupPhoneInput()
 });
 
 function setupContactForm() {
@@ -12,18 +13,31 @@ function setupContactForm() {
     });
 }
 
+function setupPhoneInput() {
+    $('#contact-phone').on('input', function () {
+        let val = $(this).val();
+        // Remove all non-digits
+        val = val.replace(/\D/g, '');
+        // Limit to 10 digits
+        if (val.length > 10) val = val.slice(0, 10);
+        $(this).val(val);
+    });
+}
+
 function handleContactSubmission() {
-    const requiredFields = [
+    let requiredFields = [
         'contact-first-name',
         'contact-last-name',
         'contact-email',
         'contact-subject',
         'contact-message'
     ];
+
     let isValid = true;
 
+    // Validate required fields
     requiredFields.forEach(function (fieldId) {
-        const $field = $('#' + fieldId);
+        let $field = $('#' + fieldId);
         if (!$field.val().trim()) {
             $field.addClass('error');
             isValid = false;
@@ -37,7 +51,8 @@ function handleContactSubmission() {
         return;
     }
 
-    const formData = {
+    // Collect form data
+    let formData = {
         firstName: $('#contact-first-name').val(),
         lastName: $('#contact-last-name').val(),
         email: $('#contact-email').val(),
@@ -48,33 +63,35 @@ function handleContactSubmission() {
         timestamp: new Date().toISOString()
     };
 
-    app.showNotification('Sending message...', 'info');
+    // --- CLEAR INPUTS IMMEDIATELY ---
+    $('#contact-form')[0].reset();
+    $('.error').removeClass('error');
 
-    setTimeout(function () {
-        let messages = app.getFromStorage('contact-messages') || [];
-        messages.push(formData);
-        app.saveToStorage('contact-messages', messages);
+    // --- DISABLE BUTTON FOR A MOMENT ---
+    let $btn = $('#contact-form button[type="submit"]');
+    $btn.text('Sent!');
+    $btn.prop('disabled', true);
 
-        app.showNotification('Thank you! Your message has been sent. We\'ll get back to you within 24 hours.', 'success');
+    // --- REVERT BUTTON AFTER 2s ---
+    setTimeout(() => {
+        $btn.text('Send Message');
+        $btn.prop('disabled', false);
+    }, 2000);
 
-        $('#contact-form')[0].reset();
+    let messages = JSON.parse(localStorage.getItem('contact-messages') || '[]');
+    messages.push(formData);
+    localStorage.setItem('contact-messages', JSON.stringify(messages));
 
-        if (formData.newsletter) {
-            setTimeout(function () {
-                app.showNotification('You\'ve been subscribed to our newsletter!', 'success');
-            }, 1000);
-        }
-    }, 1500);
 }
 
 function toggleFAQ(questionElement) {
-    const $faqItem = $(questionElement).parent();
-    const $answer = $faqItem.find('.faq-answer');
-    const $toggle = $faqItem.find('.faq-toggle');
+    let $faqItem = $(questionElement).parent();
+    let $answer = $faqItem.find('.faq-answer');
+    let $toggle = $faqItem.find('.faq-toggle');
 
     // Close other open FAQ items
     $('.faq-item').not($faqItem).each(function () {
-        const $item = $(this);
+        let $item = $(this);
         if ($item.hasClass('active')) {
             $item.removeClass('active');
             $item.find('.faq-answer').css('max-height', '0');
@@ -95,8 +112,8 @@ function toggleFAQ(questionElement) {
 }
 
 function animateStats() {
-    const $stats = $('.stat-number');
-    const observer = new IntersectionObserver(function (entries, obs) {
+    let $stats = $('.stat-number');
+    let observer = new IntersectionObserver(function (entries, obs) {
         entries.forEach(function (entry) {
             if (entry.isIntersecting) {
                 animateNumber($(entry.target));
@@ -111,15 +128,15 @@ function animateStats() {
 }
 
 function animateNumber($element) {
-    const text = $element.text();
-    const isPercentage = text.includes('%');
-    const number = parseInt(text.replace(/[^0-9]/g, ''));
-    const duration = 2000;
-    const steps = 60;
-    const increment = number / steps;
+    let text = $element.text();
+    let isPercentage = text.includes('%');
+    let number = parseInt(text.replace(/[^0-9]/g, ''));
+    let duration = 2000;
+    let steps = 60;
+    let increment = number / steps;
     let current = 0;
 
-    const timer = setInterval(function () {
+    let timer = setInterval(function () {
         current += increment;
         if (current >= number) {
             current = number;

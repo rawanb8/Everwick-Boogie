@@ -35,6 +35,10 @@
     font-display: swap;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 
 /* =================== COLOR PALETTE =================== */
 
@@ -47,6 +51,8 @@
     --accent-color: #8b4513;
     --brand-green: #cfd9cc;
     --accent: #bfb29d;
+    --olive-green: #8a9a5b;
+    --lighter-green:#a2b066;
 
     --text-dark: #2c1810;
     --deep: #382f32;
@@ -82,6 +88,7 @@
     --font-size-2xl: 1.5rem;
     --font-size-3xl: 2rem;
     --font-size-4xl: 2.5rem;
+    --font-size-5x1: 3rem;
 
     /* Spacing */
     --space-xs: 0.25rem;
@@ -153,7 +160,7 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: 'Poppins', sans-serif;
+    font-family: 'Poppins','Gill Sans' sans-serif;
     line-height: 1.2;
     margin-bottom: var(--space-md);
 }
@@ -226,38 +233,6 @@ a:hover {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
-.flex {
-    display: flex;
-    align-items: center;
-    gap: var(--space-md);
-}
-
-.flex-column {
-    flex-direction: column;
-}
-
-.flex-center {
-    justify-content: center;
-}
-
-.flex-between {
-    justify-content: space-between;
-}
-
-.flex-wrap {
-    flex-wrap: wrap;
-}
-
-/* Header */
-.header {
-    background: var(--white);
-    box-shadow: var(--shadow-sm);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-
 
 /* =================== BUTTONS =================== */
 .btn {
@@ -292,23 +267,12 @@ a:hover {
     box-shadow: var(--shadow-md);
 }
 
-.btn-secondary {
-    background: var(--secondary-color);
-    color: var(--text-dark);
-    border: 1px solid var(--gray-medium);
-}
-
-.btn-secondary:hover {
-    background: var(--white);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-    color: var(--text-dark);
-}
 
 .btn-outline {
     background: transparent;
     color: var(--primary-color);
     border: 2px solid var(--primary-color);
+     font-size: var(--font-size-base);
 }
 
 .btn-outline:hover {
@@ -379,37 +343,6 @@ a:hover {
     text-align: center;
 }
 
-.text-left {
-    text-align: left;
-}
-
-.text-right {
-    text-align: right;
-}
-
-
-/* Visibility */
-.hidden {
-    display: none;
-}
-
-.visible {
-    display: block;
-}
-
-
-/* Margin helpers */
-.mt-md {
-    margin-top: var(--space-md);
-}
-
-.mb-md {
-    margin-bottom: var(--space-md);
-}
-
-.p-lg {
-    padding: var(--space-lg);
-}
 
 /* =================== MODAL =================== */
 
@@ -429,23 +362,14 @@ a:hover {
     transition: all var(--transition-normal);
 }
 
-body.modal-open {
-    overflow: hidden;
-}
-
-
-.modal.active {
-    opacity: 1;
-    visibility: visible;
-}
 
 .modal-content {
     background: var(--white);
     border-radius: var(--radius-lg);
     padding: var(--space-xl);
-    max-width: 500px;
+    max-width: 800px;
     width: 90%;
-    max-height: 90vh;
+    max-height: 80vh;
     overflow-y: auto;
     transform: scale(0.7);
     transition: transform var(--transition-normal);
@@ -904,6 +828,11 @@ body.modal-open {
     color: var(--text-dark);
 }
 
+.footer-contact > * {
+    margin-bottom: 0.7rem;
+}
+
+
 .footer-license {
     margin-top: 0.8rem;
     font-size: 0.85rem;
@@ -927,10 +856,11 @@ body.modal-open {
 }
 
 .footer-copyright {
-    margin-top: 1.5rem;
+    margin-top: var(--space-xl);
     font-size: 0.85rem;
     color: var(--text-light);
     text-align: center;
+    width: 100%;
 }
 
 /* ----- Responsive ----- */
@@ -946,6 +876,10 @@ body.modal-open {
     .footer-newsletter {
         flex-direction: column;
     }
+}
+
+.footer-social-item i {
+   padding: 5px;
 }
 
 /*=================== END OF FOOTER STYLING=======================*/

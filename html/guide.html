@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Guide Page</title>
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/css/main.css">
     <link rel="stylesheet" href="/css/guide.css">
 </head>
@@ -23,12 +24,12 @@
     </section>
 
     <!-- Guiding Tabs -->
-    <section class="tabs-section">
+    <section class="tabs-section" id="scent-lib">
         <div class="container">
             <div class="tabs">
                 <button class="tab-btn active" onclick="showTab('library')">Scents Library</button>
                 <button class="tab-btn" onclick="showTab('quiz')">Take Quiz</button>
-                <button class="tab-btn" id="result-tab" onclick="showTab('results')">Your Results</button>
+                <button class="tab-btn" id="result-tab" style="display: none;" onclick="showTab('results')">Your Results</button>
             </div>
         </div>
     </section>
@@ -48,12 +49,9 @@
                             <select id="category-filter" class="form-select">
                                 <option value="" selected="selected">All categories</option>
                                 <option value="floral">Floral</option>
-                                <option value="fruity">Fruity</option>
                                 <option value="sweet">Sweet</option>
                                 <option value="fresh">Fresh</option>
-                                <option value="earthy">Earthy</option>
                                 <option value="spicy">Spicy</option>
-                                <option value="gourmand">Gourmand</option>
                             </select>
                         </div>
                         <!-- Mood Filtering -->
@@ -65,9 +63,6 @@
                                 <option value="romantic">Romantic</option>
                                 <option value="energizing">Energizing</option>
                                 <option value="relaxing">Relaxing</option>
-                                <option value="uplifting">Uplifting</option>
-                                <option value="grounding">Grounding</option>
-                                <option value="comforting">Comforting</option>
                             </select>
                         </div>
 
@@ -80,7 +75,6 @@
                                 <option value="summer">Summer</option>
                                 <option value="fall">Fall</option>
                                 <option value="winter">Winter</option>
-                                <option value="all-year">All year</option>
                             </select>
                         </div>
 
@@ -95,7 +89,7 @@
                             </select>
                         </div>
                     </div>
-                    <button class="btn btn-secondary" onclick="clearFilters()">Clear All</button>
+                    <button class="btn clear" onclick="clearFilters()">Clear All</button>
                 </div>
             </div>
         </section>
@@ -105,6 +99,11 @@
                 <div class="scents-grid grid grid-3" id="scents-grid">
                     <!-- Scents will be loaded here -->
                 </div>
+
+                <div class="no-results" id="no-results" style="display:none;">
+                    <p><i class="fa-solid fa-hourglass-end"></i>COMING SOON<i class="fa-solid fa-hourglass-end"></i></p>
+                </div>
+
             </div>
         </section>
     </div>
@@ -130,7 +129,7 @@
                     </div>
 
                     <div class="quiz-navigation">
-                        <button class=" btn btn-secondary" id="prev-btn" onclick="previousQuestion()"
+                        <button class=" btn btn-outline" id="prev-btn" onclick="previousQuestion()"
                             disabled>Previous</button>
                         <button class="btn btn-primary" id="next-btn" onclick="nextQuestion()">Next</button>
                         <button class="btn btn-primary" id="submit-btn" onclick="submitQuiz()">Get Results</button>
@@ -165,8 +164,8 @@
         </div>
     </div>
     <div id="footer"></div>
-    <script src="/js/guide.js"></script>
     <script src="/js/main.js"></script>
+    <script src="/js/guide.js"></script>
 </body>
 
 </html>
