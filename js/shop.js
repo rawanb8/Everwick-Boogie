@@ -292,9 +292,19 @@ function displayProducts() {
         }
     }).join('');
 
+    
+  container.querySelectorAll('.view-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      showProductDetails(btn.dataset.id);
+    });
+  });
+
+
     const loadMoreSection = document.getElementById('load-more-section');
     if (loadMoreSection) loadMoreSection.style.display = filteredProducts.length > displayedProducts.length ? 'block' : 'none';
 }
+
 
 // Load more
 function loadMoreProducts() {
@@ -346,16 +356,11 @@ function clearAllFilters() {
     updateResultsCount();
 }
 
-// Show product details modal
 function showProductDetails(productId) {
     const product = app.getProductById(productId);
-    if (!product) return;
+    if (!product) return alert('Product not found');
 
     const scent = app.getScentById(product.scentId);
-    const size = app.getSizeById(product.sizeId);
-    const color = app.getColorById(product.colorId);
-    const containerObj = app.getContainerById(product.containerId);
-    const wick = app.getWickById(product.wickId);
 
     const modalTitle = document.getElementById('product-modal-title');
     const modalBody = document.getElementById('product-modal-body');
@@ -364,56 +369,40 @@ function showProductDetails(productId) {
 
     if (modalBody) {
         modalBody.innerHTML = `
-        <div class="product-details-full">
-            <div class="product-images">
-                <img src="${product.images[0]}" alt="${product.name}" class="main-product-image" style="width:100%;border-radius:8px;">
-            </div>
-            <div class="product-info-full">
-                <div class="product-price-full">
-                    <span class="price-large">${app.formatPrice(product.price)}</span>
-                    ${product.featured ? '<span class="featured-tag">Featured</span>' : ''}
-                </div>
-                <div class="product-description"><p>${scent?.description || 'Premium handcrafted candle'}</p></div>
-                <div class="product-specifications">
-                    <h4>Specifications</h4>
-                    <div class="specs-grid">
-                        ${scent ? `<div class="spec-item"><strong>Scent:</strong> ${scent.name}</div>` : ''}
-                        ${color ? `<div class="spec-item"><strong>Color:</strong> ${color.name}</div>` : ''}
-                        ${size ? `<div class="spec-item"><strong>Size:</strong> ${size.volume}</div>` : ''}
-                        ${size ? `<div class="spec-item"><strong>Burn Time:</strong> ${size.burn_time}</div>` : ''}
-                        ${containerObj ? `<div class="spec-item"><strong>Container:</strong> ${containerObj.name}</div>` : ''}
-                        ${wick ? `<div class="spec-item"><strong>Wick:</strong> ${wick.name}</div>` : ''}
-                        <div class="spec-item"><strong>Stock:</strong> ${product.stock} available</div>
-                    </div>
-                </div>
-                ${scent ? `<div class="scent-details">
-                    <h4>Scent Profile</h4>
-                    <div class="scent-properties">
-                        <div class="scent-mood">Mood: ${scent.mood}</div>
-                        <div class="scent-strength">Strength: ${scent.aggressiveness}/10</div>
-                        <div class="scent-category">Family: ${scent.family}</div>
-                    </div>
-                    <div class="scent-notes"><strong>Notes:</strong> ${scent.notes.map(note => `<span class="note-tag">${note}</span>`).join('')}</div>
-                </div>` : ''}
-                <div class="product-actions-full">
-                    <div class="quantity-selector">
-                        <label for="quantity">Quantity:</label>
-                        <input type="number" id="quantity" min="1" max="${product.stock || 1}" value="1" class="form-input">
-                    </div>
-                    <button class="btn btn-primary btn-large" onclick="addProductToCart('${product.id}', document.getElementById('quantity').value)" ${product.stock <= 0 ? 'disabled' : ''}>
-                        ${product.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}
-                    </button>
-                </div>
-            </div>
-        </div>`;
+            <p>${scent?.description || 'Premium handcrafted candle'}</p>
+            <p>Price: ${app.formatPrice(product.price)}</p>
+            <button class="btn btn-outline" onclick="closeModal()">Close</button>
+        `;
     }
 
     const modal = document.getElementById('product-modal');
     if (modal) {
-        modal.classList.add('active');
-        document.body.classList.add('modal-open');
+        modal.classList.add('active');          // ✅ Add active class
+        document.body.classList.add('modal-open'); // optional: prevent scroll
     }
 }
+
+
+// Close modal
+function closeModal() {
+    const modal = document.getElementById('product-modal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.classList.remove('modal-open');
+    }
+}
+
+
+// Also attach modal close buttons
+document.querySelectorAll('.modal-close').forEach(btn => {
+    btn.addEventListener('click', closeModal);
+});
+
+// Close modal on click outside
+window.addEventListener('click', (e) => {
+    const modal = document.getElementById('product-modal');
+    if (modal && e.target === modal) closeModal();
+});
 
 // Add to cart
 function addProductToCart(productId, quantity = 1) {
