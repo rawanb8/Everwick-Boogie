@@ -1,12 +1,12 @@
-let app = {
-  data: {},
-  scents: [],
-  products: [],
-  cart: [],
-  colors: [],
-  sizes: [],
-  containers: [],
-  wicks: [],
+  let app = {
+    data: {},
+    scents: [],
+    products: [],
+    cart: [],
+    colors: [],
+    sizes: [],
+    containers: [],
+    wicks: [],
 
   // getters
   getSizes: function () { return this.sizes || []; },
@@ -166,7 +166,7 @@ let app = {
   },
 
 
-};
+  };
 
 (function () {
   document.addEventListener('DOMContentLoaded', function () {
@@ -278,7 +278,7 @@ let app = {
   window.initNavbar = initNavbar;
   window.updateCartCount = updateCartCount;
 
-})();
+  })();
 
 /* load navbar/footer + app data */
 document.addEventListener('DOMContentLoaded', async function () {
