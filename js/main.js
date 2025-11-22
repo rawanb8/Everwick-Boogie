@@ -152,7 +152,25 @@ let app = {
       console.error('Failed to calculate cart total:', err);
       return 0;
     }
-  }
+  },
+
+  getFromStorage(key) {
+    try {
+      return JSON.parse(localStorage.getItem(key) || 'null');
+    } catch (e) {
+      console.error('Failed to get from storage:', e);
+      return null;
+    }
+  },
+
+  saveToStorage(key, value) {
+    try {
+      localStorage.setItem(key, JSON.stringify(value));
+    } catch (e) {
+      console.error('Failed to save to storage:', e);
+    }
+  },
+
 
 };
 
