@@ -1,7 +1,7 @@
 (function ($) {
     'use strict';
 
-    // --- Config / letants ---
+    // --- Config / constants ---
     let COLORS = [
         { slug: 'pure-white', name: 'Pure White', hex: '#FFFFFF' },
         { slug: 'soft-pink', name: 'Soft Pink', hex: '#FFB6C1' },
@@ -59,14 +59,12 @@
         let $base = $('#layer-base');
         let $combined = $('#layer-combined');
 
-        // try to load requested combined image (color+label). If loads, show it; otherwise show base.
         let testImg = new Image();
         testImg.onload = function () {
             $combined.attr('src', path).removeClass('hidden').fadeIn(120);
             $base.addClass('hidden');
         };
         testImg.onerror = function () {
-            // fallback: try color + no-label
             let fallback = '/media/custom/candles/' + state.color + '-no-label.png';
             let fb = new Image();
             fb.onload = function () {
@@ -74,7 +72,6 @@
                 $base.addClass('hidden');
             };
             fb.onerror = function () {
-                // ultimate: show base
                 $combined.addClass('hidden');
                 $base.removeClass('hidden');
             };
@@ -82,13 +79,11 @@
         };
         testImg.src = path;
 
-        // text updates
         let labelName = (state.label === 'no-label') ? '' : (' — ' + (LABELS.find(l => l.slug === state.label) || {}).name || '');
         $('#preview-name').text(capitalizeWords(state.color.replace(/-/g, ' ')) + labelName);
         let s = scentsList.find(x => x.id === state.scentId);
         $('#preview-scent').text(s ? s.name : 'Choose a scent');
 
-        // update receipt visuals
         updateReceipt();
     }
 
@@ -98,22 +93,18 @@
 
     // --- Price logic ---
     function updatePriceDisplay() {
-        // size base price
         let basePrice = 0;
         let sizeObj = sizesList.find(sz => String(sz.id) === String(state.sizeId));
         if (sizeObj) basePrice = toNumber(sizeObj.price || 0);
 
-        // container extra
         let containerExtra = 0;
         let containerObj = containersList.find(c => String(c.id) === String(state.containerId));
         if (containerObj) containerExtra = toNumber(containerObj.price_modifier || containerObj.price || 0);
 
-        // wick extra
         let wickExtra = 0;
         let wickObj = wicksList.find(w => String(w.id) === String(state.wickId));
         if (wickObj) wickExtra = toNumber(wickObj.price_modifier || wickObj.price || 0);
 
-        // additions sum
         let additionsSum = 0;
         state.additions.forEach(k => {
             let a = DEFAULT_ADDITIONS.find(x => x.key === k);
@@ -177,15 +168,12 @@
         if (!$root.length) return;
         $root.empty();
 
-        let PLACEHOLDER_SVG = '/media/custom/additions/placeholder.svg';
-
         DEFAULT_ADDITIONS.forEach(a => {
             let $btn = $('<button type="button" class="addition-toggle" aria-pressed="false"></button>');
             $btn.attr('data-key', a.key).attr('data-price', a.price).attr('title', a.name + ' (+$' + toNumber(a.price).toFixed(2) + ')');
 
             let svgPath = '/media/custom/additions/' + a.key + '.svg';
             let $img = $('<img class="addition-icon" alt="">').attr('src', svgPath).on('error', function () {
-                // fallback to png if svg missing
                 let png = '/media/custom/additions/' + a.key + '.png';
                 if ($(this).attr('src') !== png) $(this).attr('src', png);
             });
@@ -196,7 +184,6 @@
             $root.append($btn);
         });
 
-        // restore pressed state if already in state
         $root.find('.addition-toggle').each(function () {
             let k = $(this).data('key');
             if (state.additions.has(k)) $(this).addClass('active').attr('aria-pressed', 'true');
@@ -204,7 +191,6 @@
     }
 
     function renderOtherControls() {
-        // --- Sizes ---
         let $sizes = $('#sizes');
         if ($sizes.length) {
             $sizes.empty();
@@ -228,70 +214,51 @@
             $containers.empty();
             containersList.forEach(c => {
                 let $b = $('<label class="container-item"></label>');
-
                 let $radio = $('<input type="radio" name="container-select">')
                     .val(c.id)
                     .attr('data-price', c.price_modifier || c.price || 0);
-
                 let $title = $('<div class="container-title" />').text(c.name);
 
-                // meta — small faded price and optional short description
                 let priceText = (c.price_modifier || c.price || 0);
-                // show "+ $X.XX" only if non-zero, otherwise empty string
                 let priceLabel = priceText ? ('+ $' + toNumber(priceText).toFixed(2)) : '';
                 let descText = c.description ? (' • ' + c.description) : '';
 
-                // put price and short description in a small muted meta line (to style faded)
                 let $meta = $('<div class="container-meta small muted" />')
                     .text((priceLabel + (descText ? (descText) : '')).trim());
 
                 $b.append($radio).append($title).append($meta);
                 $containers.append($b);
 
-                // Default selection classic glass jar
                 if (/classic/i.test(c.name)) $radio.prop('checked', true);
             });
         }
 
-
-        // --- WICKS (grid / card style with price + description) ---
         let $wicks = $('#wicks');
         if ($wicks.length) {
             $wicks.empty();
             wicksList.forEach((w, idx) => {
                 let $b = $('<label class="wick-item"></label>');
-
-                // radio with data-price for price calc
                 let $radio = $('<input type="radio" name="wick-select" aria-label="' + (w.name || 'Wick') + '">')
                     .val(w.id)
                     .attr('data-price', w.price_modifier || w.price || 0);
-
-                // visible title
                 let $title = $('<div class="wick-title" />').text(w.name);
 
-                // price label (show +$X only if non-zero)
                 let priceVal = (w.price_modifier || w.price || 0);
                 let priceLabel = priceVal ? ('+ $' + toNumber(priceVal).toFixed(2)) : '';
-
-                // description (short muted text)
                 let descText = w.description || ('Burn quality: ' + (w.burn_quality || 'standard'));
 
-                // meta line (price and description)
                 let $meta = $('<div class="container-meta small muted wick-meta" />').text(
                     (priceLabel ? (priceLabel + (descText ? (' • ' + descText) : '')) : descText)
                 );
 
-                // assemble
                 $b.append($radio).append($title).append($meta);
                 $wicks.append($b);
 
-                // default selection: first wick
                 if (idx === 0) $radio.prop('checked', true);
             });
         }
-
-
     }
+
     // --- Events ---
     $(document).on('click', '#colors .color-option', function () {
         let selected = $(this).data('color');
@@ -304,7 +271,6 @@
     $(document).on('click', '#labels .label-option', function () {
         let selected = $(this).data('label');
         if (!selected) return;
-        // if label chosen before color, ensure color default stays pure-white
         if (!state.color) state.color = 'pure-white';
         state.label = selected;
         setActiveLabelButton();
@@ -329,7 +295,6 @@
 
     $(document).on('change', 'input[name="size-select"]', function () {
         state.sizeId = $(this).val();
-        // update preview meta (burn time)
         updatePreviewBurnTime();
         updatePriceDisplay();
         updateReceipt();
@@ -353,23 +318,52 @@
         updatePreviewImage();
     });
 
-    // Add-to-cart (top and bottom buttons)
+    //compute total price
+    function computeTotalPrice() {
+        state.sizeId = $('input[name="size-select"]:checked').val() || state.sizeId;
+        state.containerId = $('input[name="container-select"]:checked').val() || state.containerId;
+        state.wickId = $('input[name="wick-select"]:checked').val() || state.wickId;
+
+        let basePrice = 0;
+        let sizeObj = sizesList.find(sz => String(sz.id) === String(state.sizeId));
+        if (sizeObj) basePrice = toNumber(sizeObj.price || 0);
+
+        let containerExtra = 0;
+        let containerObj = containersList.find(c => String(c.id) === String(state.containerId));
+        if (containerObj) containerExtra = toNumber(containerObj.price_modifier || containerObj.price || 0);
+
+        let wickExtra = 0;
+        let wickObj = wicksList.find(w => String(w.id) === String(state.wickId));
+        if (wickObj) wickExtra = toNumber(wickObj.price_modifier || wickObj.price || 0);
+
+        let additionsSum = 0;
+        state.additions.forEach(k => {
+            let a = DEFAULT_ADDITIONS.find(x => x.key === k);
+            if (a) additionsSum += toNumber(a.price);
+        });
+
+        return basePrice + containerExtra + wickExtra + additionsSum;
+    }
+
+    //add to cart
     $(document).on('click', '#add-to-cart, #add-to-cart-bottom', function (e) {
         e.preventDefault();
-        // require label
+
         if (!state.label || state.label === 'no-label') {
-            $('#label-warning').removeClass('hidden').text('Please choose a label before adding to cart.');
+            showLabelWarning('Please choose a label before adding to cart.', 4500);
             $('#labels').get(0)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
             return;
         } else {
-            $('#label-warning').addClass('hidden').text('');
+            hideLabelWarning();
         }
 
-        // compute price and build item
-        let priceText = $('#custom-price').text().replace(/[^0-9\.]/g, '');
-        let price = toNumber(priceText);
-        let img = candleImagePath(state.color, state.label);
+        state.sizeId = $('input[name="size-select"]:checked').val() || state.sizeId;
+        state.containerId = $('input[name="container-select"]:checked').val() || state.containerId;
+        state.wickId = $('input[name="wick-select"]:checked').val() || state.wickId;
 
+        let price = computeTotalPrice();
+
+        let img = candleImagePath(state.color, state.label);
         let name = capitalizeWords(state.color.replace(/-/g, ' ')) + (state.label !== 'no-label' ? (' — ' + (LABELS.find(l => l.slug === state.label) || {}).name) : '');
 
         let cartItem = {
@@ -394,11 +388,105 @@
         cart.push(cartItem);
         localStorage.setItem('cart', JSON.stringify(cart));
 
-        alert('Added to cart: ' + cartItem.name + ' — $' + price.toFixed(2));
+        showAddToCartToast(name, price);
+        setAddedButtonState($(this));
+        $('#add-to-cart, #add-to-cart-bottom').not(this).each(function () { setAddedButtonState($(this)); });
+
         try { $(document).trigger('cart:updated'); } catch (e) { }
     });
 
-    // --- Receipt & preview burn time helpers ---
+    // show a left-column red warning using Font Awesome icon
+    function showLabelWarning(message, duration = 4500) {
+        // prefer existing element if present
+        let $existing = $('#label-warning');
+        let $root = $('.custom-controls').first();
+        if (!$root.length) $root = $('body');
+
+        if (!$existing.length) {
+            $existing = $('<div id="label-warning" role="alert" aria-live="assertive"></div>');
+        }
+
+        //font awsome triangle warning
+        const html = '<i class="fa-solid fa-triangle-exclamation warn-icon" aria-hidden="true"></i>' +
+            '<span class="warn-text"></span>' +
+            '<button class="warn-close" aria-label="Close warning">&times;</button>';
+
+        $existing.html(html);
+        $existing.find('.warn-text').text(message);
+
+        // style / place it at top of left controls
+        $existing.removeClass('hidden').addClass('left-warning');
+        // ensure it appears as the first child in the controls column
+        $root.prepend($existing);
+
+        // show (allow animation frame to ensure transition)
+        requestAnimationFrame(() => $existing.addClass('show'));
+
+        // close handler
+        $existing.find('.warn-close').off('click').on('click', function () {
+            hideLabelWarning();
+        });
+
+        // auto-hide (clear previous)
+        clearTimeout($existing.data('warnTid'));
+        let tid = setTimeout(() => hideLabelWarning(), duration);
+        $existing.data('warnTid', tid);
+    }
+
+    function hideLabelWarning() {
+        let $existing = $('#label-warning');
+        if (!$existing.length) return;
+        $existing.removeClass('show');
+        clearTimeout($existing.data('warnTid'));
+        setTimeout(() => {
+            $existing.addClass('hidden');
+        }, 200); // let transition finish
+    }
+
+
+    // green toast message
+    function showAddToCartToast(itemName, price) {
+        let $region = $('.preview-details');
+        if (!$region.length) $region = $('body');
+
+        let $toast = $('#custom-add-toast');
+        if (!$toast.length) {
+            $toast = $('<div id="custom-add-toast" role="status"></div>');
+            $region.prepend($toast);
+        }
+
+        $toast.stop(true, true)
+            .removeClass('hide')
+            .addClass('show')
+            .html(
+                '<strong>Added to cart</strong>' +
+                '<div class="toast-sub">' + itemName + ' — $' + Number(price).toFixed(2) + '</div>'
+            );
+
+        clearTimeout($toast.data('timeoutId'));
+        let tid = setTimeout(function () {
+            $toast.removeClass('show').addClass('hide');
+        }, 3000);
+        $toast.data('timeoutId', tid);
+    }
+
+    // set button to "added" and reset after time delay
+    function setAddedButtonState($btn, duration = 3000) {
+        if (!$btn || !$btn.length) return;
+        if (!$btn.data('orig-text')) $btn.data('orig-text', $btn.html());
+
+        $btn.addClass('btn-added').attr('aria-pressed', 'true').prop('disabled', true);
+        $btn.html('<i class="fa-solid fa-check" aria-hidden="true"></i> Added');
+
+        clearTimeout($btn.data('revertTid'));
+        let tid = setTimeout(() => {
+            $btn.removeClass('btn-added').attr('aria-pressed', 'false').prop('disabled', false);
+            $btn.html($btn.data('orig-text') || 'Add to cart');
+        }, duration);
+        $btn.data('revertTid', tid);
+    }
+
+    // receipt preview
     function updatePreviewBurnTime() {
         let s = sizesList.find(x => String(x.id) === String(state.sizeId));
         if (s) {
@@ -413,32 +501,26 @@
     }
 
     function updateReceipt() {
-        // size
         let s = sizesList.find(x => String(x.id) === String(state.sizeId));
         $('#rc-size').text(s ? s.name : '—');
 
-        // container
         let c = containersList.find(x => String(x.id) === String(state.containerId));
         $('#rc-container').text(c ? c.name : '—');
 
-        // wick
         let w = wicksList.find(x => String(x.id) === String(state.wickId));
         $('#rc-wick').text(w ? w.name : '—');
 
-        // additions
         let names = Array.from(state.additions).map(k => {
             let a = DEFAULT_ADDITIONS.find(x => x.key === k);
             return a ? a.name : k;
         });
         $('#rc-additions').text(names.length ? names.join(', ') : 'None');
-
-        // total already updated by updatePriceDisplay
     }
 
-    // --- Init: load data from app ====
+    // load data from app & init
     $(function () {
-        // fallback render if app isn't there
         if (typeof app === 'undefined' || typeof app.loadData !== 'function') {
+            console.debug('customize.js: app not available — rendering fallback UI (sizes/containers/wicks empty).');
             sizesList = [];
             containersList = [];
             wicksList = [];
@@ -453,7 +535,6 @@
         }
 
         app.loadData().then(function () {
-            // load lists from app.data
             sizesList = Array.isArray(app.sizes) ? app.sizes : [];
             containersList = Array.isArray(app.containers) ? app.containers : [];
             wicksList = Array.isArray(app.wicks) ? app.wicks : [];
@@ -473,44 +554,36 @@
                 let small = sizesList.find(x => String(x.name || '').toLowerCase().includes('small'));
                 if (small) state.sizeId = small.id;
                 else {
-                    // fallback choose smallest price
                     let sorted = sizesList.slice().sort((a, b) => (toNumber(a.price) - toNumber(b.price)));
                     state.sizeId = sorted[0].id;
                 }
             }
 
-            // container default: prefer 'Classic Glass Jar' or first
             if (!state.containerId && containersList.length) {
                 let classic = containersList.find(x => /classic/i.test(x.name || ''));
                 state.containerId = classic ? classic.id : containersList[0].id;
             }
 
-            // wick default: first available
             if (!state.wickId && wicksList.length) state.wickId = wicksList[0].id;
-
-            // scent default: first available
             if (!state.scentId && scentsList.length) state.scentId = scentsList[0].id;
 
-            // render UI
             renderColorControls();
             renderLabelControls();
             renderAdditionsControls();
             renderOtherControls();
 
-            // pre-select radio inputs visually
             if (state.sizeId) $('input[name="size-select"][value="' + state.sizeId + '"]').prop('checked', true);
             if (state.containerId) $('input[name="container-select"][value="' + state.containerId + '"]').prop('checked', true);
             if (state.wickId) $('input[name="wick-select"][value="' + state.wickId + '"]').prop('checked', true);
             if (state.scentId) $('#scent-select').val(state.scentId);
 
-            // initial updates
             updatePreviewImage();
             updatePreviewBurnTime();
             updatePriceDisplay();
             updateReceipt();
+
         }).catch(function (err) {
             console.error('app.loadData() failed in customize.js', err);
-            // still render minimal interface
             renderColorControls();
             renderLabelControls();
             renderAdditionsControls();
@@ -520,12 +593,5 @@
             updateReceipt();
         });
     });
-
-    // expose for debugging
-    window.customizeState = state;
-    window.getCustomizePrice = function () {
-        let raw = $('#custom-price').text().replace(/[^0-9\.]/g, '');
-        return toNumber(raw);
-    };
 
 })(jQuery);

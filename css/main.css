@@ -703,7 +703,7 @@ a:hover {
 
 /* page spacer helper so content doesn't hide under fixed nav */
 .page-spacer {
-    height: 72px;
+    height: 35px;
 }
 
 /*=================== FOOTER =======================*/
