@@ -362,6 +362,11 @@ a:hover {
     transition: all var(--transition-normal);
 }
 
+.modal.active {
+    opacity: 1;
+    visibility: visible;
+}
+
 
 .modal-content {
     background: var(--white);
