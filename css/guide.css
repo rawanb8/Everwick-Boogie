@@ -7,8 +7,12 @@
 .page-header h1 {
   font-size: 3rem;
   font-weight: 700;
-  color: #8A9A5B;
-  /* main brand color */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  font-family: "Ovo";
+  color: #9a4b2b;
   margin-bottom: var(--space-md);
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -37,6 +41,7 @@
   /* center the paragraph */
   text-align: center;
   /* centered under header */
+   font-family: "Lora";
 }
 
 .tabs-section {
@@ -74,7 +79,7 @@
 }
 
 .filters-section {
-  background-color: #bec6a6;
+  background-color: #cfd9cc;
   padding: var(--space-xl) 0;
   box-shadow: var(--shadow-sm);
   margin-bottom: var(--space-xl);
@@ -124,7 +129,7 @@
 /* Specific styling for the Clear button */
 .btn.clear {
   display: block;
-  background-color: #8a9a5b;
+  background-color: #a9c593;
   /* olive-green */
   margin: var(--space-lg) auto 0 auto;
   /* top margin, horizontal auto centers it */
@@ -142,13 +147,13 @@
 }
 
 .btn.clear:hover {
-  background-color: #a2b066;
+  background-color: #829871;
   /* lighter green on hover */
   transform: translateY(-2px);
 }
 
 .btn.clear:focus {
-  outline: 2px solid #a2b066;
+  outline: 2px solid #a9c593;
   /* visible focus for accessibility */
   outline-offset: 2px;
 }
