@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Everwick Boogee | Shop Candles</title>
-  <link rel="stylesheet" href="/css/shop.css">
-  <link rel="stylesheet" href="/css/main.css">
-</head>
+  <link rel="stylesheet" href="../css/shop.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
+</head>
 
 <body>
 
@@ -31,7 +33,6 @@
     <section class="shop-controls">
       <div class="container">
         <div class="controls-layout">
-
 
           <!-- Search and Sort -->
           <div class="search-sort">
@@ -61,7 +62,6 @@
     <section class="section">
       <div class="container">
         <div class="shop-layout">
-
 
           <!-- Filters Sidebar -->
           <div class="filters-sidebar" id="filters-sidebar">
@@ -99,7 +99,6 @@
                 <!-- Will be populated dynamically -->
               </div>
             </div>
-            
             
 
             <!-- Mood Filter -->
@@ -145,8 +144,19 @@
       </div>
     </section>
 
-   
-    
+    <!-- Product Detail Modal -->
+    <div id="product-modal" class="modal">
+      <div class="modal-content modal-large">
+        <div class="modal-header">
+          <h3 id="product-modal-title">Product Details</h3>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div id="product-modal-body">
+          <!-- Product details will be loaded here -->
+        </div>
+      </div>
+    </div>
+
     <!-- Cart Modal -->
     <div id="cart-modal" class="modal">
       <div class="modal-content">
@@ -162,7 +172,7 @@
             <strong>Total: <span id="cart-total">$0.00</span></strong>
           </div>
           <div class="cart-actions">
-            <button class="btn" onclick="app.closeModal()">Continue Shopping</button>
+            <button class="btn btn-secondary" onclick="app.closeModal()">Continue Shopping</button>
             <a href="checkout.html" class="btn btn-primary">Checkout</a>
           </div>
         </div>
@@ -173,11 +183,10 @@
 
   <!-- Footer moved OUTSIDE the container -->
   <div id="footer"></div>
-  <script src="/js/main.js"></script>
-  <script src="/js/shop.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/shop.js"></script>
 
 
 </body>
-
 
 </html>
