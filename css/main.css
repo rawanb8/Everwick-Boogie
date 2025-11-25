@@ -454,9 +454,7 @@ a:hover {
 
 /* scrolled state */
 .site-nav.scrolled .nav-inner-container {
-    background: linear-gradient(180deg, rgba(62, 50, 56, 0.96), rgba(62, 50, 56, 0.96));
-    color: #f6e8ff;
-    box-shadow: 0 8px 30px rgba(20, 18, 16, 0.18);
+    backdrop-filter: blur(10px);
  } 
 
 /* ---------------- Brand ---------------- */
@@ -660,10 +658,12 @@ a:hover {
 .mobile-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(6, 4, 2, 0.48);
+    background: rgba(255,255,255,0.02);
+    /* background: transparent; */
     opacity: 0;
     transition: opacity 220ms ease;
     pointer-events: none;
+    backdrop-filter: none;
 }
 
 .mobile-menu[data-open="true"] .mobile-backdrop {
