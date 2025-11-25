@@ -454,7 +454,13 @@ a:hover {
 
 /* scrolled state */
 .site-nav.scrolled .nav-inner-container {
+<<<<<<< HEAD
     backdrop-filter: blur(10px);
+=======
+    background: linear-gradient(180deg, rgba(62, 50, 56, 0.96), rgba(62, 50, 56, 0.96));
+    color: #f6e8ff;
+    box-shadow: 0 8px 30px rgba(20, 18, 16, 0.18);
+>>>>>>> 9c37c3a (redoing navbar styling, structure w kel shi tene)
  } 
 
 /* ---------------- Brand ---------------- */
