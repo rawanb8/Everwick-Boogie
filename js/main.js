@@ -107,23 +107,40 @@ let app = {
     });
   },
 
-  addToCart: function (productId, quantity) {
-    if (typeof quantity === 'undefined') quantity = 1;
-    try {
-      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      if (!Array.isArray(cart)) cart = [];
-      let product = this.getProductById(productId);
-      if (!product) return false;
-      for (let i = 0; i < quantity; i++) {
-        cart.push({ productId: productId, addedAt: new Date().toISOString() });
-      }
-      localStorage.setItem('cart', JSON.stringify(cart));
-      return true;
-    } catch (err) {
-      console.error('Failed to add to cart:', err);
-      return false;
-    }
+ addToCart: function(productId, quantity = 1) {
+  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  let product = this.getProductById(productId);
+  if (!product) return false;
+
+  cart.push({
+    id: Date.now() + '-' + productId, // ✅ unique id
+    productId: productId,
+    quantity: quantity,
+    price: product.price
+  });
+
+  localStorage.setItem('cart', JSON.stringify(cart));
+  return true;
+},
+
+ removeFromCart: function(itemId) {
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+     cart = cart.filter(item => String(item.id) !== String(itemId));
+  localStorage.setItem('cart', JSON.stringify(cart));
+    return cart; // optional, if you want
   },
+
+
+  getCart: function() {
+  try {
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    if (!Array.isArray(cart)) cart = [];
+    return cart;
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
+},
 
   getCartTotal: function () {
     try {
@@ -132,7 +149,7 @@ let app = {
       let total = 0;
       cart.forEach(function (item) {
         let product = app.getProductById(item.productId);
-        if (product) total += Number(product.price || 0);
+       if (product) total += (Number(product.price || 0) * (item.quantity || 1));
       });
       return total;
     } catch (err) {
@@ -141,13 +158,17 @@ let app = {
     }
   },
 
+  
+
   // small storage helpers
   getFromStorage: function (key) {
     try { return JSON.parse(localStorage.getItem(key)); } catch (e) { console.error(e); return null; }
   },
   saveToStorage: function (key, value) {
     try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { console.error(e); }
-  }
+  },
+  
+
 };
 
 /* DOM bootstrap and helpers */
@@ -195,8 +216,8 @@ let app = {
       if (isOpen) closeMenu(); else openMenu();
     });
 
-    if (mobileClose) mobileClose.addEventListener('click', closeMenu);
-    if (mobileBackdrop) mobileBackdrop.addEventListener('click', closeMenu);
+      if (mobileClose) mobileClose.addEventListener('click', closeMenu);
+      if (mobileBackdrop) mobileBackdrop.addEventListener('click', closeMenu);
 
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && mobileMenu.dataset.open === "true") closeMenu();
