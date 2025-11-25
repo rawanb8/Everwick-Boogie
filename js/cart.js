@@ -145,18 +145,19 @@ function loadShippingOptions() {
     const price = isFree ? 0 : option.price;
     
     return `
-      <div class="shipping-option" onclick="selectShippingMethod(${option.id})">
-        <input type="radio" name="shipping-method" value="${option.id}" 
-               ${option.id === 1 ? 'checked' : ''}>
-        <div class="shipping-details">
-          <div class="shipping-name">${option.name}</div>
-          <div class="shipping-time">${option.time}</div>
-          ${isFree ? '<div class="free-shipping">FREE</div>' : ''}
-        </div>
-        <div class="shipping-price">
-          ${isFree ? 'FREE' : app.formatPrice(price)}
-        </div>
+      <label class="shipping-option">
+      <input type="radio" name="shipping-method" value="${option.id}" 
+           onchange="selectShippingMethod(${option.id})"
+           ${option.id === 1 ? 'checked' : ''}>
+      <div class="shipping-details">
+        <div class="shipping-name">${option.name}</div>
+        <div class="shipping-time">${option.time}</div>
+        ${isFree ? '<div class="free-shipping">FREE</div>' : ''}
       </div>
+      <div class="shipping-price">
+        ${isFree ? 'FREE' : app.formatPrice(price)}
+      </div>
+      </label>
     `;
   }).join('');
   
@@ -226,6 +227,9 @@ function nextCheckoutStep() {
     document.getElementById(`checkout-step-${checkoutSteps[currentCheckoutStep]}`).classList.add('active');
     
     updateCheckoutProgress();
+    
+    // Scroll to top to focus on the container
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     
     if (checkoutSteps[currentCheckoutStep] === 'confirmation') {
       processOrder();
