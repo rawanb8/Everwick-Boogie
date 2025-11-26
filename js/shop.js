@@ -224,7 +224,7 @@ function sortProducts() {
             case 'price-low': return a.price - b.price;
             case 'price-high': return b.price - a.price;
             case 'name': return a.name.localeCompare(b.name);
-            case 'popularity': 
+            case 'popularity':
             case 'featured':
             default: return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
         }
@@ -247,6 +247,10 @@ function displayProducts() {
         const size = app.getSizeById(product.sizeId);
         const color = app.getColorById(product.colorId);
 
+        const isWishlisted = app.isInWishlist(product.id);
+        const wishlistIconClass = isWishlisted ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+        const wishlistBtnClass = isWishlisted ? 'wishlist-btn active' : 'wishlist-btn';
+
         if (currentView === 'grid') {
             return `
             <div class="product-card" onclick="showProductDetails('${product.id}')">
@@ -254,6 +258,9 @@ function displayProducts() {
                     ${product.featured ? '<div class="featured-badge">Featured</div>' : ''}
                     ${product.stock <= 5 && product.stock > 0 ? '<div class="stock-badge">Low Stock</div>' : ''}
                     ${product.stock <= 0 ? '<div class="stock-badge">Out of Stock</div>' : ''}
+                    <button class="${wishlistBtnClass}" onclick="event.stopPropagation(); toggleWishlist('${product.id}')">
+                        <i class="${wishlistIconClass}"></i>
+                    </button>
                 </div>
                 <div class="card-content">
                     <h3 class="card-title">${product.name}</h3>
@@ -292,13 +299,13 @@ function displayProducts() {
         }
     }).join('');
 
-    
-  container.querySelectorAll('.view-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      showProductDetails(btn.dataset.id);
+
+    container.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showProductDetails(btn.dataset.id);
+        });
     });
-  });
 
 
     const loadMoreSection = document.getElementById('load-more-section');
@@ -358,27 +365,73 @@ function clearAllFilters() {
 
 function showProductDetails(productId) {
     const product = app.getProductById(productId);
-    if (!product) return alert('Product not found');
+    if (!product) return;
 
     const scent = app.getScentById(product.scentId);
+    const size = app.getSizeById(product.sizeId);
+    const container = app.getContainerById(product.containerId);
+    const wick = app.getWickById(product.wickId);
+    const isWishlisted = app.isInWishlist(product.id);
 
-    const modalTitle = document.getElementById('product-modal-title');
     const modalBody = document.getElementById('product-modal-body');
-
-    if (modalTitle) modalTitle.textContent = product.name;
+    const modalTitle = document.getElementById('product-modal-title');
+    if (modalTitle) modalTitle.style.display = 'none'; // Hide default title as we have custom layout
 
     if (modalBody) {
         modalBody.innerHTML = `
-            <p>${scent?.description || 'Premium handcrafted candle'}</p>
-            <p>Price: ${app.formatPrice(product.price)}</p>
-            <button class="btn btn-outline" onclick="closeModal()">Close</button>
+            <div class="product-modal-layout">
+                <div class="modal-image-container">
+                     <button class="modal-close-btn-absolute" onclick="closeModal()">&times;</button>
+                    <img src="${product.images[0]}" alt="${product.name}">
+                </div>
+                <div class="modal-info-container">
+                    <h2 class="modal-product-title">${product.name}</h2>
+                    <div class="modal-product-price">${app.formatPrice(product.price)}</div>
+                    
+                    <div class="modal-section-title">Description</div>
+                    <p class="modal-description">${scent?.description || 'A premium handcrafted candle.'}</p>
+                    
+                    <div class="modal-specs-grid">
+                        <div class="spec-item"><strong>Mood</strong> <span>${scent?.mood || 'N/A'}</span></div>
+                        <div class="spec-item"><strong>Family</strong> <span>${scent?.family || 'N/A'}</span></div>
+                        <div class="spec-item"><strong>Size</strong> <span>${size?.name || 'Standard'}</span></div>
+                        <div class="spec-item"><strong>Burn Time</strong> <span>${size?.burnTime || '40+ hours'}</span></div>
+                        <div class="spec-item"><strong>Container</strong> <span>${container?.name || 'Glass'}</span></div>
+                        <div class="spec-item"><strong>Wick</strong> <span>${wick?.name || 'Cotton'}</span></div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button class="btn btn-primary" onclick="addProductToCart('${product.id}')" ${product.stock <= 0 ? 'disabled' : ''}>
+                            ${product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+                        </button>
+                        <button class="btn-wishlist-modal ${isWishlisted ? 'active' : ''}" onclick="toggleWishlist('${product.id}')">
+                            <i class="${isWishlisted ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
         `;
     }
 
     const modal = document.getElementById('product-modal');
     if (modal) {
-        modal.classList.add('active');          // ✅ Add active class
-        document.body.classList.add('modal-open'); // optional: prevent scroll
+        modal.classList.add('active');
+        document.body.classList.add('modal-open');
+    }
+}
+
+function toggleWishlist(productId) {
+    if (app.isInWishlist(productId)) {
+        app.removeFromWishlist(productId);
+    } else {
+        app.addToWishlist(productId);
+    }
+    displayProducts(); // Refresh grid to update icons
+
+    // If modal is open, refresh it too (or just the button)
+    const modal = document.getElementById('product-modal');
+    if (modal && modal.classList.contains('active')) {
+        showProductDetails(productId);
     }
 }
 

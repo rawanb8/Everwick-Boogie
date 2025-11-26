@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Everwick Boogee | Your Wishlist</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/shop.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .wishlist-header {
+            background: var(--secondary-color);
+            padding: var(--space-2xl) 0;
+            text-align: center;
+        }
+        .wishlist-header h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #8A9A5B;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: var(--space-md);
+        }
+        .empty-wishlist {
+            text-align: center;
+            padding: var(--space-2xl);
+            font-size: 1.2rem;
+            color: var(--text-light);
+        }
+        .empty-wishlist a {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="navbar"></div>
+
+    <section class="wishlist-header">
+        <div class="container">
+            <h1>Your Wishlist</h1>
+            <p>Save your favorite scents for later.</p>
+        </div>
+    </section>
+
+    <section class="section">
+        <div class="container">
+            <div id="wishlist-grid" class="products-grid grid grid-3">
+                <!-- Wishlist items will be loaded here -->
+            </div>
+            <div id="empty-message" class="empty-wishlist" style="display: none;">
+                <p>Your wishlist is empty. <a href="shop.html">Start shopping</a> to add some favorites!</p>
+            </div>
+        </div>
+    </section>
+
+    <div id="footer"></div>
+
+    <script src="../js/main.js"></script>
+    <script src="../js/wishlist.js"></script>
+</body>
+</html>

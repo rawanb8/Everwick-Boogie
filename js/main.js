@@ -10,6 +10,7 @@ let app = {
   sizes: [],
   containers: [],
   wicks: [],
+  wishlist: [],
 
   // getters
   getSizes: function () { return this.sizes || []; },
@@ -107,40 +108,66 @@ let app = {
     });
   },
 
- addToCart: function(productId, quantity = 1) {
-  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-  let product = this.getProductById(productId);
-  if (!product) return false;
-
-  cart.push({
-    id: Date.now() + '-' + productId, // ✅ unique id
-    productId: productId,
-    quantity: quantity,
-    price: product.price
-  });
-
-  localStorage.setItem('cart', JSON.stringify(cart));
-  return true;
-},
-
- removeFromCart: function(itemId) {
+  addToCart: function (productId, quantity = 1) {
     let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-     cart = cart.filter(item => String(item.id) !== String(itemId));
-  localStorage.setItem('cart', JSON.stringify(cart));
-    return cart; // optional, if you want
+    let product = this.getProductById(productId);
+    if (!product) return false;
+
+    cart.push({
+      id: Date.now() + '-' + productId,
+      productId: productId,
+      quantity: quantity,
+      price: product.price
+    });
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    return true;
   },
 
-
-  getCart: function() {
-  try {
+  removeFromCart: function (itemId) {
     let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    if (!Array.isArray(cart)) cart = [];
+    cart = cart.filter(item => String(item.id) !== String(itemId));
+    localStorage.setItem('cart', JSON.stringify(cart));
     return cart;
-  } catch (err) {
-    console.error(err);
-    return [];
-  }
-},
+  },
+
+  // Wishlist Logic
+  addToWishlist: function (productId) {
+    let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    if (!wishlist.includes(productId)) {
+      wishlist.push(productId);
+      localStorage.setItem('wishlist', JSON.stringify(wishlist));
+      return true;
+    }
+    return false;
+  },
+
+  removeFromWishlist: function (productId) {
+    let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    wishlist = wishlist.filter(id => String(id) !== String(productId));
+    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+    return true;
+  },
+
+  getWishlist: function () {
+    return JSON.parse(localStorage.getItem('wishlist') || '[]');
+  },
+
+  isInWishlist: function (productId) {
+    let wishlist = this.getWishlist();
+    return wishlist.map(String).includes(String(productId));
+  },
+
+  getCart: function () {
+    try {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (!Array.isArray(cart)) cart = [];
+      return cart;
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  },
 
   getCartTotal: function () {
     try {
@@ -149,7 +176,7 @@ let app = {
       let total = 0;
       cart.forEach(function (item) {
         let product = app.getProductById(item.productId);
-       if (product) total += (Number(product.price || 0) * (item.quantity || 1));
+        if (product) total += (Number(product.price || 0) * (item.quantity || 1));
       });
       return total;
     } catch (err) {
@@ -158,7 +185,7 @@ let app = {
     }
   },
 
-  
+
 
   // small storage helpers
   getFromStorage: function (key) {
@@ -167,7 +194,7 @@ let app = {
   saveToStorage: function (key, value) {
     try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { console.error(e); }
   },
-  
+
 
 };
 
@@ -216,8 +243,8 @@ let app = {
       if (isOpen) closeMenu(); else openMenu();
     });
 
-      if (mobileClose) mobileClose.addEventListener('click', closeMenu);
-      if (mobileBackdrop) mobileBackdrop.addEventListener('click', closeMenu);
+    if (mobileClose) mobileClose.addEventListener('click', closeMenu);
+    if (mobileBackdrop) mobileBackdrop.addEventListener('click', closeMenu);
 
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && mobileMenu.dataset.open === "true") closeMenu();
