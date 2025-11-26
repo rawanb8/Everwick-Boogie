@@ -1,6 +1,3 @@
-/* main.js — cleaned, using `let` only */
-/* Drop this in place of your current main.js */
-
 let app = {
   data: {},
   scents: [],
@@ -38,7 +35,7 @@ let app = {
   async loadData() {
     try {
       if (!this.scents.length || !this.products.length) {
-        // adjust path if necessary (see checklist below)
+        // adjust path if necessary
         let response = await fetch('../json/products.json');
         if (!response.ok) throw new Error("Fetch failed: " + response.status);
         let data = await response.json();
@@ -171,7 +168,6 @@ let app = {
 
 };
 
-/* DOM bootstrap and helpers */
 (function () {
   document.addEventListener('DOMContentLoaded', function () {
     try {
@@ -189,43 +185,79 @@ let app = {
     let mobileClose = document.getElementById('mobile-close');
     let mobileBackdrop = document.getElementById('mobile-backdrop');
 
-    if (!siteNav || !hamburger || !mobileMenu) {
-      // missing pieces — bail safely
-      return;
-    }
+    // Guard: required elements
+    if (!siteNav || !hamburger || !mobileMenu) return;
 
+    // Prevent double-init
+    if (siteNav.dataset.inited === "true") return;
+    siteNav.dataset.inited = "true";
+
+    // Ensure initial dataset state and ARIA
     mobileMenu.dataset.open = mobileMenu.dataset.open || "false";
+    hamburger.setAttribute('aria-controls', mobileMenu.id || 'mobile-menu');
+    hamburger.setAttribute('aria-expanded', mobileMenu.dataset.open === "true" ? "true" : "false");
+    mobileMenu.setAttribute('aria-hidden', mobileMenu.dataset.open === "true" ? "false" : "true");
 
-    function openMenu() {
-      mobileMenu.dataset.open = "true";
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.overflow = 'hidden';
-      let first = mobileMenu.querySelector('a, button');
-      if (first) { try { first.focus(); } catch (e) { } }
+    function setMenuOpen(open) {
+      open = !!open;
+      mobileMenu.dataset.open = open ? "true" : "false";
+      mobileMenu.setAttribute('aria-hidden', open ? "false" : "true");
+      hamburger.setAttribute('aria-expanded', open ? "true" : "false");
+
+      if (open) {
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+        siteNav.classList.add('menu-open');
+
+        // focus first focusable element inside menu (accessibility)
+        let focusable = mobileMenu.querySelector('a, button, input, [tabindex]:not([tabindex="-1"])');
+        if (focusable && typeof focusable.focus === 'function') focusable.focus();
+      } else {
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+        siteNav.classList.remove('menu-open');
+        try { hamburger.focus(); } catch (e) { }
+      }
     }
 
-    function closeMenu() {
-      mobileMenu.dataset.open = "false";
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
-      try { hamburger.focus(); } catch (e) { }
+    function toggleMenu() {
+      setMenuOpen(mobileMenu.dataset.open !== "true");
     }
 
-    hamburger.addEventListener('click', function () {
-      let isOpen = mobileMenu.dataset.open === "true";
-      if (isOpen) closeMenu(); else openMenu();
+    // Click handlers
+    hamburger.addEventListener('click', function (e) {
+      e.preventDefault();
+      toggleMenu();
     });
 
-      if (mobileClose) mobileClose.addEventListener('click', closeMenu);
-      if (mobileBackdrop) mobileBackdrop.addEventListener('click', closeMenu);
+    if (mobileClose) {
+      mobileClose.addEventListener('click', function (e) { e.preventDefault(); setMenuOpen(false); });
+    }
 
+    if (mobileBackdrop) {
+      mobileBackdrop.addEventListener('click', function () { setMenuOpen(false); });
+    }
+
+    // close on Escape
     document.addEventListener('keydown', function (e) {
-      if (e.key === 'Escape' && mobileMenu.dataset.open === "true") closeMenu();
+      if (e.key === 'Escape' && mobileMenu.dataset.open === "true") {
+        setMenuOpen(false);
+      }
     });
 
+    // close when clicking a link inside the mobile menu (common UX)
+    mobileMenu.addEventListener('click', function (e) {
+      let el = e.target;
+      if (el && (el.tagName === 'A' || (el.closest && el.closest('a')))) {
+        setMenuOpen(false);
+      }
+    });
+
+    // Add/remove "scrolled" class on scroll
     let threshold = 60;
     window.addEventListener('scroll', function () {
-      if (window.scrollY > threshold) siteNav.classList.add('scrolled'); else siteNav.classList.remove('scrolled');
+      if (window.scrollY > threshold) siteNav.classList.add('scrolled');
+      else siteNav.classList.remove('scrolled');
     });
   }
 
@@ -241,6 +273,11 @@ let app = {
       }, 300);
     } catch (err) { console.error('Failed to update cart count', err); }
   }
+
+  // expose to global so other scripts can call them after nav injection
+  window.initNavbar = initNavbar;
+  window.updateCartCount = updateCartCount;
+
 })();
 
 /* load navbar/footer + app data */
@@ -248,11 +285,31 @@ document.addEventListener('DOMContentLoaded', async function () {
   let navbarContainer = document.getElementById('navbar');
   if (navbarContainer) {
     try {
-      let response = await fetch('nav.html');
-      if (response.ok) navbarContainer.innerHTML = await response.text();
-      else console.warn('nav.html fetch not ok', response.status);
-    } catch (err) { console.error('Error loading navbar:', err); }
+      let response = await fetch('/html/nav.html');
+      if (response.ok) {
+        navbarContainer.innerHTML = await response.text();
+
+        // guarded calls: only call if functions are available globally
+        if (typeof window.initNavbar === 'function') {
+          try { window.initNavbar(); } catch (e) { console.error('initNavbar() error after injecting nav.html', e); }
+        } else {
+          console.warn('initNavbar not available after nav injection — skipping.');
+        }
+
+        if (typeof window.updateCartCount === 'function') {
+          try { window.updateCartCount(); } catch (e) { console.error('updateCartCount() error after injecting nav.html', e); }
+        } else {
+          console.warn('updateCartCount not available after nav injection — skipping.');
+        }
+
+      } else {
+        console.warn('nav.html fetch not ok', response.status);
+      }
+    } catch (err) {
+      console.error('Error loading navbar:', err);
+    }
   }
+
 
   // login modal handlers (guarded)
   let loginModal = document.querySelector('.login-modal-wrapper');

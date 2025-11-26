@@ -335,6 +335,7 @@ h3 {
 .team-section {
     background: var(--secondary-color);
     padding: var(--space-3xl) 0;
+    
 }
 
 .team-grid {
@@ -573,6 +574,12 @@ h3 {
 
 .faq-section {
     background: var(--white);
+    height: 100vh;
+}
+
+
+.faq-section .container {
+    margin-top: 30px;
 }
 
 .faq-list {
