@@ -46,10 +46,8 @@ function renderWishlist() {
 }
 
 function removeFromWishlistPage(productId) {
-    if (confirm('Remove this item from your wishlist?')) {
-        app.removeFromWishlist(productId);
-        renderWishlist();
-    }
+    app.removeFromWishlist(productId);
+    renderWishlist();
 }
 
 function moveToCart(productId) {
