@@ -1,4 +1,11 @@
 /* =================== CONTACT PAGE =================== */
+
+.top-page {
+    background: var(--secondary-color);
+    padding: var(--space-2xl) 0;
+}
+
+
 .contact-layout {
     gap: var(--space-2xl);
     align-items: start;
@@ -35,13 +42,32 @@
 }
 
 div h1 {
-    color: #596439;
-    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 3rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    font-family: "Ovo";
+    color: #9a4b2b;
+    margin-bottom: var(--space-md);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    letter-spacing: 1px;
 }
 
-div p {
-    font-size: var(--font-size-lg);
+.paragraph {
+    font-size: 1.25rem;
+    font-weight: 400;
+    color: var(--text-light);
     font-style: italic;
+    margin-top: var(--space-sm);
+    line-height: 1.6;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: "Lora";
+    text-align: center;
 }
 
 .contact-card,
@@ -82,12 +108,6 @@ div p {
 .contact-icon:hover {
     background: var(--primary-color);
     color: var(--white);
-}
-
-.contact-details h4 {
-    margin-bottom: var(--space-xs);
-    color: var(--text-dark);
-    font-size: var(--font-size-xl);
 }
 
 .contact-details p,
@@ -148,7 +168,8 @@ div p {
 
 .day,
 .time {
-    color: var(--accent-color);
+    font-family: 'Gill Sans', 'Trebuchet MS', sans-serif;
+    color: #5c4b2e;
     font-weight: 700;
     letter-spacing: 0.5px;
 }
@@ -159,11 +180,15 @@ h3 {
 
 /* =================== MISSION SECTION =================== */
 .mission-section {
-    background-color: #bdc5a6;
+    background-color: #cfd9cc;
 }
 
 .mission-section h2,
 .mission-section h3 {
+    color: #4f452e;
+}
+
+.container h2{
     color: #4f452e;
 }
 
@@ -174,7 +199,7 @@ h3 {
     align-items: center;
 }
 
-.mission-statement {
+.mission-statement, .founding-story p {
     font-size: var(--font-size-lg);
     font-style: italic;
     color: #54602f;
@@ -185,13 +210,17 @@ h3 {
     margin-bottom: var(--space-md);
 }
 
+.text-center2{
+    color: #4f452e;
+}
+
 .mission-img {
     width: 350px;
     height: 350px;
     object-fit: cover;
     border-radius: 20px;
     margin-left: 200px;
-    border: 5px solid #d4a574;
+    border: 5px solid #bba388;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
@@ -219,7 +248,7 @@ h3 {
 }
 
 .text-center {
-    color: #785c3e;
+    color: #4f452e;
     margin-bottom: 20px;
 }
 
@@ -263,7 +292,7 @@ h3 {
     background: var(--accent-color);
     color: var(--white);
     border-color: var(--accent-color);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .value-card:hover .value-icon i {
@@ -286,7 +315,7 @@ h3 {
 
 .value-details {
     list-style: none;
-    
+
     margin-top: auto;
 }
 
@@ -306,6 +335,7 @@ h3 {
 .team-section {
     background: var(--secondary-color);
     padding: var(--space-3xl) 0;
+    
 }
 
 .team-grid {
@@ -427,9 +457,12 @@ h3 {
 }
 
 @keyframes pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.15);
     }
@@ -464,10 +497,10 @@ h3 {
 
 .timeline-content:hover {
     transform: translateY(-3px);
-    box-shadow: 0 8px 16px rgba(0,0,0,0.15);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
-.timeline-content h3 {
+.timeline-content h3, .contact-details h4 {
     margin-bottom: var(--space-sm);
     font-family: "Lora";
     color: var(--text-dark);
@@ -541,6 +574,12 @@ h3 {
 
 .faq-section {
     background: var(--white);
+    height: 100vh;
+}
+
+
+.faq-section .container {
+    margin-top: 30px;
 }
 
 .faq-list {
@@ -611,6 +650,7 @@ h3 {
 }
 
 @media (max-width: 360px) {
+
     .form-input,
     .form-textarea,
     .form-select,
@@ -654,6 +694,7 @@ select:focus {
 }
 
 @media (max-width: 480px) {
+
     .footer-newsletter-input,
     .footer-newsletter-btn {
         width: 100%;
@@ -662,6 +703,7 @@ select:focus {
 
 
 @media (max-width: 570px) {
+
     .contact-form-section,
     .contact-info-section,
     .value-card,

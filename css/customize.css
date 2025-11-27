@@ -1,16 +1,16 @@
-.customize-page {
-  padding: 20px;
-  margin: 20px;
-}
+
 
 .customize-grid {
   display: grid;
   grid-template-columns: 1fr 420px;
   gap: 2rem;
   align-items: start;
+  margin: 30px;
 }
 
 .customize-hero {
+  background: var(--secondary-color);
+  padding: var(--space-2xl) 0;
   text-align: center;
 }
 
@@ -405,16 +405,32 @@ button {
 }
 
 .section-title {
+ font-size: 3rem;
+  font-weight: 700;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: .5rem;
   font-family: "Ovo";
   color: #9a4b2b;
+  margin-bottom: var(--space-md);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  letter-spacing: 1px;
 }
 
 .customize-paragraph {
-  font-family: "Lora";
+  font-size: 1.25rem;
+    font-weight: 400;
+    color: var(--text-light);
+    font-style: italic;
+    margin-top: var(--space-sm);
+    line-height: 1.6;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    font-family: "Lora";
+    text-align: center;
 }
 
 .flame-icon {
