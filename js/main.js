@@ -104,40 +104,40 @@ let app = {
     });
   },
 
- addToCart: function(productId, quantity = 1) {
-  let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-  let product = this.getProductById(productId);
-  if (!product) return false;
-
-  cart.push({
-    id: Date.now() + '-' + productId, // ✅ unique id
-    productId: productId,
-    quantity: quantity,
-    price: product.price
-  });
-
-  localStorage.setItem('cart', JSON.stringify(cart));
-  return true;
-},
-
- removeFromCart: function(itemId) {
+  addToCart: function (productId, quantity = 1) {
     let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-     cart = cart.filter(item => String(item.id) !== String(itemId));
-  localStorage.setItem('cart', JSON.stringify(cart));
+    let product = this.getProductById(productId);
+    if (!product) return false;
+
+    cart.push({
+      id: Date.now() + '-' + productId, // ✅ unique id
+      productId: productId,
+      quantity: quantity,
+      price: product.price
+    });
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    return true;
+  },
+
+  removeFromCart: function (itemId) {
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    cart = cart.filter(item => String(item.id) !== String(itemId));
+    localStorage.setItem('cart', JSON.stringify(cart));
     return cart; // optional, if you want
   },
 
 
-  getCart: function() {
-  try {
-    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    if (!Array.isArray(cart)) cart = [];
-    return cart;
-  } catch (err) {
-    console.error(err);
-    return [];
-  }
-},
+  getCart: function () {
+    try {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (!Array.isArray(cart)) cart = [];
+      return cart;
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  },
 
   getCartTotal: function () {
     try {
@@ -146,7 +146,7 @@ let app = {
       let total = 0;
       cart.forEach(function (item) {
         let product = app.getProductById(item.productId);
-       if (product) total += (Number(product.price || 0) * (item.quantity || 1));
+        if (product) total += (Number(product.price || 0) * (item.quantity || 1));
       });
       return total;
     } catch (err) {
@@ -155,7 +155,7 @@ let app = {
     }
   },
 
-  
+
 
   // small storage helpers
   getFromStorage: function (key) {
@@ -164,7 +164,7 @@ let app = {
   saveToStorage: function (key, value) {
     try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { console.error(e); }
   },
-  
+
 
 };
 
@@ -288,6 +288,53 @@ document.addEventListener('DOMContentLoaded', async function () {
       let response = await fetch('/html/nav.html');
       if (response.ok) {
         navbarContainer.innerHTML = await response.text();
+
+        // after injecting the nav move the modal of login in nav.html to the body of the page ---
+        try {
+          // move any modal that was inside the injected nav into document.body so it behaves like a global modal
+          let injectedModal = document.querySelector('.login-modal-wrapper');
+          if (injectedModal && injectedModal.parentElement !== document.body) {
+            // move to body preserves the element and event listeners 
+            document.body.appendChild(injectedModal);
+          }
+
+          // ensure nav init functions are called (guarded as before)
+          if (typeof window.initNavbar === 'function') {
+            try { window.initNavbar(); } catch (e) { console.error('initNavbar() error after injecting nav.html', e); }
+          } else {
+            console.warn('initNavbar not available after nav injection — skipping.');
+          }
+
+          if (typeof window.updateCartCount === 'function') {
+            try { window.updateCartCount(); } catch (e) { console.error('updateCartCount() error after injecting nav.html', e); }
+          } else {
+            console.warn('updateCartCount not available after nav injection — skipping.');
+          }
+
+          // Make sure the login button in the injected nav has a trigger class or id we can listen to.
+          // Preferred: give the button class "open-login" in nav.html (or below we attach to #login-btn if present).
+          let loginTriggers = document.querySelectorAll('.open-login');
+          if (!loginTriggers.length) {
+            // fallback to #login-btn if you used that id
+            let btn = document.getElementById('login-btn');
+            if (btn) btn.classList.add('open-login'); // add class so your existing code finds it
+            loginTriggers = document.querySelectorAll('.open-login');
+          }
+
+          // Wire the click => show modal (the rest of your modal handlers run later in the file)
+          let loginModal = document.querySelector('.login-modal-wrapper');
+          if (loginTriggers && loginTriggers.length && loginModal) {
+            loginTriggers.forEach(btn => {
+              btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.style.display = 'flex';
+              });
+            });
+          }
+        } catch (err) {
+          console.error('Post-nav-inject setup error:', err);
+        }
+
 
         // guarded calls: only call if functions are available globally
         if (typeof window.initNavbar === 'function') {
