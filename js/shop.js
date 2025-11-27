@@ -381,10 +381,10 @@ function showProductDetails(productId) {
         modalBody.innerHTML = `
             <div class="product-modal-layout">
                 <div class="modal-image-container">
-                     <button class="modal-close-btn-absolute" onclick="closeModal()">&times;</button>
                     <img src="${product.images[0]}" alt="${product.name}">
                 </div>
                 <div class="modal-info-container">
+                    <button class="modal-close-custom" onclick="closeModal()">&times;</button>
                     <h2 class="modal-product-title">${product.name}</h2>
                     <div class="modal-product-price">${app.formatPrice(product.price)}</div>
                     
@@ -465,14 +465,21 @@ function addProductToCart(productId, quantity = 1) {
 
     const qty = Math.min(parseInt(quantity) || 1, product.stock);
     if (app.addToCart(productId, qty)) {
-        alert(`Added ${qty} ${product.name} to cart`);
-        updateCartCountDisplay();
+        // Find the button that was clicked and update its text
+        const buttons = document.querySelectorAll(`button[onclick*="addProductToCart('${productId}')"]`);
+        buttons.forEach(btn => {
+            const originalText = btn.textContent;
+            btn.textContent = 'Added';
+            btn.disabled = true;
 
-        const modal = document.getElementById('product-modal');
-        if (modal) {
-            modal.classList.remove('active');
-            document.body.classList.remove('modal-open');
-        }
+            // Revert back after 2 seconds
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = product.stock <= 0;
+            }, 2000);
+        });
+
+        updateCartCountDisplay();
     } else alert('Failed to add to cart');
 }
 
