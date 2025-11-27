@@ -1,12 +1,13 @@
-  let app = {
-    data: {},
-    scents: [],
-    products: [],
-    cart: [],
-    colors: [],
-    sizes: [],
-    containers: [],
-    wicks: [],
+let app = {
+  data: {},
+  scents: [],
+  products: [],
+  cart: [],
+  colors: [],
+  sizes: [],
+  containers: [],
+  wicks: [],
+  wishlist: [],
 
   // getters
   getSizes: function () { return this.sizes || []; },
@@ -164,9 +165,35 @@
   saveToStorage: function (key, value) {
     try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { console.error(e); }
   },
+  // Wishlist Logic
+  addToWishlist: function (productId) {
+    let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    if (!wishlist.includes(productId)) {
+      wishlist.push(productId);
+      localStorage.setItem('wishlist', JSON.stringify(wishlist));
+      return true;
+    }
+    return false;
+  },
+
+  removeFromWishlist: function (productId) {
+    let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    wishlist = wishlist.filter(id => String(id) !== String(productId));
+    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+    return true;
+  },
+
+  getWishlist: function () {
+    return JSON.parse(localStorage.getItem('wishlist') || '[]');
+  },
+
+  isInWishlist: function (productId) {
+    let wishlist = this.getWishlist();
+    return wishlist.map(String).includes(String(productId));
+  },
 
 
-  };
+};
 
 (function () {
   document.addEventListener('DOMContentLoaded', function () {
@@ -278,7 +305,7 @@
   window.initNavbar = initNavbar;
   window.updateCartCount = updateCartCount;
 
-  })();
+})();
 
 /* load navbar/footer + app data */
 document.addEventListener('DOMContentLoaded', async function () {
@@ -433,6 +460,8 @@ function initNewsletterForm() {
     }
   });
 }
+
+
 
 /* login form handler (if present) */
 (function attachLoginHandlerIfPresent() {
