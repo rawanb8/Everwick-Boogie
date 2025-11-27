@@ -454,14 +454,9 @@ a:hover {
 
 /* scrolled state */
 .site-nav.scrolled .nav-inner-container {
-<<<<<<< HEAD
     backdrop-filter: blur(10px);
-=======
-    background: linear-gradient(180deg, rgba(62, 50, 56, 0.96), rgba(62, 50, 56, 0.96));
-    color: #f6e8ff;
     box-shadow: 0 8px 30px rgba(20, 18, 16, 0.18);
->>>>>>> 9c37c3a (redoing navbar styling, structure w kel shi tene)
- } 
+}
 
 /* ---------------- Brand ---------------- */
 .brand {
@@ -540,7 +535,7 @@ a:hover {
     box-shadow: none;
 }
 
-/* ---------------- Actions (search, cart, hamburger) ---------------- */
+/* ---------------- Actions (cart, hamburger) ---------------- */
 .nav-actions {
     display: flex;
     gap: .6rem;
@@ -622,9 +617,9 @@ a:hover {
 .mobile-menu {
     position: fixed;
     inset: 0;
-    z-index: 1100;
+    z-index: 1300;
     pointer-events: none;
-    /* --panel-width: 340px; */
+    -webkit-font-smoothing: subpixel-antialiased;
 }
 
 .mobile-menu[data-open="true"] {
@@ -639,19 +634,20 @@ a:hover {
     bottom: 0;
     width: 320px;
     max-width: 92%;
-    background: var(--white);
-    box-shadow: 18px 30px 60px rgba(12, 10, 12, 0.18);
+    background: linear-gradient(180deg, #fff6e9, #f4efe3);
+    box-shadow: 24px 30px 60px rgba(8, 8, 8, 0.18);
     padding: 1.25rem;
-    transform: translateX(-100%);
+    transform: translateX(-110%);
     opacity: 0;
-    transition: transform 300ms cubic-bezier(.2, .9, .3, 1), opacity 260ms ease;
+    transition: transform 360ms cubic-bezier(.2, .9, .3, 1), opacity 240ms ease;
     border-right: 1px solid rgba(0, 0, 0, 0.04);
     display: flex;
     flex-direction: column;
     gap: 1rem;
-    overflow: auto;
+    overflow-y: auto;
     border-top-right-radius: 12px;
     border-bottom-right-radius: 12px;
+    z-index: 1305;
 }
 
 /* reveal panel */
@@ -664,18 +660,47 @@ a:hover {
 .mobile-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(255,255,255,0.02);
-    /* background: transparent; */
+    z-index: 1301;
+    background: rgba(0, 0, 0, 0.12);
     opacity: 0;
     transition: opacity 220ms ease;
     pointer-events: none;
-    backdrop-filter: none;
 }
 
 .mobile-menu[data-open="true"] .mobile-backdrop {
     opacity: 1;
     pointer-events: auto;
+
 }
+
+.mobile-menu-inner .mobile-brand-row {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding-bottom: .25rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    margin-bottom: .5rem;
+}
+
+.mobile-brand-row .brand-logo,
+.mobile-brand img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+
+
+.mobile-brand .brand-text {
+    font-family: "TAN Meringue", "Amsterdam Two", serif;
+    font-size: 1.05rem;
+    color: var(--text-dark);
+    font-weight: 800;
+    line-height: 1;
+    text-decoration: none;
+}
+
 
 /* close button */
 .mobile-close {
@@ -693,7 +718,8 @@ a:hover {
     box-shadow: 0 6px 18px rgba(10, 10, 12, 0.08);
     transition: transform 150ms ease, box-shadow 150ms ease;
     font-size: 1.05rem;
-    color: var(--deep, #4b2b3a);
+    color: var(--deep);
+    z-index: 1310;
 }
 
 .mobile-close:hover {
@@ -711,6 +737,10 @@ a:hover {
 .mobile-nav {
     margin-top: 0.25rem;
 }
+.mobile-brand span{
+    font-family: "TAN Meringue";
+    padding-top: 14px;
+}
 
 .mobile-nav ul {
     list-style: none;
@@ -722,90 +752,65 @@ a:hover {
 }
 
 .mobile-nav a {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
+    display: block;
+    /* align-items: center; */
+    /* gap: 0.6rem; */
     padding: 0.85rem 0.9rem;
     border-radius: 10px;
-    color: var(--deep);
+    color: var(--text-dark);
     text-decoration: none;
     font-weight: 700;
     background: transparent;
     transition: transform 140ms ease, background 160ms ease, color 140ms ease;
+    font-family: "TAN Meringue";
 }
-
-.mobile-nav a:hover {
-    transform: translateY(-2px);
-    background: linear-gradient(90deg, rgba(180, 110, 255, 0.06), rgba(240, 219, 131, 0.03));
-    color: var(--primary-color, #8a4fff);
-}
-
-.mobile-nav a:focus {
-    outline: none;
-    box-shadow: 0 0 0 4px rgba(138, 79, 255, 0.08);
-}
-
-/* .mobile-nav a i {
-    min-width: 22px;
-    text-align: center;
-    font-size: 0.95rem;
-    color: var(--primary-color, #8a4fff);
-}
-
-.mobile-nav hr {
-    border: 0;
-    height: 1px;
-    background: linear-gradient(90deg, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.02));
-    margin: 0.75rem 0;
-} */
-
-/* mobile actions */
-.mobile-actions {
-    margin-top: 1rem;
-    display: flex;
-    gap: .6rem;
-    flex-direction: column;
-}
-
-.mobile-actions .btn {
-  padding: 0.7rem 0.9rem;
+.mobile-nav a:hover,
+.mobile-nav a:active,
+.mobile-nav a:focus,
+.mobile-nav a:focus-visible {
+  transform: translateY(-2px);
+  background: linear-gradient(90deg, rgba(207,217,204,0.06), rgba(240,219,131,0.03));
+  color: var(--primary-color);
+  outline: none;
+  box-shadow: none;
   border-radius: 10px;
-  font-weight: 700;
-  text-align: center;
-  display: inline-flex;
-  gap: .5rem;
-  align-items: center;
-  justify-content: center;
-  transition: transform 140ms ease, background 120ms ease, color 120ms ease;
-  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-  color:white;
-  border:0;
 }
-/* .mobile-actions .btn {
-  background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
-  color: var(--white);
-  border: 0;
-} */
+.mobile-nav a:focus-visible {
+  box-shadow: 0 0 0 4px rgba(212,165,116,0.12);
+}
+.mobile-nav a,
+.mobile-nav a:link,
+.mobile-nav a:visited {
+  -webkit-tap-highlight-color: rgba(0,0,0,0);
+}
 
-.mobile-actions .btn:hover {
+.mobile-actions {
+  margin-top: 1rem;
+  display: none; 
+}
+/* .mobile-actions .btn:hover {
     transform: translateY(-2px);
     filter: brightness(1.03);
+} */
+
+.btn-ghost {
+    background: transparent;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    color: var(--deep);
 }
 
-.btn-ghost { 
-    background: transparent; 
-    border: 1px solid rgba(0,0,0,0.06); 
-    color: var(--deep); 
-}
-.nav-inner-container .search-btn:focus,
-.nav-inner-container .cart-btn:focus,
-.nav-inner-container .hamburger:focus,
-.nav-links a:focus {
-  outline: 3px solid rgba(160,120,100,0.18);
-  outline-offset: 2px;
-  border-radius: 8px;
-}
 
+/* responsive tweaks */
+@media (max-width: 420px) {
+    .mobile-menu-inner {
+        width: calc(100% - 16px);
+        padding: 0.85rem;
+    }
+
+    .mobile-brand .brand-text {
+        font-size: 1rem;
+    }
+}
 
 /* ---------------- Responsive rules ------------------ */
 @media (max-width: 980px) {
@@ -848,6 +853,7 @@ a:hover {
     .brand-text {
         display: none;
     }
+
     .brand-logo {
         width: 36px;
         height: 36px;
@@ -877,6 +883,14 @@ a:hover {
     * {
         transition: none !important;
         animation: none !important;
+    }
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .mobile-nav a:hover {
+        transform: translateY(-2px);
+        background: linear-gradient(90deg, rgba(207, 217, 204, 0.06), rgba(240, 219, 131, 0.03));
+        color: var(--primary-color);
     }
 }
 

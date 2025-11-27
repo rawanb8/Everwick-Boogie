@@ -20,6 +20,12 @@
     <!-- Actions -->
     <div class="nav-actions">
 
+      <!-- Login button -->
+      <a class="login-btn" href="/html/login.html" title="Login">
+        <i class="fa-solid fa-user"></i>
+        <span class="login-text">Login</span>
+      </a>
+
       <!-- Cart button -->
       <a class="cart-btn" href="cart.html" title="Cart">
         <i class="fa-solid fa-cart-shopping cart-icon"></i>
@@ -36,32 +42,25 @@
   <!-- mobile menu modal -->
   <div class="mobile-menu" id="mobile-menu" data-open="false">
     <div class="mobile-menu-inner">
-      <!-- <div class="mobile-brand" style="display:flex;align-items:center;gap:.6rem">
-        <img src="/media/icons/icon.svg" alt="" style="width:36px;height:36px;border-radius:8px" />
-        <div style="font-weight:800">Everwick Boogie</div>
-      </div> -->
 
       <button id="mobile-close" class="mobile-close" type="button">✕</button>
+      <!-- BRAND on top -->
+      <a class="mobile-brand" href="/html/index.html" title="Everwick home"
+        style="display:flex; align-items:center; gap:.5rem; margin-bottom:1.2rem;">
+        <img src="/media/icons/icon.svg" alt="Everwick Boogie Logo" style="width:38px; height:auto;">
+        <span style="font-size:1.35rem; font-weight:600;">Everwick Boogie</span>
+      </a>
 
       <nav class="mobile-nav">
         <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="shop.html">Shop</a></li>
-          <li><a href="customize.html">Customize</a></li>
-          <li><a href="guide.html">Guide</a></li>
-          <li><a href="about.html">About</a></li>
-          <li><a href="cart.html">Cart</a></li>
+          <li><a href="/html/index.html">Home</a></li>
+          <li><a href="/html/shop.html">Shop</a></li>
+          <li><a href="/html/customize.html">Customize</a></li>
+          <li><a href="/html/guide.html">Guide</a></li>
+          <li><a href="/html/about.html">About</a></li>
+          <li><a href="/html/cart.html">Cart</a></li>
         </ul>
       </nav>
-
-      <div class="mobile-actions">
-        <a href="cart.html" class="btn">
-          <i class="fa-solid fa-cart-shopping"></i>
-          (<span id="mobile-cart-count">0</span>)
-        </a>
-
-        <a href="customize.html" class="btn btn-ghost">Customize</a>
-      </div>
 
     </div>
 
