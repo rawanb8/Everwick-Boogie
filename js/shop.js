@@ -24,12 +24,12 @@ function initializeShop() {
 // Setup global event listeners
 function setupEventListeners() {
     // Search input with debounce
-    const searchInput = document.getElementById('search-input');
+    let searchInput = document.getElementById('search-input');
     if (searchInput) searchInput.addEventListener('input', app.debounce(searchProducts, 300));
 
     // Price range sliders
-    const priceMin = document.getElementById('price-min');
-    const priceMax = document.getElementById('price-max');
+    let priceMin = document.getElementById('price-min');
+    let priceMax = document.getElementById('price-max');
     if (priceMin && priceMax) {
         priceMin.addEventListener('input', updatePriceLabels);
         priceMax.addEventListener('input', updatePriceLabels);
@@ -40,7 +40,7 @@ function setupEventListeners() {
     // Close modal buttons
     document.querySelectorAll('.modal-close').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            const modal = e.target.closest('.modal');
+            let modal = e.target.closest('.modal');
             if (modal) {
                 modal.classList.remove('active');
                 document.body.classList.remove('modal-open');
@@ -62,9 +62,9 @@ function setupFilters() {
 
 // Filter population functions
 function setupScentCategoryFilters() {
-    const container = document.getElementById('scent-category-filters');
+    let container = document.getElementById('scent-category-filters');
     if (!container) return;
-    const families = [...new Set(app.getScents().map(s => s.family))];
+    let families = [...new Set(app.getScents().map(s => s.family))];
     container.innerHTML = families.map(f => `
         <label class="filter-checkbox">
             <input type="checkbox" value="${f}" onchange="applyFilters()">
@@ -73,9 +73,9 @@ function setupScentCategoryFilters() {
 }
 
 function setupSizeFilters() {
-    const container = document.getElementById('size-filters');
+    let container = document.getElementById('size-filters');
     if (!container) return;
-    const sizes = app.getSizes();
+    let sizes = app.getSizes();
     container.innerHTML = sizes.map(size => `
         <label class="filter-checkbox">
             <input type="checkbox" value="${size.id}" onchange="applyFilters()">
@@ -86,7 +86,7 @@ function setupSizeFilters() {
 function setupColorFilters() {
     let container = document.getElementById('color-filters');
     if (!container) {
-        const filtersSection = document.querySelector('.filters-sidebar');
+        let filtersSection = document.querySelector('.filters-sidebar');
         if (filtersSection) {
             filtersSection.insertAdjacentHTML('beforeend', `
                 <div class="filter-section">
@@ -97,7 +97,7 @@ function setupColorFilters() {
         }
     }
     if (!container) return;
-    const colors = app.getColors();
+    let colors = app.getColors();
     container.innerHTML = colors.map(color => `
         <label class="filter-checkbox">
             <input type="checkbox" value="${color.id}" onchange="applyFilters()">
@@ -108,7 +108,7 @@ function setupColorFilters() {
 function setupContainerFilters() {
     let container = document.getElementById('container-filters');
     if (!container) {
-        const filtersSection = document.querySelector('.filters-sidebar');
+        let filtersSection = document.querySelector('.filters-sidebar');
         if (filtersSection) {
             filtersSection.insertAdjacentHTML('beforeend', `
                 <div class="filter-section">
@@ -119,7 +119,7 @@ function setupContainerFilters() {
         }
     }
     if (!container) return;
-    const containers = app.getContainers();
+    let containers = app.getContainers();
     container.innerHTML = containers.map(c => `
         <label class="filter-checkbox">
             <input type="checkbox" value="${c.id}" onchange="applyFilters()">
@@ -130,7 +130,7 @@ function setupContainerFilters() {
 function setupWickFilters() {
     let container = document.getElementById('wick-filters');
     if (!container) {
-        const filtersSection = document.querySelector('.filters-sidebar');
+        let filtersSection = document.querySelector('.filters-sidebar');
         if (filtersSection) {
             filtersSection.insertAdjacentHTML('beforeend', `
                 <div class="filter-section">
@@ -141,7 +141,7 @@ function setupWickFilters() {
         }
     }
     if (!container) return;
-    const wicks = app.getWicks();
+    let wicks = app.getWicks();
     container.innerHTML = wicks.map(w => `
         <label class="filter-checkbox">
             <input type="checkbox" value="${w.id}" onchange="applyFilters()">
@@ -150,9 +150,9 @@ function setupWickFilters() {
 }
 
 function setupMoodFilters() {
-    const container = document.getElementById('mood-filters');
+    let container = document.getElementById('mood-filters');
     if (!container) return;
-    const moods = [...new Set(app.getScents().map(s => s.mood))];
+    let moods = [...new Set(app.getScents().map(s => s.mood))];
     container.innerHTML = moods.map(mood => `
         <label class="filter-checkbox">
             <input type="checkbox" value="${mood}" onchange="applyFilters()">
@@ -162,14 +162,14 @@ function setupMoodFilters() {
 
 // Price label update
 function updatePriceLabels() {
-    const minSlider = document.getElementById('price-min');
-    const maxSlider = document.getElementById('price-max');
-    const minLabel = document.getElementById('price-min-label');
-    const maxLabel = document.getElementById('price-max-label');
+    let minSlider = document.getElementById('price-min');
+    let maxSlider = document.getElementById('price-max');
+    let minLabel = document.getElementById('price-min-label');
+    let maxLabel = document.getElementById('price-max-label');
     if (!minSlider || !maxSlider || !minLabel || !maxLabel) return;
 
-    const minValue = parseInt(minSlider.value);
-    const maxValue = parseInt(maxSlider.value);
+    let minValue = parseInt(minSlider.value);
+    let maxValue = parseInt(maxSlider.value);
     if (minValue >= maxValue) minSlider.value = maxValue - 1;
 
     minLabel.textContent = `$${minSlider.value}`;
@@ -179,17 +179,17 @@ function updatePriceLabels() {
 // Apply filters
 function applyFilters() {
     filteredProducts = allProducts.filter(product => {
-        const scentFilters = Array.from(document.querySelectorAll('#scent-category-filters input:checked')).map(cb => cb.value);
-        const sizeFilters = Array.from(document.querySelectorAll('#size-filters input:checked')).map(cb => parseInt(cb.value));
-        const colorFilters = Array.from(document.querySelectorAll('#color-filters input:checked')).map(cb => parseInt(cb.value));
-        const containerFilters = Array.from(document.querySelectorAll('#container-filters input:checked')).map(cb => parseInt(cb.value));
-        const wickFilters = Array.from(document.querySelectorAll('#wick-filters input:checked')).map(cb => parseInt(cb.value));
-        const moodFilters = Array.from(document.querySelectorAll('#mood-filters input:checked')).map(cb => cb.value);
-        const minPrice = parseInt(document.getElementById('price-min')?.value || 0);
-        const maxPrice = parseInt(document.getElementById('price-max')?.value || 100);
-        const inStockOnly = document.getElementById('in-stock-filter')?.checked;
+        let scentFilters = Array.from(document.querySelectorAll('#scent-category-filters input:checked')).map(cb => cb.value);
+        let sizeFilters = Array.from(document.querySelectorAll('#size-filters input:checked')).map(cb => parseInt(cb.value));
+        let colorFilters = Array.from(document.querySelectorAll('#color-filters input:checked')).map(cb => parseInt(cb.value));
+        let containerFilters = Array.from(document.querySelectorAll('#container-filters input:checked')).map(cb => parseInt(cb.value));
+        let wickFilters = Array.from(document.querySelectorAll('#wick-filters input:checked')).map(cb => parseInt(cb.value));
+        let moodFilters = Array.from(document.querySelectorAll('#mood-filters input:checked')).map(cb => cb.value);
+        let minPrice = parseInt(document.getElementById('price-min')?.value || 0);
+        let maxPrice = parseInt(document.getElementById('price-max')?.value || 100);
+        let inStockOnly = document.getElementById('in-stock-filter')?.checked;
 
-        const scent = app.getScentById(product.scentId);
+        let scent = app.getScentById(product.scentId);
 
         if (scentFilters.length && (!scent || !scentFilters.includes(scent.family))) return false;
         if (moodFilters.length && (!scent || !moodFilters.includes(scent.mood))) return false;
@@ -209,7 +209,7 @@ function applyFilters() {
 
 // Search products
 function searchProducts() {
-    const query = document.getElementById('search-input')?.value.trim();
+    let query = document.getElementById('search-input')?.value.trim();
     filteredProducts = query ? app.searchProducts(query) : [...allProducts];
     currentPage = 1;
     displayProducts();
@@ -218,7 +218,7 @@ function searchProducts() {
 
 // Sort products
 function sortProducts() {
-    const sortBy = document.getElementById('sort-select')?.value;
+    let sortBy = document.getElementById('sort-select')?.value;
     filteredProducts.sort((a, b) => {
         switch (sortBy) {
             case 'price-low': return a.price - b.price;
@@ -234,22 +234,22 @@ function sortProducts() {
 
 // Display products
 function displayProducts() {
-    const container = document.getElementById('products-grid');
+    let container = document.getElementById('products-grid');
     if (!container) return;
 
-    const startIndex = 0;
-    const endIndex = currentPage * productsPerPage;
+    let startIndex = 0;
+    let endIndex = currentPage * productsPerPage;
     displayedProducts = filteredProducts.slice(startIndex, endIndex);
 
     container.className = `products-grid ${currentView === 'grid' ? 'grid grid-3' : 'products-list'}`;
     container.innerHTML = displayedProducts.map(product => {
-        const scent = app.getScentById(product.scentId);
-        const size = app.getSizeById(product.sizeId);
-        const color = app.getColorById(product.colorId);
+        let scent = app.getScentById(product.scentId);
+        let size = app.getSizeById(product.sizeId);
+        let color = app.getColorById(product.colorId);
 
-        const isWishlisted = app.isInWishlist(product.id);
-        const wishlistIconClass = isWishlisted ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
-        const wishlistBtnClass = isWishlisted ? 'wishlist-btn active' : 'wishlist-btn';
+        let isWishlisted = app.isInWishlist(product.id);
+        let wishlistIconClass = isWishlisted ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+        let wishlistBtnClass = isWishlisted ? 'wishlist-btn active' : 'wishlist-btn';
 
         if (currentView === 'grid') {
             return `
@@ -308,7 +308,7 @@ function displayProducts() {
     });
 
 
-    const loadMoreSection = document.getElementById('load-more-section');
+    let loadMoreSection = document.getElementById('load-more-section');
     if (loadMoreSection) loadMoreSection.style.display = filteredProducts.length > displayedProducts.length ? 'block' : 'none';
 }
 
@@ -321,10 +321,10 @@ function loadMoreProducts() {
 
 // Update results count
 function updateResultsCount() {
-    const container = document.getElementById('results-count');
+    let container = document.getElementById('results-count');
     if (!container) return;
-    const total = filteredProducts.length;
-    const showing = Math.min(displayedProducts.length, total);
+    let total = filteredProducts.length;
+    let showing = Math.min(displayedProducts.length, total);
     container.textContent = `Showing ${showing} of ${total} products`;
 }
 
@@ -338,23 +338,23 @@ function setView(viewType) {
 
 // Toggle filters sidebar
 function toggleFilters() {
-    const sidebar = document.getElementById('filters-sidebar');
+    let sidebar = document.getElementById('filters-sidebar');
     if (sidebar) sidebar.classList.toggle('active');
 }
 
 // Clear all filters
 function clearAllFilters() {
     document.querySelectorAll('.filter-checkbox input').forEach(cb => cb.checked = false);
-    const priceMin = document.getElementById('price-min');
-    const priceMax = document.getElementById('price-max');
+    let priceMin = document.getElementById('price-min');
+    let priceMax = document.getElementById('price-max');
     if (priceMin) priceMin.value = 0;
     if (priceMax) priceMax.value = 100;
     updatePriceLabels();
 
-    const searchInput = document.getElementById('search-input');
+    let searchInput = document.getElementById('search-input');
     if (searchInput) searchInput.value = '';
 
-    const sortSelect = document.getElementById('sort-select');
+    let sortSelect = document.getElementById('sort-select');
     if (sortSelect) sortSelect.value = 'featured';
 
     filteredProducts = [...allProducts];
@@ -364,17 +364,17 @@ function clearAllFilters() {
 }
 
 function showProductDetails(productId) {
-    const product = app.getProductById(productId);
+    let product = app.getProductById(productId);
     if (!product) return;
 
-    const scent = app.getScentById(product.scentId);
-    const size = app.getSizeById(product.sizeId);
-    const container = app.getContainerById(product.containerId);
-    const wick = app.getWickById(product.wickId);
-    const isWishlisted = app.isInWishlist(product.id);
+    let scent = app.getScentById(product.scentId);
+    let size = app.getSizeById(product.sizeId);
+    let container = app.getContainerById(product.containerId);
+    let wick = app.getWickById(product.wickId);
+    let isWishlisted = app.isInWishlist(product.id);
 
-    const modalBody = document.getElementById('product-modal-body');
-    const modalTitle = document.getElementById('product-modal-title');
+    let modalBody = document.getElementById('product-modal-body');
+    let modalTitle = document.getElementById('product-modal-title');
     if (modalTitle) modalTitle.style.display = 'none'; // Hide default title as we have custom layout
 
     if (modalBody) {
@@ -413,7 +413,7 @@ function showProductDetails(productId) {
         `;
     }
 
-    const modal = document.getElementById('product-modal');
+    let modal = document.getElementById('product-modal');
     if (modal) {
         modal.classList.add('active');
         document.body.classList.add('modal-open');
@@ -429,7 +429,7 @@ function toggleWishlist(productId) {
     displayProducts(); // Refresh grid to update icons
 
     // If modal is open, refresh it too (or just the button)
-    const modal = document.getElementById('product-modal');
+    let modal = document.getElementById('product-modal');
     if (modal && modal.classList.contains('active')) {
         showProductDetails(productId);
     }
@@ -438,7 +438,7 @@ function toggleWishlist(productId) {
 
 // Close modal
 function closeModal() {
-    const modal = document.getElementById('product-modal');
+    let modal = document.getElementById('product-modal');
     if (modal) {
         modal.classList.remove('active');
         document.body.classList.remove('modal-open');
@@ -453,22 +453,22 @@ document.querySelectorAll('.modal-close').forEach(btn => {
 
 // Close modal on click outside
 window.addEventListener('click', (e) => {
-    const modal = document.getElementById('product-modal');
+    let modal = document.getElementById('product-modal');
     if (modal && e.target === modal) closeModal();
 });
 
 // Add to cart
 function addProductToCart(productId, quantity = 1) {
-    const product = app.getProductById(productId);
+    let product = app.getProductById(productId);
     if (!product) return alert('Product not found');
     if (product.stock <= 0) return alert('Product is out of stock');
 
-    const qty = Math.min(parseInt(quantity) || 1, product.stock);
+    let qty = Math.min(parseInt(quantity) || 1, product.stock);
     if (app.addToCart(productId, qty)) {
         // Find the button that was clicked and update its text
-        const buttons = document.querySelectorAll(`button[onclick*="addProductToCart('${productId}')"]`);
+        let buttons = document.querySelectorAll(`button[onclick*="addProductToCart('${productId}')"]`);
         buttons.forEach(btn => {
-            const originalText = btn.textContent;
+            let originalText = btn.textContent;
             btn.textContent = 'Added';
             btn.disabled = true;
 
@@ -487,7 +487,7 @@ function addProductToCart(productId, quantity = 1) {
 function updateCartCountDisplay() {
     try {
         let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-        const count = Array.isArray(cart) ? cart.length : 0;
+        let count = Array.isArray(cart) ? cart.length : 0;
         document.querySelectorAll('#cart-count, #mobile-cart-count').forEach(el => el.textContent = count);
     } catch (err) {
         console.error('Failed to update cart count:', err);

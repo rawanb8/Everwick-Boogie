@@ -287,7 +287,7 @@ function validateCurrentStep() {
   }
 }
 function validateShippingForm() {
-  const requiredFields = ['first-name', 'last-name', 'email', 'address', 'city', 'state', 'zip'];
+  const requiredFields = ['first-name', 'last-name', 'email', 'address', 'city', 'zip'];
   let isValid = true;
   let firstInvalidFieldName = '';
 
