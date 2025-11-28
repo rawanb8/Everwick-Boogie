@@ -97,11 +97,11 @@
   color: var(--primary-color);
 }
 
-.sort-controls {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  white-space: nowrap;
+.sort-controls {}
+
+align-items: center;
+gap: var(--space-sm);
+white-space: nowrap;
 }
 
 .sort-controls label {
@@ -518,7 +518,8 @@
   justify-content: space-between;
   cursor: pointer;
   box-shadow: var(--shadow-md);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s ease,
+    box-shadow 0.2s ease;
   border-radius: var(--radius-lg);
   overflow: hidden;
   background: var(--white);
@@ -1803,6 +1804,10 @@
   background: var(--white);
   overflow: hidden;
   min-height: 500px;
+}
+
+.container {
+  overflow-x: hidden;
 }
 
 .modal-image-container {
