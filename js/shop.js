@@ -272,7 +272,7 @@ function displayProducts() {
                     </div>
                     <div class="product-actions">
                         <button class="btn btn-outline btn-small" onclick="event.stopPropagation(); showProductDetails('${product.id}')">View</button>
-                        <button class="btn btn-primary btn-small open-login" onclick="event.stopPropagation(); addProductToCart('${product.id}')" ${product.stock <= 0 ? 'disabled' : ''}>Add</button>
+                        <button class="btn btn-primary btn-small" onclick="event.stopPropagation(); addProductToCart('${product.id}')" ${product.stock <= 0 ? 'disabled' : ''}>Add</button>
                     </div>
                 </div>
             </div>`;
@@ -421,19 +421,28 @@ function showProductDetails(productId) {
 }
 
 function toggleWishlist(productId) {
-    if (app.isInWishlist(productId)) {
-        app.removeFromWishlist(productId);
+    const isFav = app.isInWishlistForUser(productId, currentUser);
+    if (isFav) {
+        app.removeFromWishlistForUser(productId, currentUser);
     } else {
-        app.addToWishlist(productId);
+        app.addToWishlistForUser(productId, currentUser);
     }
-    displayProducts(); // Refresh grid to update icons
 
-    // If modal is open, refresh it too (or just the button)
+    // Update the product grid (icons)
+    if (typeof displayProducts === 'function') displayProducts();
+
+    // Update wishlist page if visible
+    const wishlistGrid = document.getElementById('wishlist-grid');
+    if (wishlistGrid) renderWishlist();
+
+    // Update modal button if open
     const modal = document.getElementById('product-modal');
     if (modal && modal.classList.contains('active')) {
         showProductDetails(productId);
     }
 }
+
+
 
 
 // Close modal

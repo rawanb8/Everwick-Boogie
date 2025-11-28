@@ -1,14 +1,17 @@
 document.addEventListener('DOMContentLoaded', async () => {
     await app.loadData();
+     currentUser = localStorage.getItem('currentUser') || null;
+    // If currentUser is null, treat as anonymous
     renderWishlist();
 });
 
+// Renders the wishlist grid for the current user
 function renderWishlist() {
     const container = document.getElementById('wishlist-grid');
     const emptyMessage = document.getElementById('empty-message');
     if (!container || !emptyMessage) return;
 
-    const wishlistIds = app.getWishlist();
+    const wishlistIds = app.getWishlistForUser(currentUser); 
     const products = wishlistIds.map(id => app.getProductById(id)).filter(p => p);
 
     if (products.length === 0) {
@@ -45,21 +48,33 @@ function renderWishlist() {
     }).join('');
 }
 
+// Remove a product from the wishlist of the current user
 function removeFromWishlistPage(productId) {
-    app.removeFromWishlist(productId);
-    renderWishlist();
-}
-
-function moveToCart(productId) {
-    if (app.addToCart(productId)) {
-        app.removeFromWishlist(productId);
+    if (confirm('Remove this item from your wishlist?')) {
+        app.removeFromWishlistForUser(productId, currentUser);
         renderWishlist();
-        alert('Moved to cart!');
-        // Update cart count if needed (main.js handles storage event usually)
-        const cartCount = document.getElementById('cart-count');
-        if (cartCount) {
-            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            cartCount.textContent = cart.length;
-        }
     }
 }
+
+// Move a wishlist item to the cart
+function moveToCart(productId) {
+    if (app.addToCart(productId)) {
+        app.removeFromWishlistForUser(productId, currentUser);
+        renderWishlist();
+        alert('Moved to cart!');
+        updateCartCountUI();
+    }
+}
+
+// Update cart count in navbar
+function updateCartCountUI() {
+    const cartCount = document.getElementById('cart-count');
+    if (cartCount) {
+        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        cartCount.textContent = cart.length;
+    }
+}
+
+
+document.addEventListener('userChanged', renderWishlist);
+

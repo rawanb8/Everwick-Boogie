@@ -1,3 +1,4 @@
+let currentUser = null;
 let app = {
   data: {},
   scents: [],
@@ -195,6 +196,42 @@ let app = {
 
 };
 
+app.saveWishlistForUser = function (username = null, wishlist = []) {
+  const key = username ? 'wishlist_' + username : 'wishlist_anonymous';
+  const obj = { username: username || 'anonymous', wishlist: wishlist };
+  localStorage.setItem(key, JSON.stringify(obj));
+};
+
+app.getWishlistForUser = function (username = null) {
+  const key = username ? 'wishlist_' + username : 'wishlist_anonymous';
+  const obj = JSON.parse(localStorage.getItem(key) || '{}');
+  return obj.wishlist || [];
+};
+
+
+// add to wishlist for a user
+app.addToWishlistForUser = function (productId, username = null) {
+  let wishlist = this.getWishlistForUser(username);
+  if (!wishlist.includes(productId)) {
+    wishlist.push(productId);
+    this.saveWishlistForUser(username, wishlist);
+  }
+};
+
+// remove from wishlist for a user
+app.removeFromWishlistForUser = function (productId, username = null) {
+  let wishlist = this.getWishlistForUser(username);
+  wishlist = wishlist.filter(id => String(id) !== String(productId));
+  this.saveWishlistForUser(username, wishlist);
+};
+
+// check if a product is in a user's wishlist
+app.isInWishlistForUser = function (productId, username = null) {
+  let wishlist = this.getWishlistForUser(username);
+  return wishlist.map(String).includes(String(productId));
+};
+
+
 (function () {
   document.addEventListener('DOMContentLoaded', function () {
     try {
@@ -257,9 +294,15 @@ let app = {
       toggleMenu();
     });
 
-    if (mobileClose) mobileClose.addEventListener('click', closeMenu);
-    if (mobileBackdrop) mobileBackdrop.addEventListener('click', closeMenu);
+    if (mobileClose) {
+      mobileClose.addEventListener('click', function (e) { e.preventDefault(); setMenuOpen(false); });
+    }
 
+    if (mobileBackdrop) {
+      mobileBackdrop.addEventListener('click', function () { setMenuOpen(false); });
+    }
+
+    // close on Escape
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && mobileMenu.dataset.open === "true") {
         setMenuOpen(false);
@@ -456,28 +499,92 @@ function initNewsletterForm() {
 }
 
 
-
-/* login form handler (if present) */
-(function attachLoginHandlerIfPresent() {
+/* login modal & form handler */
+async function attachLoginHandler() {
+  // Wait until navbar is loaded and modal moved
+  let loginModal = document.querySelector('.login-modal-wrapper');
   let loginForm = document.getElementById('loginForm');
-  if (!loginForm) return;
+  let closeBtn = document.querySelector('.login-modal-close');
+
+  if (!loginModal || !loginForm) return;
+
+  const allowedUsers = [
+    { username: 'rama', password: '12345' },
+    { username: 'maryam', password: '6789' },
+    { username: 'rawan', password: '1011' }
+  ];
+
+  // Ensure all buttons have the correct trigger class
+  let loginTriggers = document.querySelectorAll('.open-login');
+  if (!loginTriggers.length) {
+    let btn = document.getElementById('login-btn');
+    if (btn) btn.classList.add('open-login');
+    loginTriggers = document.querySelectorAll('.open-login');
+  }
+
+  // Open modal on click
+  loginTriggers.forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.preventDefault();
+      loginModal.style.display = 'flex';
+    });
+  });
+
+  // Close modal
+  if (closeBtn) closeBtn.addEventListener('click', () => loginModal.style.display = 'none');
+  window.addEventListener('click', e => { if (e.target === loginModal) loginModal.style.display = 'none'; });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && loginModal.style.display === 'flex') loginModal.style.display = 'none'; });
+
+  // Handle login submit
   loginForm.addEventListener('submit', function (e) {
     e.preventDefault();
-    let username = (document.getElementById('username') && document.getElementById('username').value) ? document.getElementById('username').value.trim() : '';
-    let password = (document.getElementById('password') && document.getElementById('password').value) ? document.getElementById('password').value.trim() : '';
-    let loginModal = document.querySelector('.login-modal-wrapper');
-    let allowedUsers = [
-      { username: 'rama', password: '12345' },
-      { username: 'maryam', password: '6789' },
-      { username: 'rawan', password: '1011' }
-    ];
-    let user = allowedUsers.find(function (u) { return u.username === username && u.password === password; });
-    if (user) {
-      alert('Login successful! Welcome, ' + user.username);
-      if (loginModal) loginModal.style.display = 'none';
-      try { loginForm.reset(); } catch (e) { }
-    } else {
+
+    let username = loginForm.querySelector('#username')?.value.trim() || '';
+    let password = loginForm.querySelector('#password')?.value.trim() || '';
+
+    // Only allow exact matches
+    let user = allowedUsers.find(u => u.username === username && u.password === password);
+
+    if (!user) {
       alert('Incorrect username or password.');
+      return;
     }
+
+    // Login success
+    currentUser = user.username;
+    localStorage.setItem('currentUser', currentUser);
+    alert('Login successful! Welcome, ' + currentUser);
+
+    // Merge anonymous wishlist
+    let anonWishlist = app.getWishlistForUser(null);
+    let userWishlist = app.getWishlistForUser(currentUser);
+    let mergedWishlist = Array.from(new Set([...anonWishlist.map(String), ...userWishlist.map(String)]));
+    app.saveWishlistForUser(currentUser, mergedWishlist);
+    app.saveWishlistForUser(null, []); // clear anonymous
+
+    renderWishlist();
+
+    // UI updates
+    loginModal.style.display = 'none';
+    loginForm.reset();
+    // if (typeof renderWishlist === 'function') renderWishlist();
+    if (typeof displayProducts === 'function') displayProducts();
+    document.dispatchEvent(new Event('userChanged'));
   });
-})();
+}
+
+/* call after navbar and modal are fully loaded */
+document.addEventListener('DOMContentLoaded', async function () {
+  // wait for nav injection
+  let checkNavLoaded = setInterval(() => {
+    let loginModal = document.querySelector('.login-modal-wrapper');
+    let loginForm = document.getElementById('loginForm');
+    if (loginModal && loginForm) {
+      clearInterval(checkNavLoaded);
+      attachLoginHandler();
+    }
+  }, 100); // check every 100ms
+});
+
+
+
