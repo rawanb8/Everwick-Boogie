@@ -111,7 +111,7 @@ let app = {
     if (!product) return false;
 
     cart.push({
-      id: Date.now() + '-' + productId,
+      id: Date.now() + '-' + productId, // ✅ unique id
       productId: productId,
       quantity: quantity,
       price: product.price
@@ -125,35 +125,9 @@ let app = {
     let cart = JSON.parse(localStorage.getItem('cart') || '[]');
     cart = cart.filter(item => String(item.id) !== String(itemId));
     localStorage.setItem('cart', JSON.stringify(cart));
-    return cart;
+    return cart; // optional, if you want
   },
 
-  // Wishlist Logic
-  addToWishlist: function (productId) {
-    let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
-    if (!wishlist.includes(productId)) {
-      wishlist.push(productId);
-      localStorage.setItem('wishlist', JSON.stringify(wishlist));
-      return true;
-    }
-    return false;
-  },
-
-  removeFromWishlist: function (productId) {
-    let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
-    wishlist = wishlist.filter(id => String(id) !== String(productId));
-    localStorage.setItem('wishlist', JSON.stringify(wishlist));
-    return true;
-  },
-
-  getWishlist: function () {
-    return JSON.parse(localStorage.getItem('wishlist') || '[]');
-  },
-
-  isInWishlist: function (productId) {
-    let wishlist = this.getWishlist();
-    return wishlist.map(String).includes(String(productId));
-  },
 
   getCart: function () {
     try {
@@ -190,6 +164,32 @@ let app = {
   },
   saveToStorage: function (key, value) {
     try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { console.error(e); }
+  },
+  // Wishlist Logic
+  addToWishlist: function (productId) {
+    let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    if (!wishlist.includes(productId)) {
+      wishlist.push(productId);
+      localStorage.setItem('wishlist', JSON.stringify(wishlist));
+      return true;
+    }
+    return false;
+  },
+
+  removeFromWishlist: function (productId) {
+    let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    wishlist = wishlist.filter(id => String(id) !== String(productId));
+    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+    return true;
+  },
+
+  getWishlist: function () {
+    return JSON.parse(localStorage.getItem('wishlist') || '[]');
+  },
+
+  isInWishlist: function (productId) {
+    let wishlist = this.getWishlist();
+    return wishlist.map(String).includes(String(productId));
   },
 
 
@@ -316,6 +316,53 @@ document.addEventListener('DOMContentLoaded', async function () {
       if (response.ok) {
         navbarContainer.innerHTML = await response.text();
 
+        // after injecting the nav move the modal of login in nav.html to the body of the page ---
+        try {
+          // move any modal that was inside the injected nav into document.body so it behaves like a global modal
+          let injectedModal = document.querySelector('.login-modal-wrapper');
+          if (injectedModal && injectedModal.parentElement !== document.body) {
+            // move to body preserves the element and event listeners 
+            document.body.appendChild(injectedModal);
+          }
+
+          // ensure nav init functions are called (guarded as before)
+          if (typeof window.initNavbar === 'function') {
+            try { window.initNavbar(); } catch (e) { console.error('initNavbar() error after injecting nav.html', e); }
+          } else {
+            console.warn('initNavbar not available after nav injection — skipping.');
+          }
+
+          if (typeof window.updateCartCount === 'function') {
+            try { window.updateCartCount(); } catch (e) { console.error('updateCartCount() error after injecting nav.html', e); }
+          } else {
+            console.warn('updateCartCount not available after nav injection — skipping.');
+          }
+
+          // Make sure the login button in the injected nav has a trigger class or id we can listen to.
+          // Preferred: give the button class "open-login" in nav.html (or below we attach to #login-btn if present).
+          let loginTriggers = document.querySelectorAll('.open-login');
+          if (!loginTriggers.length) {
+            // fallback to #login-btn if you used that id
+            let btn = document.getElementById('login-btn');
+            if (btn) btn.classList.add('open-login'); // add class so your existing code finds it
+            loginTriggers = document.querySelectorAll('.open-login');
+          }
+
+          // Wire the click => show modal (the rest of your modal handlers run later in the file)
+          let loginModal = document.querySelector('.login-modal-wrapper');
+          if (loginTriggers && loginTriggers.length && loginModal) {
+            loginTriggers.forEach(btn => {
+              btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.style.display = 'flex';
+              });
+            });
+          }
+        } catch (err) {
+          console.error('Post-nav-inject setup error:', err);
+        }
+
+
         // guarded calls: only call if functions are available globally
         if (typeof window.initNavbar === 'function') {
           try { window.initNavbar(); } catch (e) { console.error('initNavbar() error after injecting nav.html', e); }
@@ -413,6 +460,8 @@ function initNewsletterForm() {
     }
   });
 }
+
+
 
 /* login form handler (if present) */
 (function attachLoginHandlerIfPresent() {

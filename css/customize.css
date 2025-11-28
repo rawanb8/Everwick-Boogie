@@ -1,5 +1,3 @@
-
-
 .customize-grid {
   display: grid;
   grid-template-columns: 1fr 420px;
@@ -10,7 +8,8 @@
 
 .customize-hero {
   background: var(--secondary-color);
-  padding: var(--space-2xl) 0;
+  /* padding: var(--space-2xl) 0; */
+  padding: 20px 0 20px 0;
   text-align: center;
 }
 
@@ -160,14 +159,14 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: center;
+  /* justify-content: center; */
   gap: 0.35rem;
   padding: 0.65rem;
   border-radius: 10px;
   cursor: pointer;
   border: 1px solid rgba(0, 0, 0, 0.06);
   background-color: #cfd9cc;
-  min-height: 78px;
+  min-height: 90px;
   transition: background .12s ease, box-shadow .12s ease, transform .12s ease;
 }
 
@@ -336,8 +335,8 @@
 .container-item::before,
 .wick-item::before {
   content: "";
-  width: 13px;
-  height: 13px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   border: 2px solid #cfd9cc;
   background: transparent;
@@ -382,10 +381,12 @@
 @media (max-width: 980px) {
   .customize-grid {
     grid-template-columns: 1fr;
+    /* align-items: stretch; */
+    gap: 1rem;
   }
 
   .custom-preview {
-    order: -1;
+    order: 1;
     margin-bottom: 1rem;
   }
 
@@ -405,8 +406,9 @@ button {
 }
 
 .section-title {
- font-size: 3rem;
+  font-size: 3rem;
   font-weight: 700;
+  margin-top: 35px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -421,16 +423,16 @@ button {
 
 .customize-paragraph {
   font-size: 1.25rem;
-    font-weight: 400;
-    color: var(--text-light);
-    font-style: italic;
-    margin-top: var(--space-sm);
-    line-height: 1.6;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-    font-family: "Lora";
-    text-align: center;
+  font-weight: 400;
+  color: var(--text-light);
+  font-style: italic;
+  margin-top: var(--space-sm);
+  line-height: 1.6;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  font-family: "Lora";
+  text-align: center;
 }
 
 .flame-icon {
