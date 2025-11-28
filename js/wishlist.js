@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', async () => {
+$('document').ready(async function () {
     await app.loadData();
      currentUser = localStorage.getItem('currentUser') || null;
     // If currentUser is null, treat as anonymous
@@ -7,24 +7,26 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // Renders the wishlist grid for the current user
 function renderWishlist() {
-    const container = document.getElementById('wishlist-grid');
-    const emptyMessage = document.getElementById('empty-message');
-    if (!container || !emptyMessage) return;
+    let $container = $('#wishlist-grid');
+    let $emptyMessage = $('#empty-message');
+    if ($container.length === 0 || $emptyMessage.length === 0) return;
 
-    const wishlistIds = app.getWishlistForUser(currentUser); 
-    const products = wishlistIds.map(id => app.getProductById(id)).filter(p => p);
+    let wishlistIds = app.getWishlist();
+    let products = wishlistIds
+        .map(id => app.getProductById(id))
+        .filter(p => p);
 
     if (products.length === 0) {
-        container.style.display = 'none';
-        emptyMessage.style.display = 'block';
+        $container.hide();
+        $emptyMessage.show();
         return;
     }
 
-    container.style.display = 'grid';
-    emptyMessage.style.display = 'none';
+    $container.css('display', 'grid');
+    $emptyMessage.hide();
 
-    container.innerHTML = products.map(product => {
-        const scent = app.getScentById(product.scentId);
+    let html = products.map(product => {
+        let scent = app.getScentById(product.scentId);
         return `
         <div class="product-card">
             <div class="product-image" style="background-image: url('${product.images[0]}')">
@@ -39,13 +41,15 @@ function renderWishlist() {
                     <div class="scent-price">${app.formatPrice(product.price)}</div>
                 </div>
                 <div class="product-actions">
-                    <button class="btn btn-primary btn-small" onclick="moveToCart('${product.id}')" ${product.stock <= 0 ? 'disabled' : ''}>
-                        ${product.stock > 0 ? 'Move to Cart' : 'Out of Stock'}
+                    <button class="btn btn-primary btn-small" onclick="addToCartFromWishlist(this, '${product.id}')" ${product.stock <= 0 ? 'disabled' : ''}>
+                        ${product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
                     </button>
                 </div>
             </div>
         </div>`;
     }).join('');
+
+    $container.html(html);
 }
 
 // Remove a product from the wishlist of the current user
@@ -56,22 +60,24 @@ function removeFromWishlistPage(productId) {
     }
 }
 
-// Move a wishlist item to the cart
-function moveToCart(productId) {
+function addToCartFromWishlist(btnElement, productId) {
     if (app.addToCart(productId)) {
-        app.removeFromWishlistForUser(productId, currentUser);
-        renderWishlist();
-        alert('Moved to cart!');
-        updateCartCountUI();
-    }
-}
+        // Visual feedback
+        let originalText = btnElement.innerText;
+        btnElement.innerText = 'Added';
+        btnElement.disabled = true;
 
-// Update cart count in navbar
-function updateCartCountUI() {
-    const cartCount = document.getElementById('cart-count');
-    if (cartCount) {
-        const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-        cartCount.textContent = cart.length;
+        setTimeout(() => {
+            btnElement.innerText = originalText;
+            btnElement.disabled = false;
+        }, 2000);
+
+        // Update cart count if needed
+        let $cartCount = $('#cart-count');
+        if ($cartCount.length) {
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            $cartCount.text(cart.length);
+        }
     }
 }
 

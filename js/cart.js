@@ -2,8 +2,9 @@
 let currentCheckoutStep = 0;
 let selectedShippingMethod = null;
 let orderData = {};
-const checkoutSteps = ['cart', 'shipping', 'payment', 'confirmation'];
-const shippingOptions = [
+
+let checkoutSteps = ['cart', 'shipping', 'payment', 'confirmation'];
+let shippingOptions = [
   { id: 1, name: 'Standard Shipping', price: 5.99, time: '5-7 business days', freeThreshold: 50 },
   { id: 2, name: 'Express Shipping', price: 12.99, time: '2-3 business days', freeThreshold: 100 },
   { id: 3, name: 'Overnight Shipping', price: 24.99, time: 'Next business day', freeThreshold: 150 }
@@ -11,14 +12,14 @@ const shippingOptions = [
 
 document.addEventListener('DOMContentLoaded', async () => {
   await app.loadData();
-  
+
   // Check if cart is empty
-  const cart = app.getCart();
+  let cart = app.getCart();
   if (cart.length === 0) {
     redirectToShop();
     return;
   }
-  
+
   initializeCheckout();
 });
 
@@ -38,23 +39,24 @@ function initializeCheckout() {
 }
 
 function loadCartReview() {
-  const container = document.getElementById('cart-review');
-  const cart = app.getCart();
-  
+  let container = document.getElementById('cart-review');
+  let cart = app.getCart();
+
   if (cart.length === 0) {
     container.innerHTML = '<p class="text-center">Your cart is empty.</p>';
     return;
   }
-  
+
   container.innerHTML = cart.map(item => {
-    const product = app.getProductById(item.productId);
+    let product = app.getProductById(item.productId);
     if (!product) return '';
-    
-    const scent = app.getScentById(product.scentId);
-    const itemQuantity = parseInt(item.quantity) || 1;
-    const itemPrice = parseFloat(item.price) || 0;
-    const itemTotal = itemPrice * itemQuantity;
-    
+
+    let scent = app.getScentById(product.scentId);
+    let itemQuantity = parseInt(item.quantity) || 1;
+    // Use product price if item price is 0 or missing
+    let itemPrice = parseFloat(item.price) || parseFloat(product.price) || 0;
+    let itemTotal = itemPrice * itemQuantity;
+
     return `
       <div class="cart-review-item">
         <div class="item-image">
@@ -80,19 +82,20 @@ function loadCartReview() {
 }
 
 function loadOrderSummary() {
-  const itemsContainer = document.getElementById('summary-items');
-  const cart = app.getCart();
-  
+  let itemsContainer = document.getElementById('summary-items');
+  let cart = app.getCart();
+
   if (!itemsContainer) return;
-  
+
   itemsContainer.innerHTML = cart.map(item => {
-    const product = app.getProductById(item.productId);
+    let product = app.getProductById(item.productId);
     if (!product) return '';
-    
-    const itemQuantity = parseInt(item.quantity) || 1;
-    const itemPrice = parseFloat(item.price) || 0;
-    const itemTotal = itemPrice * itemQuantity;
-    
+
+    let itemQuantity = parseInt(item.quantity) || 1;
+    // Use product price if item price is 0 or missing
+    let itemPrice = parseFloat(item.price) || parseFloat(product.price) || 0;
+    let itemTotal = itemPrice * itemQuantity;
+
     return `
       <div class="summary-item">
         <div class="item-info">
@@ -103,19 +106,18 @@ function loadOrderSummary() {
       </div>
     `;
   }).join('');
-  
+
   updateOrderTotals();
 }
 
 function updateOrderTotals() {
-  const totalsContainer = document.getElementById('summary-totals');
+  let totalsContainer = document.getElementById('summary-totals');
   if (!totalsContainer) return;
-  
-  const subtotal = app.getCartTotal();
-  const shippingCost = calculateShippingCost(subtotal) || 0;
-  const tax = (subtotal || 0) * 0.08;
-  const total = (subtotal || 0) + shippingCost + tax;
-  
+
+  let subtotal = app.getCartTotal();
+  let shippingCost = calculateShippingCost(subtotal) || 0;
+  let total = (subtotal || 0) + shippingCost;
+
   totalsContainer.innerHTML = `
     <div class="total-line">
       <span>Subtotal:</span>
@@ -137,62 +139,64 @@ function updateOrderTotals() {
 }
 
 function loadShippingOptions() {
-  const container = document.getElementById('shipping-options');
+  let container = document.getElementById('shipping-options');
   if (!container) return;
-  
-  const subtotal = app.getCartTotal();
-  
+
+  let subtotal = app.getCartTotal();
+
   container.innerHTML = shippingOptions.map(option => {
-    const isFree = subtotal >= option.freeThreshold;
-    const price = isFree ? 0 : option.price;
-    
+    let isFree = subtotal >= option.freeThreshold;
+    let price = isFree ? 0 : option.price;
+
     return `
-      <div class="shipping-option" onclick="selectShippingMethod(${option.id})">
-        <input type="radio" name="shipping-method" value="${option.id}" 
-               ${option.id === 1 ? 'checked' : ''}>
-        <div class="shipping-details">
-          <div class="shipping-name">${option.name}</div>
-          <div class="shipping-time">${option.time}</div>
-          ${isFree ? '<div class="free-shipping">FREE</div>' : ''}
-        </div>
-        <div class="shipping-price">
-          ${isFree ? 'FREE' : app.formatPrice(price)}
-        </div>
+      <label class="shipping-option">
+      <input type="radio" name="shipping-method" value="${option.id}" 
+           onchange="selectShippingMethod(${option.id})"
+           ${option.id === 1 ? 'checked' : ''}>
+      <div class="shipping-details">
+        <div class="shipping-name">${option.name}</div>
+        <div class="shipping-time">${option.time}</div>
+        ${isFree ? '<div class="free-shipping">FREE</div>' : ''}
       </div>
+      <div class="shipping-price">
+        ${isFree ? 'FREE' : app.formatPrice(price)}
+      </div>
+      </label>
     `;
   }).join('');
-  
+
   selectedShippingMethod = 1;
 }
 
 function calculateShippingCost(subtotal) {
   if (!selectedShippingMethod || !subtotal) return 0;
-  
-  const method = shippingOptions.find(opt => opt.id === selectedShippingMethod);
+
+  let method = shippingOptions.find(opt => opt.id === selectedShippingMethod);
   if (!method) return 0;
-  
+
   return subtotal >= method.freeThreshold ? 0 : method.price;
 }
 
 function selectShippingMethod(methodId) {
   selectedShippingMethod = methodId;
-  
-  const radioBtn = document.querySelector(`input[value="${methodId}"]`);
+
+  let radioBtn = document.querySelector(`input[value="${methodId}"]`);
   if (radioBtn) radioBtn.checked = true;
-  
+
   updateOrderTotals();
 }
 
 function setupFormValidation() {
-  const forms = document.querySelectorAll('form');
-  
+  let forms = document.querySelectorAll('form');
+
   forms.forEach(form => {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
     });
   });
-  
-  const cardNumberInput = document.getElementById('card-number');
+
+  // Format card number
+  let cardNumberInput = document.getElementById('card-number');
   if (cardNumberInput) {
     cardNumberInput.addEventListener('input', (e) => {
       let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
@@ -200,8 +204,9 @@ function setupFormValidation() {
       e.target.value = formattedValue;
     });
   }
-  
-  const expiryInput = document.getElementById('expiry');
+
+  // Format expiry date
+  let expiryInput = document.getElementById('expiry');
   if (expiryInput) {
     expiryInput.addEventListener('input', (e) => {
       let value = e.target.value.replace(/\D/g, '');
@@ -217,16 +222,19 @@ function nextCheckoutStep() {
   if (!validateCurrentStep()) {
     return;
   }
-  
+
   if (currentCheckoutStep < checkoutSteps.length - 1) {
     document.getElementById(`checkout-step-${checkoutSteps[currentCheckoutStep]}`).classList.remove('active');
-    
+
     currentCheckoutStep++;
-    
+
     document.getElementById(`checkout-step-${checkoutSteps[currentCheckoutStep]}`).classList.add('active');
-    
+
     updateCheckoutProgress();
-    
+
+    // Scroll to top to focus on the container
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
     if (checkoutSteps[currentCheckoutStep] === 'confirmation') {
       processOrder();
     }
@@ -236,19 +244,19 @@ function nextCheckoutStep() {
 function previousCheckoutStep() {
   if (currentCheckoutStep > 0) {
     document.getElementById(`checkout-step-${checkoutSteps[currentCheckoutStep]}`).classList.remove('active');
-    
+
     currentCheckoutStep--;
-    
+
     document.getElementById(`checkout-step-${checkoutSteps[currentCheckoutStep]}`).classList.add('active');
-    
+
     updateCheckoutProgress();
   }
 }
 
 function updateCheckoutProgress() {
   checkoutSteps.forEach((step, index) => {
-    const stepElement = document.getElementById(`step-${step}`);
-    
+    let stepElement = document.getElementById(`step-${step}`);
+
     if (stepElement) {
       if (index <= currentCheckoutStep) {
         stepElement.classList.add('active');
@@ -260,9 +268,9 @@ function updateCheckoutProgress() {
 }
 
 function validateCurrentStep() {
-  const currentStep = checkoutSteps[currentCheckoutStep];
-  const cart = app.getCart();
-  
+  let currentStep = checkoutSteps[currentCheckoutStep];
+  let cart = app.getCart();
+
   switch (currentStep) {
     case 'cart':
       if (cart.length === 0) {
@@ -270,45 +278,52 @@ function validateCurrentStep() {
         return false;
       }
       return true;
-      
+
     case 'shipping':
       return validateShippingForm();
-      
+
     case 'payment':
       return validatePaymentForm();
-      
+
     default:
       return true;
   }
 }
-
 function validateShippingForm() {
-  const requiredFields = ['first-name', 'last-name', 'email', 'address', 'city', 'state', 'zip'];
+  let requiredFields = ['first-name', 'last-name', 'email', 'address', 'city', 'zip'];
   let isValid = true;
-  
+  let firstInvalidFieldName = '';
+
   requiredFields.forEach(fieldId => {
-    const field = document.getElementById(fieldId);
+    let field = document.getElementById(fieldId);
     if (!field || !field.value.trim()) {
       if (field) field.classList.add('error');
       isValid = false;
+      if (!firstInvalidFieldName) {
+        firstInvalidFieldName = fieldId.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+      }
     } else {
       field.classList.remove('error');
     }
   });
-  
+
   if (!isValid) {
-    app.showNotification('Please fill in all required fields', 'error');
+    if (firstInvalidFieldName) {
+      app.showNotification(`Please fill in the '${firstInvalidFieldName}' field`, 'error');
+    } else {
+      app.showNotification('Please fill in all required fields', 'error');
+    }
   }
-  
+
   return isValid;
 }
 
 function validatePaymentForm() {
-  const requiredFields = ['card-number', 'expiry', 'cvv', 'card-name'];
+  let requiredFields = ['card-number', 'expiry', 'cvv', 'card-name'];
   let isValid = true;
-  
+
   requiredFields.forEach(fieldId => {
-    const field = document.getElementById(fieldId);
+    let field = document.getElementById(fieldId);
     if (!field || !field.value.trim()) {
       if (field) field.classList.add('error');
       isValid = false;
@@ -316,32 +331,31 @@ function validatePaymentForm() {
       field.classList.remove('error');
     }
   });
-  
-  const cardNumberField = document.getElementById('card-number');
+
+  let cardNumberField = document.getElementById('card-number');
   if (cardNumberField) {
-    const cardNumber = cardNumberField.value.replace(/\s/g, '');
-    if (cardNumber.length < 13 || cardNumber.length > 19) {
+    let cardNumber = cardNumberField.value.replace(/\s/g, '');
+    if (cardNumber.length < 3 || cardNumber.length > 22) {
       cardNumberField.classList.add('error');
       isValid = false;
     }
   }
-  
+
   if (!isValid) {
     app.showNotification('Please check your payment information', 'error');
   }
-  
+
   return isValid;
 }
 
 function processOrder() {
   app.showNotification('Processing your order...', 'info');
-  
-  const cart = app.getCart();
-  const subtotal = app.getCartTotal() || 0;
-  const shippingCost = calculateShippingCost(subtotal) || 0;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shippingCost + tax;
-  
+
+  let cart = app.getCart();
+  let subtotal = app.getCartTotal() || 0;
+  let shippingCost = calculateShippingCost(subtotal) || 0;
+  let total = subtotal + shippingCost;
+
   orderData = {
     orderId: 'CW' + Date.now(),
     items: cart,
@@ -352,7 +366,7 @@ function processOrder() {
     shippingAddress: getShippingAddress(),
     orderDate: new Date().toLocaleDateString()
   };
-  
+
   setTimeout(() => {
     displayOrderConfirmation();
     app.clearCart();
@@ -377,10 +391,10 @@ function getShippingAddress() {
 }
 
 function displayOrderConfirmation() {
-  const container = document.getElementById('order-confirmation-details');
-  
+  let container = document.getElementById('order-confirmation-details');
+
   if (!container) return;
-  
+
   container.innerHTML = `
     <div class="order-summary-final">
       <div class="order-number">
@@ -390,10 +404,11 @@ function displayOrderConfirmation() {
       <div class="order-items">
         <h4>Items Ordered:</h4>
         ${orderData.items.map(item => {
-          const product = app.getProductById(item.productId);
-          if (!product) return '';
-          return `<div class="confirmation-item">${product.name} (Qty: ${item.quantity})</div>`;
-        }).join('')}
+    let product = app.getProductById(item.productId);
+    if (!product) return '';
+    let itemQuantity = parseInt(item.quantity) || 1;
+    return `<div class="confirmation-item">${product.name} (Qty: ${itemQuantity})</div>`;
+  }).join('')}
       </div>
       
       <div class="order-total">
@@ -422,8 +437,8 @@ function updateCartItemQuantity(itemId, quantity) {
 
 function removeCartItem(itemId) {
   app.removeFromCart(itemId);
-  const cart = app.getCart();
-  
+  let cart = app.getCart();
+
   if (cart.length === 0) {
     redirectToShop();
   } else {
@@ -433,9 +448,9 @@ function removeCartItem(itemId) {
 }
 
 function toggleBillingAddress() {
-  const checkbox = document.getElementById('same-as-shipping');
-  const billingForm = document.getElementById('billing-form');
-  
+  let checkbox = document.getElementById('same-as-shipping');
+  let billingForm = document.getElementById('billing-form');
+
   if (checkbox && billingForm) {
     billingForm.style.display = checkbox.checked ? 'none' : 'block';
   }
