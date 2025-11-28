@@ -20,11 +20,41 @@
         .wishlist-header h1 {
             font-size: 3rem;
             font-weight: 700;
-            color: #8A9A5B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            font-family: "Ovo";
+            color: #9a4b2b;
+            margin-bottom: var(--space-md);
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: var(--space-md);
+            letter-spacing: 1px;
         }
+
+        .wishlist-header p {
+            font-size: 1.25rem;
+            /* slightly larger than normal for emphasis */
+            font-weight: 400;
+            /* normal weight, not bold */
+            color: var(--text-light);
+            /* softer text color */
+            font-style: italic;
+            /* adds elegance */
+            margin-top: var(--space-sm);
+            /* spacing below header */
+            line-height: 1.6;
+            /* improves readability */
+            max-width: 800px;
+            /* keeps text in readable width */
+            margin-left: auto;
+            margin-right: auto;
+            /* center the paragraph */
+            text-align: center;
+            /* centered under header */
+            font-family: "Lora";
+        }
+
 
         .empty-wishlist {
             text-align: center;
