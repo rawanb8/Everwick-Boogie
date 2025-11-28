@@ -11,14 +11,14 @@ const shippingOptions = [
 
 document.addEventListener('DOMContentLoaded', async () => {
   await app.loadData();
-  
+
   // Check if cart is empty
   const cart = app.getCart();
   if (cart.length === 0) {
     redirectToShop();
     return;
   }
-  
+
   initializeCheckout();
 });
 
@@ -40,21 +40,21 @@ function initializeCheckout() {
 function loadCartReview() {
   const container = document.getElementById('cart-review');
   const cart = app.getCart();
-  
+
   if (cart.length === 0) {
     container.innerHTML = '<p class="text-center">Your cart is empty.</p>';
     return;
   }
-  
+
   container.innerHTML = cart.map(item => {
     const product = app.getProductById(item.productId);
     if (!product) return '';
-    
+
     const scent = app.getScentById(product.scentId);
     const itemQuantity = parseInt(item.quantity) || 1;
     const itemPrice = parseFloat(item.price) || 0;
     const itemTotal = itemPrice * itemQuantity;
-    
+
     return `
       <div class="cart-review-item">
         <div class="item-image">
@@ -82,17 +82,17 @@ function loadCartReview() {
 function loadOrderSummary() {
   const itemsContainer = document.getElementById('summary-items');
   const cart = app.getCart();
-  
+
   if (!itemsContainer) return;
-  
+
   itemsContainer.innerHTML = cart.map(item => {
     const product = app.getProductById(item.productId);
     if (!product) return '';
-    
+
     const itemQuantity = parseInt(item.quantity) || 1;
     const itemPrice = parseFloat(item.price) || 0;
     const itemTotal = itemPrice * itemQuantity;
-    
+
     return `
       <div class="summary-item">
         <div class="item-info">
@@ -103,19 +103,18 @@ function loadOrderSummary() {
       </div>
     `;
   }).join('');
-  
+
   updateOrderTotals();
 }
 
 function updateOrderTotals() {
   const totalsContainer = document.getElementById('summary-totals');
   if (!totalsContainer) return;
-  
+
   const subtotal = app.getCartTotal();
   const shippingCost = calculateShippingCost(subtotal) || 0;
-  const tax = (subtotal || 0) * 0.08;
-  const total = (subtotal || 0) + shippingCost + tax;
-  
+  const total = (subtotal || 0) + shippingCost;
+
   totalsContainer.innerHTML = `
     <div class="total-line">
       <span>Subtotal:</span>
@@ -139,13 +138,13 @@ function updateOrderTotals() {
 function loadShippingOptions() {
   const container = document.getElementById('shipping-options');
   if (!container) return;
-  
+
   const subtotal = app.getCartTotal();
-  
+
   container.innerHTML = shippingOptions.map(option => {
     const isFree = subtotal >= option.freeThreshold;
     const price = isFree ? 0 : option.price;
-    
+
     return `
       <label class="shipping-option">
       <input type="radio" name="shipping-method" value="${option.id}" 
@@ -162,37 +161,38 @@ function loadShippingOptions() {
       </label>
     `;
   }).join('');
-  
+
   selectedShippingMethod = 1;
 }
 
 function calculateShippingCost(subtotal) {
   if (!selectedShippingMethod || !subtotal) return 0;
-  
+
   const method = shippingOptions.find(opt => opt.id === selectedShippingMethod);
   if (!method) return 0;
-  
+
   return subtotal >= method.freeThreshold ? 0 : method.price;
 }
 
 function selectShippingMethod(methodId) {
   selectedShippingMethod = methodId;
-  
+
   const radioBtn = document.querySelector(`input[value="${methodId}"]`);
   if (radioBtn) radioBtn.checked = true;
-  
+
   updateOrderTotals();
 }
 
 function setupFormValidation() {
   const forms = document.querySelectorAll('form');
-  
+
   forms.forEach(form => {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
     });
   });
-  
+
+  // Format card number
   const cardNumberInput = document.getElementById('card-number');
   if (cardNumberInput) {
     cardNumberInput.addEventListener('input', (e) => {
@@ -201,7 +201,8 @@ function setupFormValidation() {
       e.target.value = formattedValue;
     });
   }
-  
+
+  // Format expiry date
   const expiryInput = document.getElementById('expiry');
   if (expiryInput) {
     expiryInput.addEventListener('input', (e) => {
@@ -218,19 +219,19 @@ function nextCheckoutStep() {
   if (!validateCurrentStep()) {
     return;
   }
-  
+
   if (currentCheckoutStep < checkoutSteps.length - 1) {
     document.getElementById(`checkout-step-${checkoutSteps[currentCheckoutStep]}`).classList.remove('active');
-    
+
     currentCheckoutStep++;
-    
+
     document.getElementById(`checkout-step-${checkoutSteps[currentCheckoutStep]}`).classList.add('active');
-    
+
     updateCheckoutProgress();
-    
+
     // Scroll to top to focus on the container
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    
+
     if (checkoutSteps[currentCheckoutStep] === 'confirmation') {
       processOrder();
     }
@@ -240,11 +241,11 @@ function nextCheckoutStep() {
 function previousCheckoutStep() {
   if (currentCheckoutStep > 0) {
     document.getElementById(`checkout-step-${checkoutSteps[currentCheckoutStep]}`).classList.remove('active');
-    
+
     currentCheckoutStep--;
-    
+
     document.getElementById(`checkout-step-${checkoutSteps[currentCheckoutStep]}`).classList.add('active');
-    
+
     updateCheckoutProgress();
   }
 }
@@ -252,7 +253,7 @@ function previousCheckoutStep() {
 function updateCheckoutProgress() {
   checkoutSteps.forEach((step, index) => {
     const stepElement = document.getElementById(`step-${step}`);
-    
+
     if (stepElement) {
       if (index <= currentCheckoutStep) {
         stepElement.classList.add('active');
@@ -266,7 +267,7 @@ function updateCheckoutProgress() {
 function validateCurrentStep() {
   const currentStep = checkoutSteps[currentCheckoutStep];
   const cart = app.getCart();
-  
+
   switch (currentStep) {
     case 'cart':
       if (cart.length === 0) {
@@ -274,43 +275,50 @@ function validateCurrentStep() {
         return false;
       }
       return true;
-      
+
     case 'shipping':
       return validateShippingForm();
-      
+
     case 'payment':
       return validatePaymentForm();
-      
+
     default:
       return true;
   }
 }
-
 function validateShippingForm() {
   const requiredFields = ['first-name', 'last-name', 'email', 'address', 'city', 'state', 'zip'];
   let isValid = true;
-  
+  let firstInvalidFieldName = '';
+
   requiredFields.forEach(fieldId => {
     const field = document.getElementById(fieldId);
     if (!field || !field.value.trim()) {
       if (field) field.classList.add('error');
       isValid = false;
+      if (!firstInvalidFieldName) {
+        firstInvalidFieldName = fieldId.replace(/-/g, ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+      }
     } else {
       field.classList.remove('error');
     }
   });
-  
+
   if (!isValid) {
-    app.showNotification('Please fill in all required fields', 'error');
+    if (firstInvalidFieldName) {
+      app.showNotification(`Please fill in the '${firstInvalidFieldName}' field`, 'error');
+    } else {
+      app.showNotification('Please fill in all required fields', 'error');
+    }
   }
-  
+
   return isValid;
 }
 
 function validatePaymentForm() {
   const requiredFields = ['card-number', 'expiry', 'cvv', 'card-name'];
   let isValid = true;
-  
+
   requiredFields.forEach(fieldId => {
     const field = document.getElementById(fieldId);
     if (!field || !field.value.trim()) {
@@ -320,7 +328,7 @@ function validatePaymentForm() {
       field.classList.remove('error');
     }
   });
-  
+
   const cardNumberField = document.getElementById('card-number');
   if (cardNumberField) {
     const cardNumber = cardNumberField.value.replace(/\s/g, '');
@@ -329,23 +337,22 @@ function validatePaymentForm() {
       isValid = false;
     }
   }
-  
+
   if (!isValid) {
     app.showNotification('Please check your payment information', 'error');
   }
-  
+
   return isValid;
 }
 
 function processOrder() {
   app.showNotification('Processing your order...', 'info');
-  
+
   const cart = app.getCart();
   const subtotal = app.getCartTotal() || 0;
   const shippingCost = calculateShippingCost(subtotal) || 0;
-  const tax = subtotal * 0.08;
-  const total = subtotal + shippingCost + tax;
-  
+  const total = subtotal + shippingCost;
+
   orderData = {
     orderId: 'CW' + Date.now(),
     items: cart,
@@ -356,7 +363,7 @@ function processOrder() {
     shippingAddress: getShippingAddress(),
     orderDate: new Date().toLocaleDateString()
   };
-  
+
   setTimeout(() => {
     displayOrderConfirmation();
     app.clearCart();
@@ -382,9 +389,9 @@ function getShippingAddress() {
 
 function displayOrderConfirmation() {
   const container = document.getElementById('order-confirmation-details');
-  
+
   if (!container) return;
-  
+
   container.innerHTML = `
     <div class="order-summary-final">
       <div class="order-number">
@@ -394,10 +401,11 @@ function displayOrderConfirmation() {
       <div class="order-items">
         <h4>Items Ordered:</h4>
         ${orderData.items.map(item => {
-          const product = app.getProductById(item.productId);
-          if (!product) return '';
-          return `<div class="confirmation-item">${product.name} (Qty: ${item.quantity})</div>`;
-        }).join('')}
+    const product = app.getProductById(item.productId);
+    if (!product) return '';
+    const itemQuantity = parseInt(item.quantity) || 1;
+    return `<div class="confirmation-item">${product.name} (Qty: ${itemQuantity})</div>`;
+  }).join('')}
       </div>
       
       <div class="order-total">
@@ -427,7 +435,7 @@ function updateCartItemQuantity(itemId, quantity) {
 function removeCartItem(itemId) {
   app.removeFromCart(itemId);
   const cart = app.getCart();
-  
+
   if (cart.length === 0) {
     redirectToShop();
   } else {
@@ -439,7 +447,7 @@ function removeCartItem(itemId) {
 function toggleBillingAddress() {
   const checkbox = document.getElementById('same-as-shipping');
   const billingForm = document.getElementById('billing-form');
-  
+
   if (checkbox && billingForm) {
     billingForm.style.display = checkbox.checked ? 'none' : 'block';
   }
