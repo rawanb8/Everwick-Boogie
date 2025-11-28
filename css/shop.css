@@ -97,11 +97,10 @@
   color: var(--primary-color);
 }
 
-.sort-controls {}
-
-align-items: center;
-gap: var(--space-sm);
-white-space: nowrap;
+.sort-controls {
+  align-items: center;
+  gap: var(--space-sm);
+  white-space: nowrap;
 }
 
 .sort-controls label {
