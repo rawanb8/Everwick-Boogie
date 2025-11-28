@@ -9,16 +9,27 @@
 
     <!-- Nav links -->
     <ul class="nav-links" id="nav-links">
-      <li><a href="/html/index.html">Home</a></li>
-      <li><a href="/html/shop.html">Shop</a></li>
-      <li><a href="/html/customize.html">Customize</a></li>
-      <li><a href="/html/guide.html">Guide</a></li>
-      <li><a href="/html/about.html">About</a></li>
-      <li><a href="/html/cart.html">Cart</a></li>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="shop.html">Shop</a></li>
+      <li><a href="customize.html">Customize</a></li>
+      <li><a href="guide.html">Guide</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="cart.html">Cart</a></li>
     </ul>
 
     <!-- Actions -->
     <div class="nav-actions">
+
+      <!-- Login button -->
+      <button class="login-btn open-login" id="login-btn" title="Login">
+        <i class="fa-solid fa-user"></i>
+        <span>Login</span>
+      </button>
+
+      <!-- Wishlist button->only heart icon -->
+      <a class="wishlist-btn" id="wishlist-btn" href="wishlist.html" title="Wishlist" aria-label="Wishlist">
+        <i class="fa-solid fa-heart"></i>
+      </a>
 
       <!-- Cart button -->
       <a class="cart-btn" href="cart.html" title="Cart">
@@ -36,12 +47,14 @@
   <!-- mobile menu modal -->
   <div class="mobile-menu" id="mobile-menu" data-open="false">
     <div class="mobile-menu-inner">
-      <!-- <div class="mobile-brand" style="display:flex;align-items:center;gap:.6rem">
-        <img src="/media/icons/icon.svg" alt="" style="width:36px;height:36px;border-radius:8px" />
-        <div style="font-weight:800">Everwick Boogie</div>
-      </div> -->
 
       <button id="mobile-close" class="mobile-close" type="button">✕</button>
+      <!-- BRAND on top -->
+      <a class="mobile-brand" href="index.html" title="Everwick home"
+        style="display:flex; align-items:center; gap:.5rem; margin-bottom:1.2rem;">
+        <img src="/media/icons/icon.svg" alt="Everwick Boogie Logo" style="width:38px; height:auto;">
+        <span style="font-size:1.35rem; font-weight:600;">Everwick Boogie</span>
+      </a>
 
       <nav class="mobile-nav">
         <ul>
@@ -51,20 +64,38 @@
           <li><a href="guide.html">Guide</a></li>
           <li><a href="about.html">About</a></li>
           <li><a href="cart.html">Cart</a></li>
+
+          <li class="mobile-wishlist-wrapper">
+            <a class="mobile-wishlist-link" href="wishlist.html" title="Wishlist">
+              <i class="fa-solid fa-heart"></i>
+              <span>Wishlist</span>
+            </a>
+          </li>
+
+          <li class="mobile-login-wrapper">
+            <button class="mobile-login-btn open-login">
+              <i class="fa-solid fa-user"></i>
+              Login
+            </button>
+          </li>
         </ul>
       </nav>
-
-      <div class="mobile-actions">
-        <a href="cart.html" class="btn">
-          <i class="fa-solid fa-cart-shopping"></i>
-          (<span id="mobile-cart-count">0</span>)
-        </a>
-
-        <a href="customize.html" class="btn btn-ghost">Customize</a>
-      </div>
 
     </div>
 
     <div class="mobile-backdrop" id="mobile-backdrop" role="presentation"></div>
   </div>
 </nav>
+
+<div class="login-modal-wrapper" role="dialog" aria-modal="true">
+  <div class="login-modal-overlay"></div>
+  <div class="login-modal-content">
+    <button class="login-modal-close">&times;</button>
+    <h3>Login</h3>
+    <form id="loginForm" class="login-modal-form">
+      <input type="text" id="username" placeholder="Username" required>
+      <input type="password" id="password" placeholder="Password" required>
+      <button type="submit">Login</button>
+    </form>
+  </div>
+</div>

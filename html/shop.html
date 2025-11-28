@@ -5,10 +5,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Everwick Boogee | Shop Candles</title>
+  <link rel="shortcut icon" href="/media/icons/icon.svg" type="image/x-icon">
   <link rel="stylesheet" href="../css/shop.css">
   <link rel="stylesheet" href="../css/main.css">
-  <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
 
 </head>
@@ -53,7 +53,7 @@
                 <option value="popularity">Popularity</option>
               </select>
             </div>
-          </div> 
+          </div>
         </div>
       </div>
     </section>
@@ -69,7 +69,7 @@
               <h3>Filters</h3>
               <button class="clear-filters-btn" onclick="clearAllFilters()">Clear All</button>
             </div>
- 
+
 
             <!-- Scent Category Filter -->
             <div class="filter-section">
@@ -99,7 +99,7 @@
                 <!-- Will be populated dynamically -->
               </div>
             </div>
-            
+
 
             <!-- Mood Filter -->
             <div class="filter-section">
@@ -147,9 +147,8 @@
     <!-- Product Detail Modal -->
     <div id="product-modal" class="modal">
       <div class="modal-content modal-large">
-        <div class="modal-header">
+        <div class="modal-header" style="display: none;">
           <h3 id="product-modal-title">Product Details</h3>
-          <button class="modal-close">&times;</button>
         </div>
         <div id="product-modal-body">
           <!-- Product details will be loaded here -->
