@@ -542,6 +542,7 @@ a:hover {
     align-items: center;
     flex: 0 0 auto;
     justify-self: end;
+    padding-top: 10px;
 }
 
 
@@ -583,6 +584,84 @@ a:hover {
     background: #cfd9cc;
     color: #493b42;
     transform: translateY(-2px);
+}
+
+/*wishlist btn styling in desktop and mobile*/
+
+/* Desktop: compact icon button that sits next to login and cart */
+.wishlist-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    font-size: 1.05rem;
+    transition: background var(--transition), transform var(--transition), color var(--transition);
+    color: var(--text-dark);
+    padding: 0;
+    margin: 0 .15rem;
+}
+
+.wishlist-btn .fa-heart {
+    line-height: 1;
+    display: inline-block;
+}
+
+.wishlist-btn:hover,
+.wishlist-btn:focus {
+    background: #cfd9cc;
+    color: #493b42;
+    transform: translateY(-2px);
+    outline: none;
+}
+
+.wishlist-btn:focus-visible {
+    outline: 3px solid rgba(160, 120, 100, 0.18);
+    outline-offset: 2px;
+    border-radius: 10px;
+}
+
+/*mobile wishlit btn*/
+.mobile-wishlist-wrapper {
+    margin-top: .5rem;
+}
+
+.mobile-wishlist-link {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: 0.85rem 0.9rem;
+    border-radius: 10px;
+    color: var(--text-dark);
+    text-decoration: none;
+    font-weight: 700;
+    background: transparent;
+    transition: transform 140ms ease, background 160ms ease, color 140ms ease;
+    font-family: "Lora", serif;
+    border: 2px solid transparent;
+    /* default no visible border */
+}
+
+.mobile-wishlist-link {
+    border-color: var(--primary-color);
+    background: transparent;
+}
+
+/* On hover / focus: invert color a bit for affordance */
+.mobile-wishlist-link:hover,
+.mobile-wishlist-link:focus {
+    transform: translateY(-2px);
+    background: linear-gradient(90deg, rgba(207, 217, 204, 0.06), rgba(240, 219, 131, 0.03));
+    color: var(--primary-color);
+    outline: none;
+}
+
+.mobile-wishlist-link .fa-heart {
+    font-size: 1.05rem;
 }
 
 /* ---------------- Hamburger (desktop hidden, mobile visible) ---------------- */
@@ -749,35 +828,6 @@ a:hover {
     gap: 0.35rem;
 }
 
-/* .mobile-nav .mobile-login-btn {
-    width: 100%;
-    padding: 0.9rem 1rem;
-    background-color: #ffffff10;
-    color: var(--text-dark);
-    text-align: left;
-    font-size: 1.15rem;
-    font-weight: 600;
-    border: 2px solid #ffffff20;
-    border-radius: 8px;
-    font-family: "TAN Meringue";
-    cursor: pointer;
-    transition:
-        background-color 0.25s ease,
-        border-color 0.25s ease,
-        transform 0.2s ease;
-} */
-
-/* .mobile-nav .mobile-login-btn:hover {
-    background-color: #ffffff25;
-    border-color: #fff;
-    transform: translateX(4px);
-}
-
-.mobile-nav .mobile-login-btn:active {
-    transform: translateX(2px);
-    background-color: #ffffff35;
-} */
-
 
 .mobile-nav a {
     display: block;
@@ -798,11 +848,15 @@ a:hover {
     border-top: 1px solid rgba(0, 0, 0, 0.06);
 }
 
+.mobile-login-wrapper i {
+    padding-bottom: 6px;
+}
+
 
 .mobile-login-btn {
     width: 100%;
     padding: 0.9rem 1rem;
-    background: transparent;
+    background: var(--primary-color);
     border: 1.5px solid rgba(0, 0, 0, 0.12);
     border-radius: 12px;
     color: var(--text-dark);
@@ -876,6 +930,12 @@ a:hover {
     color: var(--deep);
 }
 
+.wishlist-btn i {
+    font-size: 1.4rem;
+}
+.mobile-wishlist-link i{
+    font-size: 1.4rem;
+}
 
 /* responsive tweaks */
 @media (max-width: 420px) {
@@ -932,7 +992,7 @@ a:hover {
     font-size: 1.3rem;
 }
 
-@media (max-width: 780px) {
+@media (max-width: 900px) {
 
     .nav-links {
         display: none;
@@ -946,6 +1006,46 @@ a:hover {
         justify-content: space-between;
         gap: 0.5rem;
     }
+
+    /* hide the visible "Login" text next to the user icon in the top nav */
+    .login-btn span {
+        display: none !important;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+    }
+
+    /* tighten spacing between action icons (login, wishlist, cart, hamburger) */
+    .nav-actions {
+        gap: 0.35rem;
+    }
+
+    /* make wishlist icon slightly more compact */
+    .wishlist-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        margin: 0 .1rem;
+        padding: 0;
+    }
+
+    .cart-btn,
+    .login-btn {
+        padding: 0.25rem 0.5rem;
+    }
+
+    /* slightly reduce nav container padding so everything fits */
+    .nav-inner-container.container {
+        padding: 0.45rem 0.6rem;
+    }
+
+    /* keep brand text from growing too large */
+    .brand-text {
+        font-size: 0.95rem;
+        padding-top: 8px;
+    }
+
+
 }
 
 @media (max-width: 420px) {
@@ -959,9 +1059,9 @@ a:hover {
     }
 
     .cart-count {
-        font-size: .72rem;
-        padding: 2px 6px;
-        min-width: 20px;
+        font-size: 0.68rem;
+        padding: 1px 6px;
+        min-width: 18px;
     }
 
     .mobile-menu-inner {
@@ -974,6 +1074,28 @@ a:hover {
     .mobile-close {
         width: 36px;
         height: 36px;
+    }
+
+    .wishlist-btn {
+        width: 34px;
+        height: 34px;
+    }
+
+    .cart-btn,
+    .login-btn {
+        padding: 0.2rem 0.45rem;
+    }
+
+    .hamburger {
+        padding: 0.34rem;
+    }
+
+    .nav-inner-container.container {
+        padding: 0.35rem 0.5rem;
+    }
+
+    .login-btn span {
+        display: none !important;
     }
 }
 
