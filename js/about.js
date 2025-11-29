@@ -58,7 +58,6 @@ function handleContactSubmission() {
         phone: $('#contact-phone').val(),
         subject: $('#contact-subject').val(),
         message: $('#contact-message').val(),
-        newsletter: $('#newsletter-signup').is(':checked'),
         timestamp: new Date().toISOString()
     };
 

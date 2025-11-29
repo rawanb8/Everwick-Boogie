@@ -53,8 +53,11 @@ function renderWishlist() {
 }
 
 function removeFromWishlistPage(productId) {
-    app.removeFromWishlist(productId);
-    renderWishlist();
+     let user = localStorage.getItem('currentUser') || localStorage.getItem('currentUser') || null;
+    if (confirm('Remove this item from your wishlist?')) {
+        app.removeFromWishlistForUser(productId, user);
+        renderWishlist();
+    }
 }
 
 function addToCartFromWishlist(btnElement, productId) {
