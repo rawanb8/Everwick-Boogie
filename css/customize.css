@@ -36,7 +36,7 @@
 /*scent drop down*/
 #scent-select {
   width: 200px;
-  padding: 0.75rem 1rem;
+  padding:var(--font-size-xs) 1rem;
   font-size: 1rem;
   border: 1px solid #ccc;
   border-radius: 0.5rem;
@@ -165,7 +165,7 @@
   border-radius: 10px;
   cursor: pointer;
   border: 1px solid rgba(0, 0, 0, 0.06);
-  background-color: #cfd9cc;
+  background-color: var(--brand-green);
   min-height: 90px;
   transition: background .12s ease, box-shadow .12s ease, transform .12s ease;
 }
@@ -338,7 +338,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  border: 2px solid #cfd9cc;
+  border: 2px solid var(--brand-green);
   background: transparent;
   position: absolute;
   top: 10px;
@@ -361,7 +361,7 @@
 .size-item:has(input:checked)::before,
 .container-item:has(input:checked)::before,
 .wick-item:has(input:checked)::before {
-  background: #cfd9cc;
+  background: var(--brand-green);
 }
 
 .container-meta,
@@ -452,7 +452,7 @@ button {
   width: calc(100% - 2rem);
   max-width: 360px;
   margin: 0 auto 0.5rem;
-  padding: 0.5rem 0.75rem;
+  padding: 0.5rem var(--font-size-xs);
   border-radius: 10px;
   background: #e6f7ea;
   border: 1px solid #b9e6c7;

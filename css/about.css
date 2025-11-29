@@ -185,7 +185,7 @@ h3 {
 
 /* =================== MISSION SECTION =================== */
 .mission-section {
-    background-color: #cfd9cc;
+    background-color: var(--brand-green);
 }
 
 .mission-section h2,

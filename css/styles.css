@@ -1181,7 +1181,7 @@
 }
 
 .category-card h3 {
-    margin: 0.75rem 0;
+    margin: var(--font-size-xs) 0;
     font-size: 1.1rem;
     text-align: center;
 }
