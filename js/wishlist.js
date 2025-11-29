@@ -55,8 +55,9 @@ function renderWishlist() {
 
 // Remove a product from the wishlist of the current user
 function removeFromWishlistPage(productId) {
+     let user = localStorage.getItem('currentUser') || localStorage.getItem('currentUser') || null;
     if (confirm('Remove this item from your wishlist?')) {
-        app.removeFromWishlistForUser(productId, currentUser);
+        app.removeFromWishlistForUser(productId, user);
         renderWishlist();
     }
 }

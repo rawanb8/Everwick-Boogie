@@ -176,7 +176,8 @@ let app = {
   },
 
   removeFromWishlist: function (productId) {
-    this.removeFromWishlistForUser(productId, window.currentUser || null);
+     let user = window.currentUser || localStorage.getItem('currentUser') || null;
+    this.removeFromWishlistForUser(productId,user);
     return true;
   },
 
