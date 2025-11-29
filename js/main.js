@@ -126,9 +126,13 @@ let app = {
     let cart = JSON.parse(localStorage.getItem('cart') || '[]');
     cart = cart.filter(item => String(item.id) !== String(itemId));
     localStorage.setItem('cart', JSON.stringify(cart));
-    return cart; // optional, if you want
+    return cart;
   },
 
+  clearCart: function () {
+    localStorage.setItem('cart', JSON.stringify([]));
+    return [];
+  },
 
   getCart: function () {
     try {
