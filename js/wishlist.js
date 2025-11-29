@@ -1,12 +1,12 @@
 $('document').ready(async function () {
     await app.loadData();
-     if (typeof app.migrateOldWishlist === 'function') app.migrateOldWishlist();
+    if (typeof app.migrateOldWishlist === 'function') app.migrateOldWishlist();
     // If currentUser is null, treat as anonymous
     renderWishlist();
 });
 
 function renderWishlist() {
-     let user = localStorage.getItem('currentUser') || null;
+    let user = localStorage.getItem('currentUser') || null;
     let $container = $('#wishlist-grid');
     let $emptyMessage = $('#empty-message');
     if ($container.length === 0 || $emptyMessage.length === 0) return;
@@ -53,11 +53,9 @@ function renderWishlist() {
 }
 
 function removeFromWishlistPage(productId) {
-     let user = localStorage.getItem('currentUser') || localStorage.getItem('currentUser') || null;
-    if (confirm('Remove this item from your wishlist?')) {
-        app.removeFromWishlistForUser(productId, user);
-        renderWishlist();
-    }
+    let user = localStorage.getItem('currentUser') || localStorage.getItem('currentUser') || null;
+    app.removeFromWishlistForUser(productId, user);
+    renderWishlist();
 }
 
 function addToCartFromWishlist(btnElement, productId) {
