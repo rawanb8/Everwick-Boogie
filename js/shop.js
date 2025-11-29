@@ -246,7 +246,7 @@ function displayProducts() {
         let scent = app.getScentById(product.scentId);
         let size = app.getSizeById(product.sizeId);
         let color = app.getColorById(product.colorId);
-        const user = localStorage.getItem('currentUser') || null;
+        let user = localStorage.getItem('currentUser') || null;
 
         let isWishlisted = user ? app.isInWishlistForUser(product.id, user) : app.isInWishlist(product.id);
         let wishlistIconClass = isWishlisted ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
@@ -423,7 +423,7 @@ function showProductDetails(productId) {
 
 function toggleWishlist(productId) {
     // read current user from localStorage at click time
-    const user = localStorage.getItem('currentUser') || null;
+    let user = localStorage.getItem('currentUser') || null;
 
     // Toggle for anonymous OR current logged-in user
     if (user) {
@@ -444,11 +444,11 @@ function toggleWishlist(productId) {
     if (typeof displayProducts === 'function') displayProducts();
 
     // Refresh wishlist page if visible
-    const wishlistGrid = document.getElementById('wishlist-grid');
+    let wishlistGrid = document.getElementById('wishlist-grid');
     if (wishlistGrid) renderWishlist();
 
     // Refresh modal button if open
-    const modal = document.getElementById('product-modal');
+    let modal = document.getElementById('product-modal');
     if (modal && modal.classList.contains('active')) {
         showProductDetails(productId);
     }

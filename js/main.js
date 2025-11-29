@@ -194,7 +194,7 @@ let app = {
   migrateOldWishlist: function () {
     try {
       // Old possible keys
-      const legacyKeys = ['wishlists', 'wishlist'];
+      let legacyKeys = ['wishlists', 'wishlist'];
       legacyKeys.forEach(key => {
         let raw = localStorage.getItem(key);
         if (!raw) return;
@@ -223,16 +223,16 @@ let app = {
 };
 
 app.saveWishlistForUser = function (username = null, wishlist = []) {
-  const key = username ? 'wishlist_' + username : 'wishlist_anonymous';
-  const obj = { username: username || 'anonymous', wishlist: wishlist };
+  let key = username ? 'wishlist_' + username : 'wishlist_anonymous';
+  let obj = { username: username || 'anonymous', wishlist: wishlist };
   localStorage.setItem(key, JSON.stringify(obj));
 };
 
 
 
 app.getWishlistForUser = function (username = null) {
-  const key = username ? 'wishlist_' + username : 'wishlist_anonymous';
-  const obj = JSON.parse(localStorage.getItem(key) || '{}');
+  let key = username ? 'wishlist_' + username : 'wishlist_anonymous';
+  let obj = JSON.parse(localStorage.getItem(key) || '{}');
   return obj.wishlist || [];
 };
 
@@ -538,7 +538,7 @@ async function attachLoginHandler() {
 
   if (!loginModal || !loginForm) return;
 
-  const allowedUsers = [
+  let allowedUsers = [
     { username: 'rama', password: '12345' },
     { username: 'maryam', password: '6789' },
     { username: 'rawan', password: '1011' }
@@ -619,7 +619,7 @@ async function attachLoginHandler() {
 
 
 function updateLoginUI() {
-    const loginBtn = document.querySelector('#loginForm button[type="submit"]');
+    let loginBtn = document.querySelector('#loginForm button[type="submit"]');
     if (!loginBtn) return;
 
     if (currentUser || localStorage.getItem('currentUser')) {
