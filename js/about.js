@@ -1,6 +1,5 @@
 // Contact page functionality
 $(document).ready(async function () {
-    // await app.loadData();
     setupContactForm();
     animateStats();
     setupPhoneInput()
@@ -85,9 +84,9 @@ function handleContactSubmission() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    const elements = document.querySelectorAll('.reveal');
+    let elements = document.querySelectorAll('.reveal');
 
-    const observer = new IntersectionObserver((entries) => {
+    let observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add("show");

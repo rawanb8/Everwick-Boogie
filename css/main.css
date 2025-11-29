@@ -442,7 +442,7 @@ a:hover {
 }
 
 .nav-inner-container.container {
-    max-width: var(--max-width);
+    /* max-width: var(--max-width); */
     margin: 0 auto;
     display: flex;
     align-items: center;

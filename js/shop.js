@@ -246,8 +246,9 @@ function displayProducts() {
         let scent = app.getScentById(product.scentId);
         let size = app.getSizeById(product.sizeId);
         let color = app.getColorById(product.colorId);
+        const user = localStorage.getItem('currentUser') || null;
 
-        let isWishlisted = app.isInWishlist(product.id);
+        let isWishlisted = user ? app.isInWishlistForUser(product.id, user) : app.isInWishlist(product.id);
         let wishlistIconClass = isWishlisted ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
         let wishlistBtnClass = isWishlisted ? 'wishlist-btn active' : 'wishlist-btn';
 
@@ -421,15 +422,33 @@ function showProductDetails(productId) {
 }
 
 function toggleWishlist(productId) {
-    if (app.isInWishlist(productId)) {
-        app.removeFromWishlist(productId);
-    } else {
-        app.addToWishlist(productId);
-    }
-    displayProducts(); // Refresh grid to update icons
+    // read current user from localStorage at click time
+    const user = localStorage.getItem('currentUser') || null;
 
-    // If modal is open, refresh it too (or just the button)
-    let modal = document.getElementById('product-modal');
+    // Toggle for anonymous OR current logged-in user
+    if (user) {
+        if (app.isInWishlistForUser(productId, user)) {
+            app.removeFromWishlistForUser(productId, user);
+        } else {
+            app.addToWishlistForUser(productId, user);
+        }
+    } else {
+        if (app.isInWishlist(productId, null)) {
+            app.removeFromWishlist(productId, null);
+        } else {
+            app.addToWishlist(productId, null);
+        }
+    }
+
+    // Refresh product grid icons
+    if (typeof displayProducts === 'function') displayProducts();
+
+    // Refresh wishlist page if visible
+    const wishlistGrid = document.getElementById('wishlist-grid');
+    if (wishlistGrid) renderWishlist();
+
+    // Refresh modal button if open
+    const modal = document.getElementById('product-modal');
     if (modal && modal.classList.contains('active')) {
         showProductDetails(productId);
     }

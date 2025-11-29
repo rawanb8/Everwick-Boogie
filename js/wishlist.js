@@ -1,14 +1,17 @@
 $('document').ready(async function () {
     await app.loadData();
+     if (typeof app.migrateOldWishlist === 'function') app.migrateOldWishlist();
+    // If currentUser is null, treat as anonymous
     renderWishlist();
 });
 
 function renderWishlist() {
+     let user = localStorage.getItem('currentUser') || null;
     let $container = $('#wishlist-grid');
     let $emptyMessage = $('#empty-message');
     if ($container.length === 0 || $emptyMessage.length === 0) return;
 
-    let wishlistIds = app.getWishlist();
+    let wishlistIds = app.getWishlistForUser(user);
     let products = wishlistIds
         .map(id => app.getProductById(id))
         .filter(p => p);
