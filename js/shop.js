@@ -246,8 +246,9 @@ function displayProducts() {
         let scent = app.getScentById(product.scentId);
         let size = app.getSizeById(product.sizeId);
         let color = app.getColorById(product.colorId);
+        const user = localStorage.getItem('currentUser') || null;
 
-        let isWishlisted = app.isInWishlist(product.id);
+        let isWishlisted = user ? app.isInWishlistForUser(product.id, user) : app.isInWishlist(product.id);
         let wishlistIconClass = isWishlisted ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
         let wishlistBtnClass = isWishlisted ? 'wishlist-btn active' : 'wishlist-btn';
 
@@ -421,28 +422,37 @@ function showProductDetails(productId) {
 }
 
 function toggleWishlist(productId) {
-    const isFav = app.isInWishlistForUser(productId, currentUser);
-    if (isFav) {
-        app.removeFromWishlistForUser(productId, currentUser);
+    // read current user from localStorage at click time
+    const user = localStorage.getItem('currentUser') || null;
+
+    // Toggle for anonymous OR current logged-in user
+    if (user) {
+        if (app.isInWishlistForUser(productId, user)) {
+            app.removeFromWishlistForUser(productId, user);
+        } else {
+            app.addToWishlistForUser(productId, user);
+        }
     } else {
-        app.addToWishlistForUser(productId, currentUser);
+        if (app.isInWishlist(productId, null)) {
+            app.removeFromWishlist(productId, null);
+        } else {
+            app.addToWishlist(productId, null);
+        }
     }
 
-    // Update the product grid (icons)
+    // Refresh product grid icons
     if (typeof displayProducts === 'function') displayProducts();
 
-    // Update wishlist page if visible
+    // Refresh wishlist page if visible
     const wishlistGrid = document.getElementById('wishlist-grid');
     if (wishlistGrid) renderWishlist();
 
-    // Update modal button if open
+    // Refresh modal button if open
     const modal = document.getElementById('product-modal');
     if (modal && modal.classList.contains('active')) {
         showProductDetails(productId);
     }
 }
-
-
 
 
 // Close modal

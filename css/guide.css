@@ -19,6 +19,10 @@
   letter-spacing: 1px;
 }
 
+.page-spacer1{
+  height: 60px;
+}
+
 
 
 .quote {
@@ -212,6 +216,7 @@
 @media (max-width: 768px) {}
 
 .scent-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
