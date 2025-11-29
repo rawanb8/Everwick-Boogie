@@ -1,3 +1,46 @@
+function handleLoginUI() {
+  const loginBtn = document.querySelector("#login-btn");
+  const mobileLoginBtn = document.querySelector(".mobile-login-btn");
+  const logoutBtn = document.querySelector("#logout-btn");
+  const mobileLogoutBtn = document.querySelector(".mobile-logout-btn");
+
+  if (localStorage.getItem("currentUser")) {
+    // User logged in → show logout
+    loginBtn.style.display = 'none';
+    mobileLoginBtn.style.display = 'none';
+
+    logoutBtn.style.display = 'block';
+    mobileLogoutBtn.style.display = 'block';
+  } else {
+    // User logged out → show login
+    loginBtn.style.display = 'block';
+    mobileLoginBtn.style.display = 'block';
+
+    logoutBtn.style.display = 'none';
+    mobileLogoutBtn.style.display = 'none';
+  }
+}
+
+function logout() {
+  // Save current user's wishlist before logging out
+  if (window.currentUser) {
+    let userWishlist = app.getWishlist();
+    app.saveWishlistForUser(window.currentUser, userWishlist);
+  }
+
+  // Remove currentUser
+  window.currentUser = null;
+  localStorage.removeItem('currentUser');
+
+  // Update UI
+  handleLoginUI();
+
+  // Trigger event so wishlist re-renders for anonymous
+  document.dispatchEvent(new Event('userChanged'));
+}
+
+
+
 let currentUser = null;
 let app = {
   data: {},
@@ -167,7 +210,7 @@ let app = {
     try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { console.error(e); }
   },
   // Wishlist Logic
-   // Per-user wishlist wrappers (use currentUser global or anonymous)
+  // Per-user wishlist wrappers (use currentUser global or anonymous)
   // NOTE: currentUser may be null when anonymous.
   addToWishlist: function (productId) {
     // delegate to user-aware function
@@ -176,8 +219,8 @@ let app = {
   },
 
   removeFromWishlist: function (productId) {
-     let user = window.currentUser || localStorage.getItem('currentUser') || null;
-    this.removeFromWishlistForUser(productId,user);
+    let user = window.currentUser || localStorage.getItem('currentUser') || null;
+    this.removeFromWishlistForUser(productId, user);
     return true;
   },
 
@@ -443,6 +486,12 @@ document.addEventListener('DOMContentLoaded', async function () {
           console.warn('updateCartCount not available after nav injection — skipping.');
         }
 
+        handleLoginUI();
+        // Attach logout for both desktop & mobile buttons
+        document.querySelector("#logout-btn")?.addEventListener('click', logout);
+        document.querySelector(".mobile-logout-btn")?.addEventListener('click', logout);
+
+
       } else {
         console.warn('nav.html fetch not ok', response.status);
       }
@@ -480,7 +529,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // finally, load data for customize page and others
   await app.loadData();
-   app.migrateOldWishlist && app.migrateOldWishlist();
+  app.migrateOldWishlist && app.migrateOldWishlist();
 });
 
 /* newsletter init */
@@ -598,7 +647,7 @@ async function attachLoginHandler() {
       currentUser = user.username;
       localStorage.setItem('currentUser', currentUser);
       alert('Login successful! Welcome, ' + currentUser);
-
+      handleLoginUI()
       // Merge anonymous wishlist
       let anonWishlist = app.getWishlistForUser(null);
       let userWishlist = app.getWishlistForUser(currentUser);
@@ -620,14 +669,14 @@ async function attachLoginHandler() {
 
 
 function updateLoginUI() {
-    let loginBtn = document.querySelector('#loginForm button[type="submit"]');
-    if (!loginBtn) return;
+  let loginBtn = document.querySelector('#loginForm button[type="submit"]');
+  if (!loginBtn) return;
 
-    if (currentUser || localStorage.getItem('currentUser')) {
-        loginBtn.style.display = 'none'; // hide login button once logged in
-    } else {
-        loginBtn.style.display = 'inline-block'; // show if not logged in
-    }
+  if (currentUser || localStorage.getItem('currentUser')) {
+    loginBtn.style.display = 'none'; // hide login button once logged in
+  } else {
+    loginBtn.style.display = 'inline-block'; // show if not logged in
+  }
 }
 
 

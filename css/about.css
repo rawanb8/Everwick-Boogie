@@ -19,8 +19,8 @@
     min-width: 300px;
 }
 
-.page-spacer1{
-  height: 60px;
+.page-spacer1 {
+    height: 60px;
 }
 
 
@@ -103,6 +103,11 @@ div h1 {
 }
 
 .contact-icon {
+      width: 50px;           
+    height: 50px;           
+    display: flex;           
+    align-items: center;
+    justify-content: center;
     font-size: var(--font-size-xl);
     background: var(--secondary-color);
     padding: var(--space-md);
@@ -193,7 +198,7 @@ h3 {
     color: #4f452e;
 }
 
-.container h2{
+.container h2 {
     color: #4f452e;
 }
 
@@ -204,7 +209,8 @@ h3 {
     align-items: center;
 }
 
-.mission-statement, .founding-story p {
+.mission-statement,
+.founding-story p {
     font-size: var(--font-size-lg);
     font-style: italic;
     color: #54602f;
@@ -215,7 +221,7 @@ h3 {
     margin-bottom: var(--space-md);
 }
 
-.text-center2{
+.text-center2 {
     color: #4f452e;
 }
 
@@ -224,7 +230,9 @@ h3 {
     height: 350px;
     object-fit: cover;
     border-radius: 20px;
-    margin-left: 200px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
     border: 5px solid #bba388;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
@@ -260,7 +268,7 @@ h3 {
 /* Value Card */
 .value-card {
     flex: 1 1 250px;
-    max-width: 300px;
+    max-width: 500px;
     background: var(--background-light);
     padding: var(--space-2xl);
     border-radius: var(--radius-lg);
@@ -340,7 +348,7 @@ h3 {
 .team-section {
     background: var(--secondary-color);
     padding: var(--space-3xl) 0;
-    
+
 }
 
 .team-grid {
@@ -401,6 +409,12 @@ h3 {
         justify-items: center;
         gap: 2rem;
     }
+
+    .values-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--space-2xl);
+}
 }
 
 @media (max-width: 480px) {
@@ -505,7 +519,8 @@ h3 {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
-.timeline-content h3, .contact-details h4 {
+.timeline-content h3,
+.contact-details h4 {
     margin-bottom: var(--space-sm);
     font-family: "Lora";
     color: var(--text-dark);
@@ -570,6 +585,7 @@ h3 {
     font-weight: bold;
     color: var(--primary-color);
     margin-bottom: var(--space-sm);
+    text-align: center;
 }
 
 .stat-label {
@@ -579,12 +595,15 @@ h3 {
 
 .faq-section {
     background: var(--white);
-    height: 100vh;
+    min-height: 400px;
 }
 
 
 .faq-section .container {
-    margin-top: 30px;
+    width: 100%;
+    margin: 0 auto;
+    max-width: 800px;
+    padding: 0 var(--space-md);
 }
 
 .faq-list {
@@ -706,6 +725,9 @@ select:focus {
     }
 }
 
+.header h1 {
+    text-align: center;
+}
 
 @media (max-width: 570px) {
 
@@ -715,12 +737,6 @@ select:focus {
     .team-member {
         flex: 1 1 100%;
         max-width: 100%;
-    }
-
-    .mission-img {
-        margin-left: 0;
-        width: 100%;
-        height: auto;
     }
 
     .mission-content {
@@ -741,6 +757,8 @@ select:focus {
         flex-direction: column;
         gap: var(--space-sm);
     }
+
+
 }
 
 html {

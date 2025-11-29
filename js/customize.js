@@ -31,16 +31,25 @@
 
     let BASE_IMAGE = '/media/custom/base-candle.png';
 
-    // --- State ---
+        // --- State ---
+
+    // Parse the query parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const scentFromQuery = urlParams.get('scent'); // e.g., ?scent=lavender
+
+
+    // Initialize state
     let state = {
         color: 'pure-white',
         label: 'no-label',
-        scentId: null,
+        scentId: scentFromQuery ? Number(scentFromQuery) : null,
         sizeId: null,
         containerId: null,
         wickId: null,
         additions: new Set()
-    };
+    };  
+    
+    console.log(state);
 
     // Data lists (filled from app.data)
     let sizesList = [];
@@ -277,6 +286,7 @@
         setActiveColorButton();
         updatePreviewImage();
     });
+    
 
     $(document).on('click', '#additions .addition-toggle', function () {
         let key = $(this).data('key');
@@ -317,7 +327,7 @@
         state.scentId = v ? Number(v) : null;
         updatePreviewImage();
     });
-
+     
     //compute total price
     function computeTotalPrice() {
         state.sizeId = $('input[name="size-select"]:checked').val() || state.sizeId;
