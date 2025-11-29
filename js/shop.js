@@ -246,8 +246,9 @@ function displayProducts() {
         let scent = app.getScentById(product.scentId);
         let size = app.getSizeById(product.sizeId);
         let color = app.getColorById(product.colorId);
+        let user = localStorage.getItem('currentUser') || null;
 
-        let isWishlisted = app.isInWishlist(product.id);
+        let isWishlisted = user ? app.isInWishlistForUser(product.id, user) : app.isInWishlist(product.id);
         let wishlistIconClass = isWishlisted ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
         let wishlistBtnClass = isWishlisted ? 'wishlist-btn active' : 'wishlist-btn';
 
@@ -272,7 +273,7 @@ function displayProducts() {
                     </div>
                     <div class="product-actions">
                         <button class="btn btn-outline btn-small" onclick="event.stopPropagation(); showProductDetails('${product.id}')">View</button>
-                        <button class="btn btn-primary btn-small open-login" onclick="event.stopPropagation(); addProductToCart('${product.id}')" ${product.stock <= 0 ? 'disabled' : ''}>Add</button>
+                        <button class="btn btn-primary btn-small" onclick="event.stopPropagation(); addProductToCart('${product.id}')" ${product.stock <= 0 ? 'disabled' : ''}>Add</button>
                     </div>
                 </div>
             </div>`;
@@ -421,14 +422,32 @@ function showProductDetails(productId) {
 }
 
 function toggleWishlist(productId) {
-    if (app.isInWishlist(productId)) {
-        app.removeFromWishlist(productId);
-    } else {
-        app.addToWishlist(productId);
-    }
-    displayProducts(); // Refresh grid to update icons
+    // read current user from localStorage at click time
+    let user = localStorage.getItem('currentUser') || null;
 
-    // If modal is open, refresh it too (or just the button)
+    // Toggle for anonymous OR current logged-in user
+    if (user) {
+        if (app.isInWishlistForUser(productId, user)) {
+            app.removeFromWishlistForUser(productId, user);
+        } else {
+            app.addToWishlistForUser(productId, user);
+        }
+    } else {
+        if (app.isInWishlist(productId, null)) {
+            app.removeFromWishlist(productId, null);
+        } else {
+            app.addToWishlist(productId, null);
+        }
+    }
+
+    // Refresh product grid icons
+    if (typeof displayProducts === 'function') displayProducts();
+
+    // Refresh wishlist page if visible
+    let wishlistGrid = document.getElementById('wishlist-grid');
+    if (wishlistGrid) renderWishlist();
+
+    // Refresh modal button if open
     let modal = document.getElementById('product-modal');
     if (modal && modal.classList.contains('active')) {
         showProductDetails(productId);

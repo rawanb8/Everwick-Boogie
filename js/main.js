@@ -1,3 +1,4 @@
+let currentUser = null;
 let app = {
   data: {},
   scents: [],
@@ -170,39 +171,105 @@ let app = {
     try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { console.error(e); }
   },
   // Wishlist Logic
+   // Per-user wishlist wrappers (use currentUser global or anonymous)
+  // NOTE: currentUser may be null when anonymous.
   addToWishlist: function (productId) {
-    let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
-    if (!wishlist.includes(productId)) {
-      wishlist.push(productId);
-      localStorage.setItem('wishlist', JSON.stringify(wishlist));
-      return true;
-    }
-    return false;
+    // delegate to user-aware function
+    this.addToWishlistForUser(productId, window.currentUser || null);
+    return true;
   },
 
   removeFromWishlist: function (productId) {
-    let wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
-    wishlist = wishlist.filter(id => String(id) !== String(productId));
-    localStorage.setItem('wishlist', JSON.stringify(wishlist));
+     let user = window.currentUser || localStorage.getItem('currentUser') || null;
+    this.removeFromWishlistForUser(productId,user);
     return true;
   },
 
   getWishlist: function () {
-    return JSON.parse(localStorage.getItem('wishlist') || '[]');
+    return this.getWishlistForUser(window.currentUser || null);
   },
 
   isInWishlist: function (productId) {
     let wishlist = this.getWishlist();
-    return wishlist.map(String).includes(String(productId));
+    return (Array.isArray(wishlist) ? wishlist.map(String).includes(String(productId)) : false);
+  },
+
+  // Migration helper - converts legacy 'wishlists' or 'wishlist' keys into the
+  // new per-user storage under "wishlist_anonymous" so old data is preserved.
+  migrateOldWishlist: function () {
+    try {
+      // Old possible keys
+      let legacyKeys = ['wishlists', 'wishlist'];
+      legacyKeys.forEach(key => {
+        let raw = localStorage.getItem(key);
+        if (!raw) return;
+        try {
+          let arr = JSON.parse(raw);
+          if (!Array.isArray(arr)) return;
+          // Read current anonymous wishlist (if any)
+          let anon = this.getWishlistForUser(null) || [];
+          // Merge avoiding duplicates
+          let merged = Array.from(new Set([...anon.map(String), ...arr.map(String)])).map(String);
+          this.saveWishlistForUser(null, merged);
+          // Remove old key so migration is idempotent
+          localStorage.removeItem(key);
+          console.info(`Migrated legacy wishlist key "${key}" into anonymous wishlist.`);
+        } catch (e) {
+          // ignore parse errors
+        }
+      });
+    } catch (e) {
+      console.error('Wishlist migration failed:', e);
+    }
   },
 
 
+
 };
+
+app.saveWishlistForUser = function (username = null, wishlist = []) {
+  let key = username ? 'wishlist_' + username : 'wishlist_anonymous';
+  let obj = { username: username || 'anonymous', wishlist: wishlist };
+  localStorage.setItem(key, JSON.stringify(obj));
+};
+
+
+
+app.getWishlistForUser = function (username = null) {
+  let key = username ? 'wishlist_' + username : 'wishlist_anonymous';
+  let obj = JSON.parse(localStorage.getItem(key) || '{}');
+  return obj.wishlist || [];
+};
+
+
+// add to wishlist for a user
+app.addToWishlistForUser = function (productId, username = null) {
+  let wishlist = this.getWishlistForUser(username);
+  if (!wishlist.includes(productId)) {
+    wishlist.push(productId);
+    this.saveWishlistForUser(username, wishlist);
+  }
+};
+
+// remove from wishlist for a user
+app.removeFromWishlistForUser = function (productId, username = null) {
+  let wishlist = this.getWishlistForUser(username);
+  wishlist = wishlist.filter(id => String(id) !== String(productId));
+  this.saveWishlistForUser(username, wishlist);
+};
+
+// check if a product is in a user's wishlist
+app.isInWishlistForUser = function (productId, username = null) {
+  let wishlist = this.getWishlistForUser(username);
+  return wishlist.map(String).includes(String(productId));
+};
+
 
 (function () {
   document.addEventListener('DOMContentLoaded', function () {
     try {
       initNavbar();
+      updateLoginUI();
       updateCartCount();
       initNewsletterForm();
       window.addEventListener('storage', function (e) { if (e.key === 'cart') updateCartCount(); });
@@ -417,6 +484,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   // finally, load data for customize page and others
   await app.loadData();
+   app.migrateOldWishlist && app.migrateOldWishlist();
 });
 
 /* newsletter init */
@@ -466,28 +534,124 @@ function initNewsletterForm() {
 }
 
 
-
-/* login form handler (if present) */
-(function attachLoginHandlerIfPresent() {
+/* login modal & form handler */
+async function attachLoginHandler() {
+  // Wait until navbar is loaded and modal moved
+  let loginModal = document.querySelector('.login-modal-wrapper');
   let loginForm = document.getElementById('loginForm');
-  if (!loginForm) return;
-  loginForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-    let username = (document.getElementById('username') && document.getElementById('username').value) ? document.getElementById('username').value.trim() : '';
-    let password = (document.getElementById('password') && document.getElementById('password').value) ? document.getElementById('password').value.trim() : '';
-    let loginModal = document.querySelector('.login-modal-wrapper');
-    let allowedUsers = [
-      { username: 'rama', password: '12345' },
-      { username: 'maryam', password: '6789' },
-      { username: 'rawan', password: '1011' }
-    ];
-    let user = allowedUsers.find(function (u) { return u.username === username && u.password === password; });
-    if (user) {
-      alert('Login successful! Welcome, ' + user.username);
-      if (loginModal) loginModal.style.display = 'none';
-      try { loginForm.reset(); } catch (e) { }
-    } else {
-      alert('Incorrect username or password.');
+  let closeBtn = document.querySelector('.login-modal-close');
+
+  if (!loginModal || !loginForm) return;
+
+  let allowedUsers = [
+    { username: 'rama', password: '12345' },
+    { username: 'maryam', password: '6789' },
+    { username: 'rawan', password: '1011' }
+  ];
+
+  // Ensure all buttons have the correct trigger class
+  let loginTriggers = document.querySelectorAll('.open-login');
+  if (!loginTriggers.length) {
+    let btn = document.getElementById('login-btn');
+    if (btn) btn.classList.add('open-login');
+    loginTriggers = document.querySelectorAll('.open-login');
+  }
+
+  // Open modal on click
+  loginTriggers.forEach(btn => {
+    if (!btn.dataset.listenerAttached) {
+      btn.addEventListener('click', e => {
+        e.preventDefault();
+        loginModal.style.display = 'flex';
+      });
+      btn.dataset.listenerAttached = "true";
     }
   });
-})();
+
+  if (closeBtn && !closeBtn.dataset.listenerAttached) {
+    closeBtn.addEventListener('click', () => loginModal.style.display = 'none');
+    closeBtn.dataset.listenerAttached = "true";
+  }
+  if (!window._loginWindowListener) {
+    window.addEventListener('click', e => {
+      if (e.target === loginModal) loginModal.style.display = 'none';
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && loginModal.style.display === 'flex') loginModal.style.display = 'none';
+    });
+    window._loginWindowListener = true;
+  }
+
+  // Handle login submit — attach only once
+  if (!loginForm.dataset.listenerAttached) {
+    loginForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      let username = loginForm.querySelector('#username')?.value.trim() || '';
+      let password = loginForm.querySelector('#password')?.value.trim() || '';
+
+      // Only allow exact matches
+      let user = allowedUsers.find(u => u.username === username && u.password === password);
+
+      if (!user) {
+        alert('Incorrect username or password.');
+        return;
+      }
+
+      // Login success
+      currentUser = user.username;
+      localStorage.setItem('currentUser', currentUser);
+      alert('Login successful! Welcome, ' + currentUser);
+
+      // Merge anonymous wishlist
+      let anonWishlist = app.getWishlistForUser(null);
+      let userWishlist = app.getWishlistForUser(currentUser);
+      let mergedWishlist = Array.from(new Set([...anonWishlist.map(String), ...userWishlist.map(String)]));
+      app.saveWishlistForUser(currentUser, mergedWishlist);
+      app.saveWishlistForUser(null, []); // clear anonymous
+
+      if (typeof renderWishlist === 'function') renderWishlist();
+      if (typeof displayProducts === 'function') displayProducts();
+
+      loginModal.style.display = 'none';
+      loginForm.reset();
+      document.dispatchEvent(new Event('userChanged'));
+    });
+    loginForm.dataset.listenerAttached = "true";
+  }
+}
+
+
+
+function updateLoginUI() {
+    let loginBtn = document.querySelector('#loginForm button[type="submit"]');
+    if (!loginBtn) return;
+
+    if (currentUser || localStorage.getItem('currentUser')) {
+        loginBtn.style.display = 'none'; // hide login button once logged in
+    } else {
+        loginBtn.style.display = 'inline-block'; // show if not logged in
+    }
+}
+
+
+
+
+
+
+
+/* call after navbar and modal are fully loaded */
+document.addEventListener('DOMContentLoaded', async function () {
+  // wait for nav injection
+  let checkNavLoaded = setInterval(() => {
+    let loginModal = document.querySelector('.login-modal-wrapper');
+    let loginForm = document.getElementById('loginForm');
+    if (loginModal && loginForm) {
+      clearInterval(checkNavLoaded);
+      attachLoginHandler();
+    }
+  }, 100); // check every 100ms
+});
+
+
+

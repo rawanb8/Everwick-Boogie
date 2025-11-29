@@ -392,7 +392,7 @@
 
 .btn.clear {
   display: block;
-  background-color: #cfd9cc;
+  background-color: var(--brand-green);
   /* olive-green */
   margin: var(--space-lg) auto 0 auto;
   /* top margin, horizontal auto centers it */
@@ -818,7 +818,7 @@
 }
 
 .category-card h3 {
-    margin: 0.75rem 0;
+    margin: var(--font-size-xs) 0;
     font-size: 1.1rem;
     text-align: center;
 }

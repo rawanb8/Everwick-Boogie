@@ -19,6 +19,10 @@
   letter-spacing: 1px;
 }
 
+.page-spacer1{
+  height: 60px;
+}
+
 
 
 .quote {
@@ -79,7 +83,7 @@
 }
 
 .filters-section {
-  background-color: #cfd9cc;
+  background-color: var(--brand-green);
   padding: var(--space-xl) 0;
   box-shadow: var(--shadow-sm);
   margin-bottom: var(--space-xl);
@@ -122,7 +126,7 @@
 
 .filter-group select:focus {
   outline: none;
-  border-color: #8a9a5b;
+  border-color: var(--olive-green);
   box-shadow: 0 0 5px rgba(138, 154, 91, 0.5);
 }
 
@@ -212,6 +216,7 @@
 @media (max-width: 768px) {}
 
 .scent-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -536,7 +541,7 @@ input[type="range"]::-ms-thumb {
   margin: 10px;
 
   /* Gradient text from palette */
-  background: linear-gradient(45deg, #d4a574, #b8935f, #8b4513);
+  background: linear-gradient(45deg, var(--primary-color), var(--primary-dark), var(--accent-color));
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -618,7 +623,7 @@ input[type="range"]::-ms-thumb {
 
   .scent-category,
   .note-tag {
-    font-size: 0.75rem;
+    font-size: var(--font-size-xs);
   }
 
   .filter-grid,
