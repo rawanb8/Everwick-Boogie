@@ -125,6 +125,24 @@
     -moz-osx-font-smoothing: grayscale;
 }
 
+@media (max-width: 544px) {
+  .brand-slogan {
+    font-size: clamp(1.1rem, 6.5vw, 1.6rem);
+    line-height: 3; 
+    white-space: normal;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    letter-spacing: 0.01em;
+  }
+
+  @media (max-width: 360px) {
+    .brand-slogan {
+      font-size: 1.15rem;
+      line-height: 3.5;
+    }
+  }
+}
+
 /* small subtitle under the slogan */
 .hero-sub {
     margin: .5rem auto 0;
@@ -183,9 +201,8 @@
     gap: 2.5rem;
     align-items: center;
     justify-content: space-between;
-    padding-left: 1rem;
-    padding-right: 1rem;
     box-sizing: border-box;
+    padding: 4rem 2rem 4rem 2rem;
 }
 
 .candle-content {
@@ -895,7 +912,7 @@
 
 /* ========== CATEGORIES ========== */
 .categories {
-    padding: 4rem 0;
+    padding: 4rem 1rem 4rem 1rem;
 }
 
 #categories-title {
