@@ -57,39 +57,82 @@
 
   /* ========== FEATURED PRODUCTS (pagination) ========== */
   (function initFeatured() {
-    const featured = products.filter(p => p.featured === true);
-    const perPage = 4;
-    let currentPage = 0;
-    const totalPages = Math.max(1, Math.ceil(featured.length / perPage));
+    const container = document.getElementById('featured-grid');
+    if (!container) {
+      console.warn('initFeatured: #featured-grid not found');
+      return;
+    }
 
-    // build controls
+    // Use outer-scoped 'products' (already defined above from app.products)
+    const featuredItems = products.filter(p => p && p.featured === true);
+
+    // Nothing to show
+    if (!featuredItems.length) {
+      container.innerHTML = '<p class="text-center">No featured products.</p>';
+      return;
+    }
+
+    // Clear and build track
+    container.innerHTML = '';
+    container.style.position = 'relative';
+    container.style.overflow = 'hidden';
+
+    const track = document.createElement('div');
+    track.className = 'featured-track';
+    track.style.display = 'flex';
+    track.style.gap = '1rem';
+    track.style.alignItems = 'stretch';
+    track.style.flexWrap = 'nowrap';
+    track.style.transition = 'transform 420ms cubic-bezier(.2,.9,.3,1)';
+    track.style.willChange = 'transform';
+    track.style.padding = '0.25rem 0';
+
+    // Helper to make card via user's buildProductCard if available
+    function makeCard(p) {
+      if (typeof buildProductCard === 'function') {
+        return buildProductCard(p);
+      }
+      // fallback minimal card
+      const a = document.createElement('article');
+      a.className = 'product-card';
+      a.innerHTML = `
+      <div class="product-image"><img src="${(Array.isArray(p.images) && p.images[0]) || ''}" alt="${p.name || ''}"></div>
+      <h3 class="product-title">${p.name || 'Untitled'}</h3>
+      <p class="product-price">${typeof window.app?.formatPrice === 'function' ? window.app.formatPrice(p.price) : ('$' + (Number(p.price || 0).toFixed(2)))}</p>
+    `;
+      return a;
+    }
+
+    // Append cards
+    featuredItems.forEach(p => {
+      const card = makeCard(p);
+      card.style.flexShrink = '0';
+      card.style.margin = '0';
+      track.appendChild(card);
+    });
+
+    container.appendChild(track);
+
+    // Controls
     const controls = document.createElement('div');
     controls.className = 'featured-controls';
     controls.style.display = 'flex';
-    controls.style.alignItems = 'center';
+    controls.style.gap = '.6rem';
     controls.style.justifyContent = 'center';
-    controls.style.gap = '0.5rem';
+    controls.style.alignItems = 'center';
     controls.style.marginTop = '1rem';
 
     const prevBtn = document.createElement('button');
     prevBtn.type = 'button';
-    prevBtn.className = 'btn btn-outline btn-small';
-    prevBtn.setAttribute('aria-label', 'Previous featured products');
-    prevBtn.textContent = '← Prev';
-    prevBtn.addEventListener('click', () => {
-      currentPage = (currentPage - 1 + totalPages) % totalPages;
-      renderPage();
-    });
+    prevBtn.className = 'featured-arrow';
+    prevBtn.setAttribute('aria-label', 'Previous featured');
+    prevBtn.innerHTML = '<i class="fa-solid fa-caret-left" aria-hidden="true"></i>';
 
     const nextBtn = document.createElement('button');
     nextBtn.type = 'button';
-    nextBtn.className = 'btn btn-outline btn-small';
-    nextBtn.setAttribute('aria-label', 'Next featured products');
-    nextBtn.textContent = 'Next →';
-    nextBtn.addEventListener('click', () => {
-      currentPage = (currentPage + 1) % totalPages;
-      renderPage();
-    });
+    nextBtn.className = 'featured-arrow';
+    nextBtn.setAttribute('aria-label', 'Next featured');
+    nextBtn.innerHTML = '<i class="fa-solid fa-caret-right" aria-hidden="true"></i>';
 
     const pageIndicator = document.createElement('div');
     pageIndicator.className = 'featured-page-indicator';
@@ -101,49 +144,154 @@
     controls.appendChild(pageIndicator);
     controls.appendChild(nextBtn);
 
-    // insert controls after the grid (if there's a container)
-    featuredGrid.parentNode && featuredGrid.parentNode.insertBefore(controls, featuredGrid.nextSibling);
+    // Insert controls after container
+    container.parentNode && container.parentNode.insertBefore(controls, container.nextSibling);
 
-    function renderPage() {
-      featuredGrid.innerHTML = '';
-      if (!featured.length) {
-        featuredGrid.innerHTML = '<p class="text-center">No featured products.</p>';
-        pageIndicator.textContent = '';
+    // Carousel state
+    let index = 0; // index of left-most visible card
+    const cards = Array.from(track.querySelectorAll('.product-card'));
+
+    // Measure function
+    function getMetrics() {
+      const firstCard = track.querySelector('.product-card');
+      if (!firstCard) return { cardW: 0, gap: 0, visibleCount: 1, containerW: container.clientWidth };
+      const cardRect = firstCard.getBoundingClientRect();
+      const cs = getComputedStyle(track);
+      const gap = parseFloat(cs.gap) || 0;
+      const cardW = Math.round(cardRect.width);
+      const containerW = container.clientWidth;
+      const visibleCount = Math.max(1, Math.floor((containerW + gap) / (cardW + gap)));
+      return { cardW, gap, visibleCount, containerW };
+    }
+
+    // Update buttons / transform
+    function update() {
+      const { cardW, gap, visibleCount } = getMetrics();
+      const total = cards.length;
+      const maxIndex = Math.max(0, total - visibleCount);
+
+      if (index > maxIndex) index = maxIndex;
+      if (index < 0) index = 0;
+
+      if (total <= visibleCount) {
+        track.style.transform = 'translateX(0px)';
         prevBtn.disabled = true;
         nextBtn.disabled = true;
+        pageIndicator.textContent = `${total} item${total === 1 ? '' : 's'}`;
         return;
       }
 
-      const start = currentPage * perPage;
-      const pageItems = featured.slice(start, start + perPage);
+      prevBtn.disabled = false;
+      nextBtn.disabled = false;
 
-      pageItems.forEach(p => featuredGrid.appendChild(buildProductCard(p)));
+      const translateX = -Math.round(index * (cardW + gap));
+      track.style.transform = `translateX(${translateX}px)`;
 
-      pageIndicator.textContent = `Page ${currentPage + 1} / ${totalPages}`;
-      prevBtn.disabled = totalPages <= 1;
-      nextBtn.disabled = totalPages <= 1;
+      pageIndicator.textContent = `Showing ${index + 1}–${Math.min(index + visibleCount, total)} of ${total}`;
     }
 
-    renderPage();
+    // Next / Prev handlers (wrap-around)
+    function next() {
+      const { visibleCount } = getMetrics();
+      const total = cards.length;
+      const maxIndex = Math.max(0, total - visibleCount);
+
+      if (total <= visibleCount) {
+        index = 0;
+      } else {
+        index = index + 1;
+        if (index > maxIndex) index = 0; // wrap
+      }
+      update();
+    }
+
+    function prev() {
+      const { visibleCount } = getMetrics();
+      const total = cards.length;
+      const maxIndex = Math.max(0, total - visibleCount);
+
+      if (total <= visibleCount) {
+        index = 0;
+      } else {
+        index = index - 1;
+        if (index < 0) index = maxIndex; // wrap to end
+      }
+      update();
+    }
+
+    prevBtn.addEventListener('click', prev);
+    nextBtn.addEventListener('click', next);
+
+    // Keyboard support
+    controls.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') prev();
+      if (e.key === 'ArrowRight') next();
+    });
+
+    // Resize handling (debounced)
+    let resizeTimer = null;
+    function onResize() {
+      const { visibleCount } = getMetrics();
+      const total = cards.length;
+      const maxIndex = Math.max(0, total - visibleCount);
+      if (index > maxIndex) index = maxIndex;
+      update();
+    }
+
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(onResize, 120);
+    });
+
+    // Ensure images load before initial measure
+    const imgs = track.querySelectorAll('img');
+    let imgsToLoad = imgs.length;
+    if (!imgsToLoad) {
+      cards.forEach(c => c.classList.add('visible'));
+      update();
+    } else {
+      imgs.forEach(img => {
+        if (img.complete) {
+          imgsToLoad--;
+          if (imgsToLoad === 0) {
+            cards.forEach(c => c.classList.add('visible'));
+            update();
+          }
+        } else {
+          img.addEventListener('load', () => {
+            imgsToLoad--;
+            if (imgsToLoad === 0) {
+              cards.forEach(c => c.classList.add('visible'));
+              update();
+            }
+          });
+        }
+        img.style.maxWidth = '100%';
+        img.style.display = 'block';
+      });
+    }
+
+    // expose a small API on the container for debug if needed
+    container.__carousel = { next, prev, update, track, cards };
   })();
 
   // Select all review cards
-const reviewCards = document.querySelectorAll('.review-card');
+  const reviewCards = document.querySelectorAll('.review-card');
 
-const observerOptions = {
-  threshold: 0.1 // triggers when 10% of card is visible
-};
+  const observerOptions = {
+    threshold: 0.1 // triggers when 10% of card is visible
+  };
 
-const observer = new IntersectionObserver((entries, observer) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('animate');
-      observer.unobserve(entry.target); // only animate once
-    }
-  });
-}, observerOptions);
+  const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animate');
+        observer.unobserve(entry.target); // only animate once
+      }
+    });
+  }, observerOptions);
 
-reviewCards.forEach(card => observer.observe(card));
+  reviewCards.forEach(card => observer.observe(card));
 
 
   /* ========== CATEGORY CARDS ========== */
@@ -182,55 +330,13 @@ reviewCards.forEach(card => observer.observe(card));
 
     // if there were no collections, do nothing (don't overwrite any static HTML)
     if (!collectionsArr.length) {
-      // leave existing static category cards (if any) — helpful if you prefer static content
+      // leave static cards if any
       if (!categoryList.children.length) {
         categoryList.innerHTML = '<p class="text-center">No categories found.</p>';
       }
     }
   })();
 
-  /* ========== MODAL (single reusable) ========== */
-  (function ensureModal() {
-    if (document.getElementById('product-modal')) return;
-
-    const wrapper = document.createElement('div');
-    wrapper.id = 'product-modal';
-    wrapper.className = 'modal';
-    wrapper.setAttribute('role', 'dialog');
-    wrapper.setAttribute('aria-modal', 'true');
-    wrapper.style.display = 'none';
-    wrapper.innerHTML = `
-      <div class="modal-content" role="document" style="max-width:760px;">
-        <div class="modal-header">
-          <h3 id="pm-title"></h3>
-          <button class="modal-close" id="pm-close" aria-label="Close">&times;</button>
-        </div>
-        <div class="modal-body" id="pm-body">
-          <div class="pm-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;align-items:center">
-            <div class="pm-image-wrap"><img id="pm-image" loading="lazy" alt="" style="width:100%;height:auto;border-radius:8px"></div>
-            <div class="pm-details">
-              <p id="pm-desc"></p>
-              <p class="pm-price" id="pm-price" style="font-weight:700;margin-top:8px"></p>
-              <div id="pm-extra"></div>
-              <div style="margin-top:1rem;"><a id="pm-link" class="btn btn-primary" href="#">View full product</a></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    `;
-
-    document.body.appendChild(wrapper);
-
-    wrapper.querySelector('#pm-close').addEventListener('click', () => closeModal());
-    wrapper.addEventListener('click', (e) => { if (e.target === wrapper) closeModal(); });
-
-    function closeModal() {
-      wrapper.style.display = 'none';
-      document.body.classList.remove('modal-open');
-    }
-
-    // expose for other functions (not global, closure only)
-  })();
 
   /* ========== HELPERS ========== */
   function buildProductCard(p) {
@@ -244,8 +350,7 @@ reviewCards.forEach(card => observer.observe(card));
     // actual image
     const img = document.createElement('img');
     img.alt = p.name || 'Product';
-    img.loading = 'lazy';
-    img.src = Array.isArray(p.images) && p.images.length ? p.images[0] : '/media/placeholder/product-placeholder.png';
+    img.src = Array.isArray(p.images) && p.images.length ? p.images[0] : '';
 
     const title = document.createElement('h3');
     title.className = 'product-title';
@@ -258,22 +363,13 @@ reviewCards.forEach(card => observer.observe(card));
     const actions = document.createElement('div');
     actions.className = 'product-actions';
 
-    const viewBtn = document.createElement('button');
-    viewBtn.type = 'button';
-    viewBtn.className = 'btn btn-outline';
-    viewBtn.textContent = 'View';
-    viewBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      openProductPreview(p);
-    });
-
+    // "Go to product" now navigates to shop page and pre-fills search query with the product name
     const shopLink = document.createElement('a');
     shopLink.className = 'btn btn-primary';
-    const slug = p.slug || encodeURIComponent(String(p.id || p.name || '').toLowerCase().replace(/\s+/g, '-'));
-    shopLink.href = `/html/product.html?slug=${slug}`;
-    shopLink.textContent = 'Go to product';
+    const searchQuery = encodeURIComponent(String(p.name || '').trim());
+    shopLink.href = `/html/shop.html?q=${searchQuery}`;
+    shopLink.textContent = 'Go to shop';
 
-    actions.appendChild(viewBtn);
     actions.appendChild(shopLink);
 
     imgWrap.appendChild(img);
@@ -285,32 +381,18 @@ reviewCards.forEach(card => observer.observe(card));
     return article;
   }
 
-  function openProductPreview(product) {
-    const modal = document.getElementById('product-modal');
-    if (!modal) return;
-
-    modal.style.display = 'flex';
-    document.body.classList.add('modal-open');
-
-    const img = modal.querySelector('#pm-image');
-    const title = modal.querySelector('#pm-title');
-    const desc = modal.querySelector('#pm-desc');
-    const priceEl = modal.querySelector('#pm-price');
-    const link = modal.querySelector('#pm-link');
-
-    if (img) img.src = (Array.isArray(product.images) && product.images.length) ? product.images[0] : '/media/placeholder/product-placeholder.png';
-    if (img) img.alt = product.name || 'Product';
-    if (title) title.textContent = product.name || '';
-    if (desc) desc.textContent = product.shortDescription || product.description || '';
-    if (priceEl) priceEl.textContent = typeof app.formatPrice === 'function' ? app.formatPrice(product.price) : `$${Number(product.price || 0).toFixed(2)}`;
-    if (link) {
-      const slug = product.slug || encodeURIComponent(String(product.id || product.name || '').toLowerCase().replace(/\s+/g, '-'));
-      link.href = `/html/product.html?slug=${slug}`;
-    }
-  }
-
   function prettyCollectionName(raw) {
     return (raw || '').replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
   }
+
+  // ensure orientationchange triggers a reflow/update of the carousel
+  window.addEventListener('orientationchange', () => {
+    setTimeout(() => {
+      const container = document.getElementById('featured-grid');
+      if (container && container.__carousel && typeof container.__carousel.update === 'function') {
+        container.__carousel.update();
+      }
+    }, 160);
+  });
 
 })();
