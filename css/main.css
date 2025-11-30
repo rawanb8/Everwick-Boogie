@@ -435,23 +435,26 @@ a:hover {
     height: var(--nav-height);
     z-index: 1200;
     width: 100%;
-    /* will-change: transform, background; */
+    pointer-events: auto;
+    display: block;
+    justify-content: center;
     background: transparent;
 }
 
 .nav-inner-container.container {
-    /* max-width: var(--max-width); */
+    box-sizing: border-box;
+    width: calc(100%-10px);
+    max-width: none;
     margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: .5rem 1rem;
+    padding: 0.5rem 1rem;
     border-radius: 0 0 12px 12px;
     transition: background var(--transition), box-shadow var(--transition), transform var(--transition), color var(--transition);
     background: var(--nav-glass);
     color: inherit;
-    box-sizing: border-box;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     flex-wrap: nowrap;
 }
 
@@ -592,7 +595,7 @@ a:hover {
 /*wishlist btn styling in desktop and mobile*/
 
 /* Desktop: compact icon button that sits next to login and cart */
-.wishlist-btn {
+.wishlist-nav-btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -609,20 +612,20 @@ a:hover {
     margin: 0 .15rem;
 }
 
-.wishlist-btn .fa-heart {
+.wishlist-nav-btn .fa-heart {
     line-height: 1;
     display: inline-block;
 }
 
-.wishlist-btn:hover,
-.wishlist-btn:focus {
+.wishlist-nav-btn:hover,
+.wishlist-nav-btn:focus {
     background: var(--brand-green);
     color: #493b42;
     transform: translateY(-2px);
     outline: none;
 }
 
-.wishlist-btn:focus-visible {
+.wishlist-nav-btn:focus-visible {
     outline: 3px solid rgba(160, 120, 100, 0.18);
     outline-offset: 2px;
     border-radius: 10px;
@@ -933,7 +936,7 @@ a:hover {
     color: var(--deep);
 }
 
-.wishlist-btn i {
+.wishlist-nav-btn i {
     font-size: 1.4rem;
 }
 .mobile-wishlist-link i{
@@ -1024,7 +1027,7 @@ a:hover {
     }
 
     /* make wishlist icon slightly more compact */
-    .wishlist-btn {
+    .wishlist-nav-btn {
         width: 36px;
         height: 36px;
         border-radius: 8px;
@@ -1079,7 +1082,7 @@ a:hover {
         height: 36px;
     }
 
-    .wishlist-btn {
+    .wishlist-nav-btn {
         width: 34px;
         height: 34px;
     }
@@ -1324,7 +1327,7 @@ a:hover {
     inset: 0;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 9999;
     font-family: 'TAN Meringue', serif;
     backdrop-filter: blur(4px);
     /* blur the page behind */
