@@ -4,7 +4,10 @@
         /*overrides width: 100% in main.css*/
     }
 }
-
+.nav-links *:nth-child(4) {
+    transition-delay: 0s !important;
+    padding-top: 0 !important;
+}
 /* -------- page baseline -------- */
 .home-page {
     background: var(--bg);

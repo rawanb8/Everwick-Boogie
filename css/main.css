@@ -856,7 +856,7 @@ a:hover {
 }
 
 
-.mobile-login-btn {
+.mobile-login-btn, .mobile-logout-btn {
     width: 100%;
     padding: 0.9rem 1rem;
     background: var(--primary-color);
@@ -879,9 +879,9 @@ a:hover {
         border-color 160ms ease;
 }
 
-.mobile-login-btn:hover,
-.mobile-login-btn:focus,
-.mobile-login-btn:active {
+.mobile-login-btn:hover, .mobile-logout-btn:hover,
+.mobile-login-btn:focus, .mobile-logout-btn:focus,
+.mobile-login-btn:active, .mobile-logout-btn:active {
     transform: translateY(-2px);
     background: linear-gradient(90deg, rgba(207, 217, 204, 0.06), rgba(240, 219, 131, 0.05));
     border-color: rgba(0, 0, 0, 0.25);
@@ -889,7 +889,7 @@ a:hover {
     outline: none;
 }
 
-.mobile-login-btn:focus-visible {
+.mobile-login-btn:focus-visible, .mobile-logout-btn {
     box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.12);
     outline: none;
 }
@@ -970,7 +970,7 @@ a:hover {
 }
 
 /* LOGIN BUTTON */
-.login-btn {
+.login-btn, .logout-btn {
     background: none;
     border: none;
     cursor: pointer;
