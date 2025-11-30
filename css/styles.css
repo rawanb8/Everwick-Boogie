@@ -8,6 +8,10 @@
     transition-delay: 0s !important;
     padding-top: 0 !important;
 }
+.category-list *:nth-child(4){
+    transition: 0 !important;
+    padding-top: 0 !important;
+}
 /* -------- page baseline -------- */
 .home-page {
     background: var(--bg);
@@ -1204,6 +1208,7 @@
     margin: var(--font-size-xs) 0;
     font-size: 1.1rem;
     text-align: center;
+    font-family: 'TAN Meringue';
 }
 
 .category-card:hover {
