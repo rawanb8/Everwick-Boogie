@@ -21,13 +21,18 @@
     <div class="nav-actions">
 
       <!-- Login button -->
+      <button class="logout-btn open-logout" style="display:none" id="logout-btn" title="logout">
+        <i class="fa-solid fa-user"></i>
+        <span>Logout</span>
+      </button>
+
       <button class="login-btn open-login" id="login-btn" title="Login">
         <i class="fa-solid fa-user"></i>
         <span>Login</span>
       </button>
 
       <!-- Wishlist button->only heart icon -->
-      <a class="wishlist-btn" id="wishlist-btn" href="wishlist.html" title="Wishlist" aria-label="Wishlist">
+      <a class="wishlist-nav-btn" id="wishlist-nav-btn" href="wishlist.html" title="Wishlist" aria-label="Wishlist">
         <i class="fa-solid fa-heart"></i>
       </a>
 
@@ -76,6 +81,11 @@
             <button class="mobile-login-btn open-login">
               <i class="fa-solid fa-user"></i>
               Login
+            </button>
+
+            <button class="mobile-logout-btn open-logout" style="display:none">
+              <i class="fa-solid fa-user"></i>
+              Logout
             </button>
           </li>
         </ul>
