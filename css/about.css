@@ -3,6 +3,7 @@
 .top-page {
     background: var(--secondary-color);
     padding: var(--space-2xl) 0;
+    margin-top: 8px;
 }
 
 

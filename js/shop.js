@@ -9,6 +9,7 @@ let currentPage = 1;
 document.addEventListener('DOMContentLoaded', async () => {
     await app.loadData();
     initializeShop();
+    applyUrlFiltersFromQuery();
     setupEventListeners();
 });
 
@@ -52,6 +53,7 @@ function setupEventListeners() {
 // Setup all filters
 function setupFilters() {
     setupScentCategoryFilters();
+    setupCollectionFilters();
     setupSizeFilters();
     setupColorFilters();
     setupContainerFilters();
@@ -71,6 +73,31 @@ function setupScentCategoryFilters() {
             <span>${f.charAt(0).toUpperCase() + f.slice(1)}</span>
         </label>`).join('');
 }
+
+//filter collections!!
+function setupCollectionFilters() {
+    let container = document.getElementById('collection-filters');
+
+    // Collect unique collection slugs from products
+    let collSet = new Set();
+    allProducts.forEach(p => {
+        if (Array.isArray(p.collections)) {
+            p.collections.forEach(c => {
+                if (c && String(c).trim()) collSet.add(String(c).trim());
+            });
+        }
+    });
+
+    let collArr = Array.from(collSet).sort();
+    container.innerHTML = collArr.map(slug => {
+        let label = slug.replace(/[-_]/g, ' ').replace(/\b\w/g, ch => ch.toUpperCase());
+        return `<label class="filter-checkbox">
+                    <input type="checkbox" value="${slug}" onchange="applyFilters()">
+                    <span>${label}</span>
+                </label>`;
+    }).join('');
+}
+
 
 function setupSizeFilters() {
     let container = document.getElementById('size-filters');
@@ -180,6 +207,7 @@ function updatePriceLabels() {
 function applyFilters() {
     filteredProducts = allProducts.filter(product => {
         let scentFilters = Array.from(document.querySelectorAll('#scent-category-filters input:checked')).map(cb => cb.value);
+        let collectionFilters = Array.from(document.querySelectorAll('#collection-filters input:checked')).map(cb => cb.value);
         let sizeFilters = Array.from(document.querySelectorAll('#size-filters input:checked')).map(cb => parseInt(cb.value));
         let colorFilters = Array.from(document.querySelectorAll('#color-filters input:checked')).map(cb => parseInt(cb.value));
         let containerFilters = Array.from(document.querySelectorAll('#container-filters input:checked')).map(cb => parseInt(cb.value));
@@ -192,6 +220,12 @@ function applyFilters() {
         let scent = app.getScentById(product.scentId);
 
         if (scentFilters.length && (!scent || !scentFilters.includes(scent.family))) return false;
+        // collection filtering
+        if (collectionFilters.length) {
+            if (!Array.isArray(product.collections) || !product.collections.some(c => collectionFilters.includes(c))) {
+                return false;
+            }
+        }
         if (moodFilters.length && (!scent || !moodFilters.includes(scent.mood))) return false;
         if (sizeFilters.length && !sizeFilters.includes(product.sizeId)) return false;
         if (colorFilters.length && !colorFilters.includes(product.colorId)) return false;
@@ -510,5 +544,40 @@ function updateCartCountDisplay() {
         document.querySelectorAll('#cart-count, #mobile-cart-count').forEach(el => el.textContent = count);
     } catch (err) {
         console.error('Failed to update cart count:', err);
+    }
+}
+
+
+function applyUrlFiltersFromQuery() {
+    let params = new URLSearchParams(window.location.search);
+    let q = params.get('q');
+    let collectionParam = params.get('collections') || params.get('collection');
+
+    if (q) {
+        let searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            searchInput.value = decodeURIComponent(q);
+            if (typeof searchProducts === 'function') searchProducts();
+        }
+    }
+
+    if (collectionParam) {
+        // The param may contain multiple comma-separated values, normalize to array
+        let requested = String(collectionParam).split(',').map(s => s.trim()).filter(Boolean);
+
+        //check matching checkboxes
+        let anyChecked = false;
+        requested.forEach(req => {
+            let cb = document.querySelector('#collection-filters input[value="' + req + '"]');
+            if (cb) {
+                cb.checked = true;
+                anyChecked = true;
+            }
+        });
+
+        if (anyChecked) {
+            if (typeof applyFilters === 'function') applyFilters();
+            return;
+        }
     }
 }
