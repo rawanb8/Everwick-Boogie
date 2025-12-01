@@ -29,32 +29,21 @@
             margin-bottom: var(--space-md);
             text-transform: uppercase;
             letter-spacing: 1px;
-            letter-spacing: 1px;
         }
 
         .wishlist-header p {
             font-size: 1.25rem;
-            /* slightly larger than normal for emphasis */
             font-weight: 400;
-            /* normal weight, not bold */
             color: var(--text-light);
-            /* softer text color */
             font-style: italic;
-            /* adds elegance */
             margin-top: var(--space-sm);
-            /* spacing below header */
             line-height: 1.6;
-            /* improves readability */
             max-width: 800px;
-            /* keeps text in readable width */
             margin-left: auto;
             margin-right: auto;
-            /* center the paragraph */
             text-align: center;
-            /* centered under header */
             font-family: "Lora";
         }
-
 
         .empty-wishlist {
             text-align: center;
@@ -66,6 +55,42 @@
         .empty-wishlist a {
             color: var(--primary-color);
             text-decoration: underline;
+        }
+
+        /* Ensure wishlist button styling matches shop page */
+        #wishlist-grid .wishlist-btn {
+            position: absolute;
+            top: var(--space-sm);
+            right: var(--space-sm);
+            background: rgba(255, 255, 255, 0.95);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 10;
+            font-size: 1.2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            /* Always visible on wishlist page */
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        #wishlist-grid .wishlist-btn:hover {
+            background: #fff;
+            transform: scale(1.15);
+            color: #e57373;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        #wishlist-grid .wishlist-btn.active {
+            color: #e57373;
+            opacity: 1;
+            transform: translateY(0);
         }
     </style>
 </head>

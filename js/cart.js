@@ -35,6 +35,7 @@ function initializeCheckout() {
   loadOrderSummary();
   loadShippingOptions();
   setupFormValidation();
+  setupPaymentMethodClickHandlers();
   updateCheckoutProgress();
 }
 
@@ -116,7 +117,8 @@ function updateOrderTotals() {
 
   let subtotal = app.getCartTotal();
   let shippingCost = calculateShippingCost(subtotal) || 0;
-  let total = (subtotal || 0) + shippingCost;
+  let tax = 0; // Tax calculation - currently 0%
+  let total = (subtotal || 0) + shippingCost + tax;
 
   totalsContainer.innerHTML = `
     <div class="total-line">
@@ -168,6 +170,53 @@ function loadShippingOptions() {
   selectedShippingMethod = 1;
 }
 
+function loadCartShippingOptions() {
+  let container = document.getElementById('cart-shipping-options');
+  if (!container) return;
+
+  let subtotal = app.getCartTotal();
+
+  let optionsHTML = shippingOptions.map(option => {
+    let isFree = subtotal >= option.freeThreshold;
+    let price = isFree ? 0 : option.price;
+
+    return `
+      <div class="shipping-option" data-method-id="${option.id}" onclick="selectCartShippingMethod(${option.id})">
+        <input type="radio" name="cart-shipping-method" value="${option.id}" 
+             ${option.id === 1 ? 'checked' : ''}>
+        <div class="shipping-details">
+          <div class="shipping-name">${option.name}</div>
+          <div class="shipping-time">${option.time}</div>
+          ${isFree ? '<div class="free-shipping">FREE</div>' : ''}
+        </div>
+        <div class="shipping-price">
+          ${isFree ? 'FREE' : app.formatPrice(price)}
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  container.innerHTML = '<h3>Shipping Method</h3>' + optionsHTML;
+  selectedShippingMethod = 1;
+}
+
+function selectCartShippingMethod(methodId) {
+  selectedShippingMethod = methodId;
+
+  // Update radio button
+  let radioBtn = document.querySelector(`input[name="cart-shipping-method"][value="${methodId}"]`);
+  if (radioBtn) radioBtn.checked = true;
+
+  // Update visual selection - remove active class from all, add to selected
+  document.querySelectorAll('#cart-shipping-options .shipping-option').forEach(opt => {
+    opt.classList.remove('active');
+  });
+  let selectedBox = document.querySelector(`#cart-shipping-options .shipping-option[data-method-id="${methodId}"]`);
+  if (selectedBox) selectedBox.classList.add('active');
+
+  updateOrderTotals();
+}
+
 function calculateShippingCost(subtotal) {
   if (!selectedShippingMethod || !subtotal) return 0;
 
@@ -180,8 +229,16 @@ function calculateShippingCost(subtotal) {
 function selectShippingMethod(methodId) {
   selectedShippingMethod = methodId;
 
-  let radioBtn = document.querySelector(`input[value="${methodId}"]`);
+  // Update radio button
+  let radioBtn = document.querySelector(`#shipping-options input[value="${methodId}"]`);
   if (radioBtn) radioBtn.checked = true;
+
+  // Update visual selection
+  document.querySelectorAll('#shipping-options .shipping-option').forEach(opt => {
+    opt.classList.remove('active');
+  });
+  let selectedBox = document.querySelector(`#shipping-options .shipping-option[data-method-id="${methodId}"]`);
+  if (selectedBox) selectedBox.classList.add('active');
 
   updateOrderTotals();
 }
@@ -195,27 +252,46 @@ function setupFormValidation() {
     });
   });
 
-  // Format card number
+  // Format card number - exactly 16 digits with spaces
   let cardNumberInput = document.getElementById('card-number');
   if (cardNumberInput) {
     cardNumberInput.addEventListener('input', (e) => {
       let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+      // Limit to 16 digits
+      value = value.substring(0, 16);
       let formattedValue = value.match(/.{1,4}/g)?.join(' ') || value;
       e.target.value = formattedValue;
     });
   }
 
-  // Format expiry date
+  // Format expiry date - MM/YY format
   let expiryInput = document.getElementById('expiry');
   if (expiryInput) {
     expiryInput.addEventListener('input', (e) => {
       let value = e.target.value.replace(/\D/g, '');
+      // Limit to 4 digits
+      value = value.substring(0, 4);
       if (value.length >= 2) {
         value = value.substring(0, 2) + '/' + value.substring(2, 4);
       }
       e.target.value = value;
     });
   }
+}
+
+function setupPaymentMethodClickHandlers() {
+  // Make payment method boxes clickable anywhere
+  document.querySelectorAll('.payment-method').forEach(method => {
+    method.addEventListener('click', function () {
+      // Remove active class from all payment methods
+      document.querySelectorAll('.payment-method').forEach(m => m.classList.remove('active'));
+      // Add active to clicked one
+      this.classList.add('active');
+      // Check the radio button
+      let radio = this.querySelector('input[type="radio"]');
+      if (radio) radio.checked = true;
+    });
+  });
 }
 
 function nextCheckoutStep() {
@@ -290,7 +366,7 @@ function validateCurrentStep() {
   }
 }
 function validateShippingForm() {
-  let requiredFields = ['first-name', 'last-name', 'email', 'address', 'city', 'zip'];
+  let requiredFields = ['first-name', 'last-name', 'email', 'phone', 'address', 'city', 'zip'];
   let isValid = true;
   let firstInvalidFieldName = '';
 
@@ -332,12 +408,27 @@ function validatePaymentForm() {
     }
   });
 
+  // Validate card number - must be exactly 16 digits
   let cardNumberField = document.getElementById('card-number');
   if (cardNumberField) {
     let cardNumber = cardNumberField.value.replace(/\s/g, '');
-    if (cardNumber.length < 3 || cardNumber.length > 22) {
+    if (cardNumber.length !== 16) {
       cardNumberField.classList.add('error');
       isValid = false;
+      app.showNotification('Card number must be exactly 16 digits', 'error');
+      return false;
+    }
+  }
+
+  // Validate expiry date - must be MM/YY format (5 characters total)
+  let expiryField = document.getElementById('expiry');
+  if (expiryField) {
+    let expiry = expiryField.value;
+    if (expiry.length !== 5 || !expiry.includes('/')) {
+      expiryField.classList.add('error');
+      isValid = false;
+      app.showNotification('Expiry date must be in MM/YY format', 'error');
+      return false;
     }
   }
 
@@ -349,12 +440,11 @@ function validatePaymentForm() {
 }
 
 function processOrder() {
-  app.showNotification('Processing your order...', 'info');
-
   let cart = app.getCart();
   let subtotal = app.getCartTotal() || 0;
   let shippingCost = calculateShippingCost(subtotal) || 0;
-  let total = subtotal + shippingCost;
+  let tax = 0; // Tax calculation - currently 0%
+  let total = subtotal + shippingCost + tax;
 
   orderData = {
     orderId: 'CW' + Date.now(),
@@ -373,7 +463,6 @@ function processOrder() {
     document.querySelectorAll('#cart-count, #mobile-cart-count').forEach(el => {
       el.textContent = '0';
     });
-    app.showNotification('Order placed successfully!', 'success');
   }, 2000);
 }
 

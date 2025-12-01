@@ -1,3 +1,6 @@
+.customize-page{
+  padding-top: 33px;
+}
 .customize-grid {
   display: grid;
   grid-template-columns: 1fr 420px;
@@ -409,7 +412,7 @@ button {
 .section-title {
   font-size: 3rem;
   font-weight: 700;
-  margin-top: 35px;
+  margin-top: 20px;
   display: flex;
   align-items: center;
   justify-content: center;

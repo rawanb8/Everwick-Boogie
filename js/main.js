@@ -169,9 +169,13 @@ let app = {
     let cart = JSON.parse(localStorage.getItem('cart') || '[]');
     cart = cart.filter(item => String(item.id) !== String(itemId));
     localStorage.setItem('cart', JSON.stringify(cart));
-    return cart; // optional, if you want
+    return cart;
   },
 
+  clearCart: function () {
+    localStorage.setItem('cart', JSON.stringify([]));
+    return [];
+  },
 
   getCart: function () {
     try {
@@ -579,7 +583,8 @@ function initNewsletterForm() {
 }
 
 
-/* login modal & form handler */
+
+/* login form handler (if present) */
 async function attachLoginHandler() {
   // Wait until navbar is loaded and modal moved
   let loginModal = document.querySelector('.login-modal-wrapper');
@@ -665,9 +670,6 @@ async function attachLoginHandler() {
     loginForm.dataset.listenerAttached = "true";
   }
 }
-
-
-
 function updateLoginUI() {
   let loginBtn = document.querySelector('#loginForm button[type="submit"]');
   if (!loginBtn) return;
@@ -678,11 +680,6 @@ function updateLoginUI() {
     loginBtn.style.display = 'inline-block'; // show if not logged in
   }
 }
-
-
-
-
-
 
 
 /* call after navbar and modal are fully loaded */
