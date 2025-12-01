@@ -1,0 +1,1625 @@
+@media(max-width: 480px) {
+    body .btn {
+        width: auto !important;
+        /*overrides width: 100% in main.css*/
+    }
+}
+.nav-links *:nth-child(4) {
+    transition-delay: 0s !important;
+    padding-top: 0 !important;
+}
+.category-list *:nth-child(4){
+    transition: 0 !important;
+    padding-top: 0 !important;
+}
+/* -------- page baseline -------- */
+.home-page {
+    background: var(--bg);
+    color: var(--text-dark);
+}
+
+.home-page::after {
+    content: "";
+    display: block;
+    height: 2px;
+    background: var(--deep);
+    width: 100%;
+}
+
+.page-spacer {
+    height: var(--nav-height, 72px);
+    pointer-events: none;
+}
+
+/* ================= HERO ================= */
+.hero {
+    position: relative;
+
+    z-index: 1;
+    min-height: 90vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    padding: 0;
+}
+
+/* media layer (video) — contained inside .hero */
+.hero-media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background: #000;
+    aspect-ratio: 28 / 27;
+}
+
+/* video element: cover container, preserve candle focus */
+.hero-media .hero-video {
+    object-fit: contain;
+    width: 100%;
+    height: 100%;
+    object-position: center 40%;
+    display: block;
+    pointer-events: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+
+/* overlay (improves text contrast) */
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background: linear-gradient(180deg, rgba(12, 10, 8, 0.28), rgba(12, 10, 8, 0.56));
+    pointer-events: none;
+}
+
+
+/* grid layout for larger screens */
+@media (min-width: 900px) {
+
+    .brand-slogan {
+        font-size: clamp(1.2rem, 6vw, 2rem);
+        white-space: normal;
+    }
+
+    .hero-ctas {
+        flex-direction: column;
+        gap: var(--space-sm, 0.5rem);
+    }
+
+    .hero-content.container {
+        display: grid;
+        grid-template-columns: 1fr minmax(320px, 720px) 1fr;
+    }
+
+    .hero-scroll {
+        display: none;
+    }
+
+    .hero-content>* {
+        grid-column: 2;
+    }
+}
+
+/* Hero slogan/title (Amsterdam Two only for this) */
+.brand-slogan {
+    font-family: "Amsterdam Two", "TAN Meringue", serif;
+    font-weight: 400;
+    color: var(--white);
+    line-height: 1;
+    text-shadow: 0 6px 22px rgba(0, 0, 0, 0.55);
+    letter-spacing: 0.01em;
+    display: inline-block;
+    white-space: nowrap;
+    max-width: 96vw;
+    overflow: visible;
+    font-size: clamp(1.6rem, 3.6vw, 2.8rem);
+    margin: 0;
+    padding: 0;
+    word-break: keep-all;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+@media (max-width: 544px) {
+  .brand-slogan {
+    font-size: clamp(1.1rem, 6.5vw, 1.6rem);
+    line-height: 3; 
+    white-space: normal;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    letter-spacing: 0.01em;
+  }
+
+  @media (max-width: 360px) {
+    .brand-slogan {
+      font-size: 1.15rem;
+      line-height: 3.5;
+    }
+  }
+}
+
+/* small subtitle under the slogan */
+.hero-sub {
+    margin: .5rem auto 0;
+    max-width: 60ch;
+    color: rgba(255, 255, 255, 0.92);
+    font-family: "Lora", Georgia, serif;
+    font-size: var(--font-size-lg, 1.125rem);
+    margin-top: 50px;
+    margin-bottom: 20px;
+}
+
+/* CTA cluster */
+.hero-ctas {
+    display: flex;
+    gap: var(--space-md, 1rem);
+    justify-content: center;
+    align-items: center;
+    margin-top: var(--space-sm, 0.5rem);
+    flex-wrap: wrap;
+}
+
+/* hero button overrides (light on dark) */
+.hero-ctas .btn {
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+    transition: transform var(--transition-normal, 0.3s), box-shadow var(--transition-normal, 0.3s);
+}
+
+.hero-ctas .btn:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* down arrow scroll cue */
+.hero-scroll {
+    display: inline-block;
+    margin-top: var(--space-md, 1rem);
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 1.5rem;
+    animation: bounce 2200ms ease-in-out infinite;
+}
+
+/* reduce motion respect */
+@media (prefers-reduced-motion: reduce) {
+
+    .brand-slogan,
+    .hero-ctas,
+    .hero-scroll {
+        animation: none;
+        transition: none;
+    }
+}
+
+/* ================================CREATE YOUR PERFECT CANDLE================================ */
+#create-candle {
+    display: flex;
+    gap: 2.5rem;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+    padding: 4rem 2rem 4rem 2rem;
+}
+
+.candle-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding-left: 20px;
+}
+
+@media (max-width: 980px) {
+    #create-candle .candle-content {
+        align-items: center;
+        text-align: center;
+    }
+
+    #create-candle .candle-content .btn {
+        min-width: 220px;
+        max-width: 92%;
+    }
+}
+
+@media (max-width: 480px) {
+
+    #featured .more-link .btn,
+    #create-candle .candle-content .btn {
+        width: auto !important;
+    }
+}
+
+#featured .more-link .btn,
+#create-candle .candle-content .btn {
+    transition: transform .18s ease, box-shadow .18s ease;
+}
+
+#featured .more-link .btn:hover,
+#create-candle .candle-content .btn:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+.candle-content .section-title {
+    margin-bottom: 1rem;
+    font-family: "Lora";
+    font-size: 2rem;
+}
+
+.candle-sub {
+    font-size: 1.1rem;
+    color: var(--text-light);
+    margin-bottom: 2rem;
+}
+
+/* 2×2 grid for features */
+.candle-features {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+    align-items: start;
+}
+
+.feature-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    background: rgba(194, 143, 74, 0.08);
+    padding: 1rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+    background: rgba(194, 143, 74, 0.08);
+    transform: translateY(-6px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* Icons */
+.feature-item i {
+    font-size: 1.7rem;
+    color: var(--accent, #c28f4a);
+    transition: all 0.3s ease;
+    transform-origin: center;
+}
+
+/* Icon grows + changes color */
+.feature-item:hover i {
+    transform: scale(180%);
+    color: var(--accent-color);
+    /* deeper warm tone */
+}
+
+.feature-item h3 {
+    font-size: 1.1rem;
+    margin: 0;
+    transition: color 0.3s ease;
+}
+
+.feature-item p {
+    font-size: 0.95rem;
+    color: var(--text-light);
+    line-height: 1.5;
+}
+
+.candle-media {
+    /* flex: 0 1 44%;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 44%;
+    max-width: 520px;
+    box-sizing: border-box;
+    padding: 0.5rem;
+}
+
+.candle-media img,
+.candle-media picture,
+.candle-media video {
+    width: 100%;
+    height: auto;
+    max-width: 520px;
+    object-fit: contain;
+    display: block;
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+
+.candle-media img:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+}
+
+.feature-item .icon-wrap {
+    display: inline-block;
+    width: 2.4rem;
+    height: 2.4rem;
+    line-height: 2.4rem;
+    /* overflow: hidden; */
+    vertical-align: middle;
+    margin-right: 0.6rem;
+    border-radius: 6px;
+    transition: transform 300ms cubic-bezier(.2, .9, .3, 1);
+}
+
+.feature-item .icon-wrap i {
+    display: inline-block;
+    width: 2.4rem;
+    height: 2.4rem;
+    line-height: 2.4rem;
+    text-align: center;
+    transform-origin: left center;
+    /* grow and slide to the right */
+    transition: transform 300ms cubic-bezier(.2, .9, .3, 1);
+}
+
+.feature-item:hover .icon-wrap i {
+    transform: translateX(6px) scale(1.25);
+}
+
+.feature-item {
+    display: flex;
+    align-items: flex-start;
+    /* or center if you prefer */
+    gap: 0.5rem;
+}
+
+/*======================= Featured carousel layout============================= */
+/* ================= FEATURED PRODUCTS (Clean, responsive, carousel -> wrap) ================= */
+
+/* Container */
+#featured.featured,
+.featured.container {
+    padding: 4rem 0;
+    overflow: visible;
+}
+
+/* Title */
+#featured .section-title {
+    font-family: "Lora";
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+    letter-spacing: 0.2px;
+    padding: 20px
+}
+
+#featured {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    box-sizing: border-box;
+}
+
+#featured .container,
+#featured.featured,
+#featured .featured-grid {
+    box-sizing: border-box;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+/* Feature area wrapper (keeps overflow hidden on carousel mode) */
+#featured-grid {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding: 0 0.6rem;
+}
+
+#featured .featured-grid,
+#featured .more-link {
+    box-sizing: border-box;
+    padding-left: 0.6rem;
+    padding-right: 0.6rem;
+}
+
+#featured .more-link {
+    display: flex;
+    justify-content: center;
+    /* horizontally center the button */
+    margin-top: 1.25rem;
+    padding-bottom: 0.5rem;
+}
+
+#featured .more-link .btn {
+    min-width: 220px;
+    max-width: calc(100% - 2rem);
+}
+
+@media (max-width: 780px) {
+    #featured .section-title {
+        text-align: center;
+        margin-left: 0;
+        margin-right: 0;
+    }
+}
+
+/* ---------- DESKTOP CAROUSEL (single-row) ---------- */
+/* Track is a single row of cards; the JS carousel shifts it by pixel amounts */
+.featured-track {
+    display: flex;
+    gap: 1rem;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    transition: transform 420ms cubic-bezier(.2, .9, .3, 1);
+    will-change: transform;
+    padding: 0.25rem 0;
+}
+
+/* Each slide wrapper (optional per your JS; cards can be direct children too) */
+.featured-slide {
+    display: flex;
+    gap: 1rem;
+    align-items: stretch;
+    box-sizing: border-box;
+}
+
+/* ---------- PRODUCT CARD ---------- */
+.product-card {
+    --card-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    background: linear-gradient(180deg, var(--white), rgba(255, 255, 255, 0.96));
+    border-radius: var(--card-radius);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    padding: 0.8rem;
+    box-sizing: border-box;
+    transition: transform 220ms ease, box-shadow 220ms ease;
+    align-self: stretch;
+    flex: 0 0 260px;
+    max-width: 260px;
+    opacity: 1 !important;
+    transform: none !important;
+    transition: transform 220ms ease, box-shadow 220ms ease;
+    max-width: 220px;
+}
+
+/* Prevent product-card from growing unexpectedly */
+.featured-track .product-card {
+    flex-shrink: 0;
+}
+
+/* Image area: fixed aspect, image covers but preserves center focus */
+.product-image {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    /* square thumbnail */
+    border-radius: calc(var(--card-radius) - 2px);
+    overflow: hidden;
+    background: linear-gradient(180deg, #f6f4f2, #efeae4);
+    /* gentle fallback */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+    /* fill area nicely, crop if needed */
+    object-position: center;
+    transition: transform 300ms ease;
+}
+
+/* Title (uses TAN Meringue) */
+.product-title {
+    font-family: "TAN Meringue", "Amsterdam Two", serif;
+    font-size: 1.05rem;
+    line-height: 1.05;
+    margin: 0;
+    color: var(--text-dark);
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding-top: 6px;
+}
+
+/* Price & actions */
+.product-price {
+    font-weight: 700;
+    color: var(--primary-dark);
+    text-align: center;
+    margin: 0;
+    font-size: 0.98rem;
+}
+
+.product-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    margin-top: auto;
+}
+
+/* Buttons inside cards */
+.product-actions .btn {
+    padding: 0.5rem 0.9rem;
+    font-size: 0.95rem;
+    border-radius: 10px;
+}
+
+/* subtle hover on card */
+.product-card:hover,
+.product-card:focus-within {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-lg);
+}
+
+.product-card:hover .product-image img {
+    transform: scale(1.03);
+}
+
+/* Placeholder card for spacing when JS inserts fillers */
+.product-card--placeholder {
+    visibility: hidden;
+    pointer-events: none;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+/* ---------- CONTROLS (arrows) ---------- */
+.featured-controls {
+    display: flex;
+    gap: 0.6rem;
+    justify-content: center;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.featured-arrow {
+    --size: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    background: transparent;
+    cursor: pointer;
+    font-size: 1.05rem;
+    transition: transform 160ms ease, background 160ms ease, color 160ms ease;
+}
+
+.featured-arrow i {
+    font-size: 1.15rem;
+}
+
+.featured-arrow:hover,
+.featured-arrow:focus {
+    transform: translateY(-3px);
+    background: var(--nav-glass);
+    outline: none;
+}
+
+.featured-arrow:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* ---------- PAGING INDICATOR (small) ---------- */
+.featured-page-indicator {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: 8px;
+}
+
+/* ---------- RESPONSIVE: tablet & phone ---------- */
+
+/* Medium screens: make the layout tighter and show fewer cards sized responsively */
+@media (max-width: 980px) {
+    .product-card {
+        flex: 0 0 220px;
+        max-width: 220px;
+        padding: 0.7rem;
+    }
+
+    .product-image {
+        aspect-ratio: 1 / 1;
+    }
+
+    /* Slightly reduce arrow size */
+    .featured-arrow {
+        --size: 40px;
+    }
+}
+
+/* Small screens: STOP carousel behavior and allow wrap like your category cards.
+   This guarantees cards keep their fixed size and will wrap into rows instead of expanding. */
+@media (max-width: 780px) {
+    #featured-grid {
+        overflow: visible;
+    }
+
+    /* allow vertical scroll if many rows */
+    .featured-track {
+        display: flex;
+        flex-wrap: wrap;
+
+        gap: 1rem;
+        /* transform: none !important; */
+
+        /* transition: none !important; */
+    }
+
+    /* Each card keeps size and wraps — two across on most phones/tablets */
+    .featured-track .product-card {
+        flex: 0 0 calc(50% - 0.5rem);
+        max-width: calc(50% - 0.5rem);
+    }
+
+    .featured-controls {
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+    }
+
+    .product-card {
+        flex: 0 0 calc((100% - 1.2rem)/2);
+        /* two cards visible */
+        max-width: calc((100% - 1.2rem)/2);
+        padding: 0.6rem;
+    }
+
+    #featured {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    #featured .section-title {
+        text-align: center;
+    }
+}
+
+/* Very small phones: one card per row (keeps consistent card size, image stays same) */
+@media (max-width: 420px) {
+    .product-card {
+        flex: 0 0 90%;
+        max-width: 90%;
+        margin-left: 5%;
+        margin-right: 5%;
+        padding: 0.6rem;
+    }
+
+    .featured-track .product-card {
+        flex: 0 0 100%;
+        max-width: 100%;
+        transition: transform 220ms ease, box-shadow 220ms ease, opacity 360ms ease;
+    }
+
+    .product-card:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .product-card.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .product-image img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+    }
+
+    .product-title {
+        font-size: 1rem;
+    }
+
+    .product-price {
+        font-size: 0.95rem;
+    }
+
+    .featured-arrow {
+        --size: 36px;
+    }
+
+    .featured-arrow {
+        --size: 36px;
+    }
+
+    #featured-grid {
+        padding: 0 0.2rem;
+    }
+
+    #featured-title {
+        text-align: center;
+    }
+}
+
+/* ---------- ACCESSIBILITY & SMALL HELPERS ---------- */
+/* Prevent accidental horizontal scroll caused by images or long text */
+#featured-grid,
+.featured-track,
+.featured-slide,
+.product-card,
+.product-image img {
+    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
+}
+
+#featured-grid {
+    overflow: hidden;
+    position: relative;
+}
+
+/* subtle entrance animation for cards (stagger when JS adds them) */
+.product-card {
+    opacity: 0;
+    transform: translateY(8px);
+    transition: transform 360ms cubic-bezier(.2, .9, .3, 1), opacity 360ms ease;
+}
+
+/* class to mark visible cards (you can add with JS when inserted) */
+.product-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.featured-track img {
+    max-width: 100%;
+    display: block;
+}
+
+/* End featured block */
+
+
+/* ========== ABOUT (inline video) ========== */
+.about {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+    align-items: center;
+    padding: 4rem 2rem 4rem 2rem;;
+}
+
+.about-media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.about-media video {
+    width: 100%;
+    height: auto;
+    max-width: 480px;
+    display: block;
+    object-fit: cover;
+    border-radius: var(--radius-md, 12px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    margin: 0 auto;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.about-content {
+    padding: 0 0.5rem;
+    margin-top: var(--space-md, 1rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 120px;
+}
+
+.about-content h2 {
+    font-family: "Lora";
+    font-size: 2rem;
+}
+
+.about-content p {
+    text-align: center;
+}
+
+.btn.clear {
+    display: block;
+    background-color: #cfd9cc;
+    /* olive-green */
+    margin: var(--space-lg) auto 0 auto;
+    /* top margin, horizontal auto centers it */
+    color: #fff;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-md);
+    padding: 10px 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    font-size: var(--font-size-base);
+    line-height: 1.4;
+
+}
+
+/* Any element you want to animate on scroll */
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.6s ease;
+}
+
+/* Apply staggered delays for children inside a container */
+.container *:nth-child(1) {
+    transition-delay: 0.1s;
+}
+
+.container *:nth-child(2) {
+    transition-delay: 0.2s;
+}
+
+.container *:nth-child(3) {
+    transition-delay: 0.3s;
+}
+
+.container *:nth-child(4) {
+    transition-delay: 0.4s;
+    padding-top: 10px;
+    /* margin-left: auto;
+    margin-right: auto;
+    text-align: center; */
+}
+
+.container *:nth-child(5) {
+    transition-delay: 0.5s;
+}
+
+.candle-content a {
+    padding-top: 10px;
+}
+
+/* Add as many as needed, or use a loop in JS to auto-assign */
+
+/* The active state when element comes into view */
+.animate-on-scroll.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+.btn.clear:hover {
+    background-color: #a4b69e;
+    /* lighter green on hover */
+    transform: translateY(-2px);
+}
+
+.btn.clear:focus {
+    outline: 2px solid #afb78d;
+    /* visible focus for accessibility */
+    outline-offset: 2px;
+}
+
+.btn.clear:disabled {
+    background-color: #c4c4b0;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+/* ========== CATEGORIES ========== */
+.categories {
+    padding: 4rem 1rem 4rem 1rem;
+}
+
+#categories-title {
+    font-family: "Lora";
+    font-size: 2rem;
+    padding-left: 20px;
+    padding-bottom: 10px;
+}
+
+.category-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: var(--space-md, 1rem);
+    margin-top: var(--space-md, 1rem);
+}
+
+.category-pill {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-sm, .5rem);
+    padding: var(--space-sm, .5rem) var(--space-md, 1rem);
+    background: var(--secondary-color);
+    border-radius: 999px;
+    font-weight: 600;
+    box-shadow: var(--shadow-sm);
+}
+
+/* ========== REVIEWS ========== */
+.reviews {
+    padding: 4rem 2rem 4rem 2rem;
+}
+
+#reviews-title {
+    font-family: "Lora";
+    font-size: 2rem;
+}
+
+.reviews-grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    margin-top: var(--space-md, 1rem);
+}
+
+.review-card {
+    background: var(--white);
+    padding: var(--space-md, 1rem);
+    border-radius: var(--radius-md, 12px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+    transform: scale(0.95);
+    /* opacity: 0; */
+    transition: transform 0.5s ease-out, opacity 0.5s ease-out, box-shadow 0.3s ease;
+}
+
+.review-card.animate {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.review-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 16px 32px rgba(194, 143, 74, 0.3);
+    /* warm golden glow */
+}
+
+
+.review-text {
+    font-style: italic;
+    color: var(--text-light);
+    line-height: 1.5;
+}
+
+.review-author {
+    margin-top: var(--space-sm, .5rem);
+    font-weight: 700;
+    color: var(--text-dark);
+    text-align: right;
+}
+
+/* ========== QUIZ CTA ========== */
+.quiz-cta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: var(--space-lg, 2rem);
+    padding: 4rem 2rem 4rem 2rem;
+    background: linear-gradient(90deg, rgba(244, 240, 232, 0.6), rgba(252, 249, 245, 0.25));
+    border-radius: var(--radius-lg, 12px);
+    text-align: center;
+    margin-top: var(--space-lg, 1.5rem);
+    position: relative;
+    box-sizing: border-box;
+}
+
+.quiz-content {
+    padding: 0 0.5rem;
+}
+
+.quiz-media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.5rem;
+    box-sizing: border-box;
+}
+
+.quiz-cta .quiz-media img {
+    display: block;
+    width: 100%;
+    max-width: 420px;
+    height: auto;
+    box-sizing: border-box;
+    border-radius: var(--radius-md, 12px);
+    object-fit: cover;
+    box-shadow: var(--shadow-md, 0 4px 6px rgba(0, 0, 0, 0.1));
+    border: 2px solid var(--lighter-green);
+}
+
+.quiz-cta .btn-primary {
+    margin-top: var(--space-md, 1rem);
+    padding: var(--space-md, 1rem) var(--space-2xl, 3rem);
+}
+
+.quiz-cta .section-title {
+    text-align: center;
+    font-family: 'Lora';
+    font-size: 2rem;
+}
+
+/* ========== RESPONSIVE ========= */
+@media (max-width: 900px) {
+    .about {
+        grid-template-columns: 1fr;
+        gap: var(--space-md, 1rem);
+    }
+
+    .about-media video {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .about-content {
+        margin-top: var(--space-md, 1rem);
+        text-align: center;
+    }
+
+    .hero-content.container {
+        padding: var(--space-lg, 1rem) 0;
+    }
+
+    .brand-slogan {
+        white-space: normal;
+        /* allow wrapping on medium/smaller screens */
+        font-size: clamp(1.3rem, 6vw, 2rem);
+    }
+
+    .hero {
+        min-height: 56vh;
+    }
+
+    .product-card {
+        min-height: 280px;
+    }
+
+    .hero-ctas {
+        flex-direction: column;
+        gap: var(--space-sm, 0.5rem);
+    }
+
+    .hero-scroll {
+        display: none;
+    }
+
+    .quiz-cta .quiz-media {
+        margin-top: var(--space-md, 1rem);
+    }
+}
+
+
+/* ========== ANIMATIONS ========== */
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+        opacity: .9;
+    }
+
+    50% {
+        transform: translateY(8px);
+        opacity: 1;
+    }
+}
+
+/* ========== Utilities ========== */
+.text-center {
+    text-align: center;
+}
+
+.page-spacer {
+    height: var(--nav-height);
+    pointer-events: none;
+}
+
+
+/* hero-media fills only the hero */
+.hero-media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* video sizing: cover hero without distortion */
+.hero-media .hero-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 40%;
+    /* tweak vertical focus if needed */
+    display: block;
+    pointer-events: none;
+}
+
+/* hero content above video */
+.hero-content {
+    position: relative;
+    z-index: 5;
+    /* sits above the video and above the nav if necessary */
+    text-align: center;
+    padding: 2rem 1rem;
+    width: 100%;
+    max-width: var(--max-width);
+    margin: 0 auto;
+}
+
+
+.hero-content.container {
+    margin-top: 0;
+}
+
+/* ---------- Small-screen safety: shrink hero headline rather than overlap nav ---------- */
+@media (max-width: 900px) {
+    .hero {
+        min-height: 56vh;
+    }
+
+    .brand-slogan {
+        font-size: clamp(1.2rem, 6vw, 2rem);
+        white-space: normal;
+    }
+}
+
+.category-list {
+    display: flex;
+    flex-wrap: wrap;
+    /* cards wrap to new lines */
+    gap: 1.5rem;
+    justify-content: center;
+}
+
+.category-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 220px;
+    text-decoration: none;
+    color: #333;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.category-card img {
+    width: 100%;
+    height: 220px;
+    /* fixed height */
+    object-fit: cover;
+    /* maintains aspect ratio without stretching */
+    display: block;
+}
+
+.category-card h3 {
+    margin: var(--font-size-xs) 0;
+    font-size: 1.1rem;
+    text-align: center;
+    font-family: 'TAN Meringue';
+}
+
+.category-card:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    color: #000;
+}
+
+#category-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+}
+
+.featured-track {
+    display: flex;
+    gap: 1rem;
+    align-items: stretch;
+    flex-wrap: nowrap;
+    /* important: single row on desktop */
+    transition: transform 420ms cubic-bezier(.2, .9, .3, 1);
+    will-change: transform;
+}
+
+/* Card default fixed size (desktop) */
+.featured-track .product-card {
+    flex: 0 0 260px;
+    /* fixed width (won't grow/shrink) */
+    max-width: 260px;
+    box-sizing: border-box;
+}
+
+/* Image behavior inside fixed card */
+.featured-track .product-card .product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* keep image filling card without distortion */
+    display: block;
+}
+
+/* Tablet: slightly smaller fixed cards */
+@media (max-width: 980px) {
+    .featured-track .product-card {
+        flex: 0 0 220px;
+        max-width: 220px;
+    }
+}
+
+@media (max-width: 780px) {
+
+    #featured {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    #featured-grid {
+        padding: 0 0.25rem;
+        overflow: hidden;
+    }
+
+    .featured-track {
+        flex-wrap: nowrap;
+        gap: 0.75rem;
+        transition: transform 420ms cubic-bezier(.2, .9, .3, 1);
+        will-change: transform;
+    }
+
+    @media (min-width: 481px) and (max-width: 780px) {
+        .featured-track .product-card {
+            flex: 0 0 calc(50% - 0.5rem);
+            max-width: calc(50% - 0.5rem);
+            box-sizing: border-box;
+            padding: 0.6rem;
+        }
+
+        @media (max-width: 480px) {
+            .featured-track .product-card {
+                flex: 0 0 86%;
+                max-width: 86%;
+                margin-left: 7%;
+                margin-right: 7%;
+                box-sizing: border-box;
+                padding: 0.6rem;
+            }
+
+            .featured-arrow {
+                --size: 36px;
+            }
+
+            #featured .section-title {
+                text-align: center;
+            }
+
+            #featured-grid {
+                padding: 0 0.1rem;
+            }
+        }
+
+
+    }
+
+    /* Very small phones: one card per row */
+    @media (max-width: 420px) {
+        .featured-track .product-card {
+            flex: 0 0 100%;
+            max-width: 100%;
+        }
+    }
+
+    .featured-track .product-card,
+    .featured-slide .product-card {
+        min-width: 0;
+    }
+
+    @media (max-width: 780px) {
+        .product-card {
+            width: auto !important;
+            -webkit-flex-basis: auto !important;
+            -ms-flex-preferred-size: auto !important;
+            flex-basis: auto !important;
+            flex-grow: 0 !important;
+            flex-shrink: 0 !important;
+        }
+    }
+}
+
+@media (max-width: 1024px) {
+    #create-candle {
+        gap: 1.25rem;
+    }
+
+    .candle-content {
+        flex: 1 1 56%;
+        min-width: 220px;
+    }
+
+    .candle-media {
+        flex: 0 1 40%;
+    }
+
+    .candle-media img {
+        max-width: 440px;
+    }
+
+    .candle-content .section-title {
+        font-size: 1.75rem;
+    }
+
+    .candle-sub {
+        font-size: 1.02rem;
+    }
+
+    .quiz-media img {
+        max-width: 360px;
+    }
+}
+
+@media (max-width: 780px) {
+
+    /* Switch to column layout with the content first, media below */
+    #create-candle {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    /* Make features span full width; image will be below */
+    .candle-content {
+        order: 1;
+        width: 100%;
+        flex: 1 1 auto;
+    }
+
+    .candle-features {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .candle-media {
+        flex: 0 0 auto;
+        max-width: 100%;
+        padding: 0;
+        margin-top: 0.5rem;
+        justify-content: center;
+        order: 2
+    }
+
+    .candle-media img {
+        max-width: 720px;
+        width: 100%;
+        height: auto;
+    }
+
+    .feature-item {
+        min-height: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    #create-candle {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+
+    .candle-content .section-title {
+        font-size: 1.5rem;
+    }
+
+    .candle-sub {
+        font-size: 1rem;
+    }
+
+    .candle-media {
+        padding: 0.25rem;
+        justify-content: center;
+    }
+
+    .candle-media img {
+        max-width: 100%;
+        width: 100%;
+        height: auto;
+    }
+
+    .feature-item {
+        padding: 0.75rem;
+        gap: 0.5rem;
+    }
+
+    /* ensure icons don't overflow when they scale */
+    .feature-item .icon-wrap i {
+        width: 2.0rem;
+        height: 2.0rem;
+        transform-origin: left center;
+    }
+
+    @media (max-width: 360px) {
+        .candle-media img {
+            width: 86%;
+            max-width: 300px;
+        }
+    }
+
+}
+
+.candle-media img,
+.candle-media picture,
+.candle-media video {
+    width: 80%;
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    box-sizing: border-box;
+}
+
+@media (min-width: 900px) and (max-width: 1200px) {
+    .candle-media {
+        flex-basis: 38%;
+    }
+
+    .candle-content {
+        flex-basis: 60%;
+    }
+}
+
+@media (max-width: 1024px) {
+
+    .about-media video,
+    .about-media img,
+    .about-media picture {
+        max-width: 440px;
+    }
+
+    .about {
+        gap: 1rem;
+    }
+}
+
+/* Narrow tablets & phones: stack vertically and put content first */
+@media (max-width: 780px) {
+    .about {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    /* Force content before media */
+    .about-content {
+        order: 1;
+        text-align: left;
+    }
+
+    .about-media {
+        order: 2;
+    }
+
+    /* center the media and give breathing room */
+    .about-media {
+        justify-content: center;
+        padding: 0.5rem 0;
+    }
+
+    /* scale the video down for mobile so it doesn't dominate the screen */
+    .about-media video,
+    .about-media img,
+    .about-media picture {
+        width: 90%;
+        max-width: 360px;
+        margin: 0 auto;
+    }
+
+    /* make content more readable on narrow screens */
+    .about-content p {
+        font-size: 1rem;
+        color: var(--text-light);
+        line-height: 1.5;
+    }
+}
+
+/* Very small phones: tighter caps */
+@media (max-width: 420px) {
+
+    .about-media video,
+    .about-media img,
+    .about-media picture {
+        max-width: 320px;
+        width: 88%;
+    }
+
+    .about-content .section-title {
+        font-size: 1.25rem;
+    }
+}
+
+/* Accessibility: prefer-reduced-motion stops any video transform animations */
+@media (prefers-reduced-motion: reduce) {
+    .about-media video {
+        animation: none;
+        transition: none;
+    }
+}
+
+@media (max-width: 780px) {
+    .quiz-cta {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
+    }
+
+    quiz-content {
+        order: 1;
+        text-align: left;
+    }
+
+    .quiz-media {
+        order: 2;
+    }
+
+    .quiz-media {
+        justify-content: center;
+        padding: 0.5rem 0;
+    }
+
+    .quiz-media img {
+        width: 90%;
+        max-width: 320px;
+        margin: 0 auto;
+    }
+
+
+    .quiz-content .btn {
+        display: inline-block;
+        margin-top: 1rem;
+        min-width: 200px;
+    }
+}
+@media (max-width: 420px) {
+  .quiz-media img {
+    max-width: 280px;
+    width: 88%;
+  }
+
+  .quiz-content .section-title {
+    font-size: 1.25rem;
+  }
+
+  .quiz-content p {
+    font-size: 0.98rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .quiz-content {
+    text-align: center;
+  }
+  .quiz-content .btn {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

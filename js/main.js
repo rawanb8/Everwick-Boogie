@@ -1,15 +1,476 @@
-(function () {
-  // Run when DOM is ready
-  document.addEventListener('DOMContentLoaded', () => {
-    initNavbar();
-    updateCartCount(); // keep cart count in sync across tabs
-    initNewsletterForm(); //initialize footer newsletter
-    window.addEventListener('storage', (e) => {
-      if (e.key === 'cart') updateCartCount();
+document.addEventListener('DOMContentLoaded', async function () {
+  // try list of candidate paths and return first OK text
+  async function fetchFirst(paths) {
+    for (let i = 0; i < paths.length; i++) {
+      let p = paths[i];
+      try {
+        let res = await fetch(p);
+        if (res && res.ok) return await res.text();
+      } catch (e) {
+        // ignore and try next
+      }
+    }
+    return null;
+  }
+
+  // likely locations for nav/footer — adjust if your files live elsewhere
+  let navCandidates = [
+    '/html/nav.html',
+    'html/nav.html',
+    'nav.html',
+    '../nav.html',
+    '../html/nav.html',
+    '/nav.html'
+  ];
+  let footerCandidates = [
+    '/html/footer.html',
+    'html/footer.html',
+    'footer.html',
+    '../footer.html',
+    '../html/footer.html',
+    '/footer.html'
+  ];
+
+  // Inject navbar
+  let navbarContainer = document.getElementById('navbar');
+  if (navbarContainer) {
+    let navHtml = await fetchFirst(navCandidates);
+    if (navHtml) {
+      navbarContainer.innerHTML = navHtml;
+
+      // move modal (if it was inside the injected nav) to document.body
+      try {
+        let injectedModal = document.querySelector('.login-modal-wrapper');
+        if (injectedModal && injectedModal.parentElement !== document.body) {
+          document.body.appendChild(injectedModal);
+        }
+      } catch (e) {
+        console.error('Error moving injected modal:', e);
+      }
+
+      // call init functions if available (guarded)
+      if (typeof window.initNavbar === 'function') {
+        try { window.initNavbar(); } catch (e) { console.error('initNavbar() after inject:', e); }
+      }
+      if (typeof window.updateCartCount === 'function') {
+        try { window.updateCartCount(); } catch (e) { console.error('updateCartCount() after inject:', e); }
+      }
+
+      // ensure login trigger class exists
+      try {
+        let loginTriggers = document.querySelectorAll('.open-login');
+        if (!loginTriggers.length) {
+          let btn = document.getElementById('login-btn');
+          if (btn) btn.classList.add('open-login');
+          loginTriggers = document.querySelectorAll('.open-login');
+        }
+
+        let loginModal = document.querySelector('.login-modal-wrapper');
+        if (loginTriggers && loginTriggers.length && loginModal) {
+          for (let i = 0; i < loginTriggers.length; i++) {
+            let btn = loginTriggers[i];
+            if (!btn.dataset.listenerAttached) {
+              btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                loginModal.style.display = 'flex';
+              });
+              btn.dataset.listenerAttached = "true";
+            }
+          }
+        }
+      } catch (e) {
+        console.error('Post-inject login wiring error:', e);
+      }
+
+      // attach logout handlers safely
+      let logoutBtn = document.querySelector("#logout-btn");
+      if (logoutBtn && !logoutBtn.dataset.listenerAttached) {
+        logoutBtn.addEventListener('click', logout);
+        logoutBtn.dataset.listenerAttached = "true";
+      }
+      let mobileLogout = document.querySelector(".mobile-logout-btn");
+      if (mobileLogout && !mobileLogout.dataset.listenerAttached) {
+        mobileLogout.addEventListener('click', logout);
+        mobileLogout.dataset.listenerAttached = "true";
+      }
+    } else {
+      console.warn('Could not load nav.html from any candidate path.');
+    }
+  }
+
+  // local login modal wiring (works even if modal was injected earlier)
+  let loginModal = document.querySelector('.login-modal-wrapper');
+  let closeBtn = document.querySelector('.login-modal-close');
+  let loginTriggersNow = document.querySelectorAll('.open-login');
+  if (loginTriggersNow && loginTriggersNow.length && loginModal) {
+    for (let i = 0; i < loginTriggersNow.length; i++) {
+      let btn = loginTriggersNow[i];
+      if (!btn.dataset.modalListener) {
+        btn.addEventListener('click', function () { loginModal.style.display = 'flex'; });
+        btn.dataset.modalListener = "1";
+      }
+    }
+  }
+  if (closeBtn && loginModal && !closeBtn.dataset.modalListener) {
+    closeBtn.addEventListener('click', function () { loginModal.style.display = 'none'; });
+    closeBtn.dataset.modalListener = "1";
+  }
+  if (!window._loginWindowClick) {
+    window.addEventListener('click', function (e) { if (loginModal && e.target === loginModal) loginModal.style.display = 'none'; });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && loginModal && loginModal.style.display === 'flex') loginModal.style.display = 'none'; });
+    window._loginWindowClick = true;
+  }
+
+  // Inject footer
+  let footerContainer = document.getElementById('footer');
+  if (footerContainer) {
+    let footerHtml = await fetchFirst(footerCandidates);
+    if (footerHtml) {
+      footerContainer.innerHTML = footerHtml;
+      // call newsletter init if present
+      if (typeof initNewsletterForm === 'function') {
+        try { initNewsletterForm(); } catch (e) { console.error('initNewsletterForm error:', e); }
+      }
+    } else {
+      console.warn('Could not load footer.html from any candidate path.');
+    }
+  }
+
+  // final data boot
+  try {
+    if (typeof app !== 'undefined' && typeof app.loadData === 'function') {
+      await app.loadData();
+      if (app.migrateOldWishlist) app.migrateOldWishlist();
+    }
+  } catch (e) {
+    console.error('app.loadData error:', e);
+  }
+
+  // ensure UI login state reflects currentUser
+  try { if (typeof handleLoginUI === 'function') handleLoginUI(); } catch (e) { /* ignore */ }
+});
+
+function handleLoginUI() {
+  const loginBtn = document.querySelector("#login-btn");
+  const mobileLoginBtn = document.querySelector(".mobile-login-btn");
+  const logoutBtn = document.querySelector("#logout-btn");
+  const mobileLogoutBtn = document.querySelector(".mobile-logout-btn");
+
+  if (localStorage.getItem("currentUser")) {
+    // User logged in → show logout
+    loginBtn.style.display = 'none';
+    mobileLoginBtn.style.display = 'none';
+
+    logoutBtn.style.display = 'block';
+    mobileLogoutBtn.style.display = 'block';
+  } else {
+    // User logged out → show login
+    loginBtn.style.display = 'block';
+    mobileLoginBtn.style.display = 'block';
+
+    logoutBtn.style.display = 'none';
+    mobileLogoutBtn.style.display = 'none';
+  }
+}
+
+function logout() {
+  // Save current user's wishlist before logging out
+  if (window.currentUser) {
+    let userWishlist = app.getWishlist();
+    app.saveWishlistForUser(window.currentUser, userWishlist);
+  }
+
+  // Remove currentUser
+  window.currentUser = null;
+  localStorage.removeItem('currentUser');
+
+  // Update UI
+  handleLoginUI();
+
+  // Trigger event so wishlist re-renders for anonymous
+  document.dispatchEvent(new Event('userChanged'));
+}
+
+
+
+let currentUser = null;
+let app = {
+  data: {},
+  scents: [],
+  products: [],
+  cart: [],
+  colors: [],
+  sizes: [],
+  containers: [],
+  wicks: [],
+  wishlist: [],
+
+  // getters
+  getSizes: function () { return this.sizes || []; },
+  getColors: function () { return this.colors || []; },
+  getContainers: function () { return this.containers || []; },
+  getWicks: function () { return this.wicks || []; },
+  getScents: function () { return this.scents || []; },
+
+  getScentById: function (id) { return this.scents.find(function (s) { return s.id === Number(id); }) || null; },
+  getSizeById: function (id) { return this.sizes.find(function (s) { return s.id === Number(id); }) || null; },
+  getColorById: function (id) { return this.colors.find(function (c) { return c.id === Number(id); }) || null; },
+  getContainerById: function (id) { return this.containers.find(function (c) { return c.id === Number(id); }) || null; },
+  getWickById: function (id) { return this.wicks.find(function (w) { return w.id === Number(id); }) || null; },
+
+  formatPrice: function (price) { return "$" + Number(price).toFixed(2); },
+
+  debounce: function (fn, delay) {
+    let timeout;
+    return function () {
+      let args = Array.prototype.slice.call(arguments);
+      clearTimeout(timeout);
+      timeout = setTimeout(function () { fn.apply(this, args); }.bind(this), delay);
+    };
+  },
+
+  async loadData() {
+    try {
+      if (!this.scents.length || !this.products.length) {
+        // adjust path if necessary
+        let response = await fetch('../json/products.json');
+        if (!response.ok) throw new Error("Fetch failed: " + response.status);
+        let data = await response.json();
+
+        this.scents = Array.isArray(data.scents) ? data.scents.map(function (s) {
+          return Object.assign({}, s, { aggressiveness: s.aggressiveness || 2 });
+        }) : [];
+
+        this.products = Array.isArray(data.products) ? data.products : [];
+        this.colors = Array.isArray(data.color) ? data.color : [];
+        this.sizes = Array.isArray(data.size) ? data.size : [];
+        this.containers = Array.isArray(data.container) ? data.container : [];
+        this.wicks = Array.isArray(data.wick) ? data.wick : [];
+      }
+      return true;
+    } catch (err) {
+      console.error('Failed to load data in app.loadData():', err);
+      return false;
+    }
+  },
+
+  calculateQuizResults: function (answers) {
+    let scents = this.getScents();
+    let scores = scents.map(function (scent) { return { scent: scent, score: 0 }; });
+
+    answers.forEach(function (answer, questionIndex) {
+      scores.forEach(function (item) {
+        let scent = item.scent;
+        switch (questionIndex) {
+          case 0:
+            if (scent.mood === answer) item.score += 3;
+            break;
+          case 1:
+            if (scent.family === answer) item.score += 3;
+            break;
+          case 2:
+            let strengthDiff = Math.abs((scent.aggressiveness || 0) - parseInt(answer, 10));
+            item.score += Math.max(3 - strengthDiff, 0);
+            break;
+          case 3:
+            if (scent.season === answer || scent.season === 'all-year') {
+              item.score += (scent.season === answer) ? 2 : 1;
+            }
+            break;
+        }
+      });
     });
+
+    return scores.sort(function (a, b) { return b.score - a.score; })
+      .slice(0, 3)
+      .map(function (it) { return it.scent; });
+  },
+
+  openModal: function (id) { let el = document.getElementById(id); if (el) el.style.display = 'block'; },
+  closeModal: function (id) { let el = document.getElementById(id); if (el) el.style.display = 'none'; },
+  showNotification: function (msg, type) { alert(msg); },
+
+  getProducts: function () { return this.products || []; },
+  getProductById: function (id) { return this.products.find(function (p) { return p.id === id; }) || null; },
+
+  searchProducts: function (query) {
+    let q = (query || '').toLowerCase();
+    return this.products.filter(function (product) {
+      let scent = app.getScentById(product.scentId);
+      return (product.name && product.name.toLowerCase().includes(q)) || (scent && scent.name && scent.name.toLowerCase().includes(q));
+    });
+  },
+
+  addToCart: function (productId, quantity = 1) {
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    let product = this.getProductById(productId);
+    if (!product) return false;
+
+    cart.push({
+      id: Date.now() + '-' + productId, // ✅ unique id
+      productId: productId,
+      quantity: quantity,
+      price: product.price
+    });
+
+    localStorage.setItem('cart', JSON.stringify(cart));
+    return true;
+  },
+
+  removeFromCart: function (itemId) {
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    cart = cart.filter(item => String(item.id) !== String(itemId));
+    localStorage.setItem('cart', JSON.stringify(cart));
+    return cart;
+  },
+
+  clearCart: function () {
+    localStorage.setItem('cart', JSON.stringify([]));
+    return [];
+  },
+
+  getCart: function () {
+    try {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (!Array.isArray(cart)) cart = [];
+      return cart;
+    } catch (err) {
+      console.error(err);
+      return [];
+    }
+  },
+
+  getCartTotal: function () {
+    try {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (!Array.isArray(cart)) cart = [];
+      let total = 0;
+      cart.forEach(function (item) {
+        let product = app.getProductById(item.productId);
+        if (product) total += (Number(product.price || 0) * (item.quantity || 1));
+      });
+      return total;
+    } catch (err) {
+      console.error('Failed to calculate cart total:', err);
+      return 0;
+    }
+  },
+
+
+
+  // small storage helpers
+  getFromStorage: function (key) {
+    try { return JSON.parse(localStorage.getItem(key)); } catch (e) { console.error(e); return null; }
+  },
+  saveToStorage: function (key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); } catch (e) { console.error(e); }
+  },
+  // Wishlist Logic
+  // Per-user wishlist wrappers (use currentUser global or anonymous)
+  // NOTE: currentUser may be null when anonymous.
+  addToWishlist: function (productId) {
+    // delegate to user-aware function
+    this.addToWishlistForUser(productId, window.currentUser || null);
+    return true;
+  },
+
+  removeFromWishlist: function (productId) {
+    let user = window.currentUser || localStorage.getItem('currentUser') || null;
+    this.removeFromWishlistForUser(productId, user);
+    return true;
+  },
+
+  getWishlist: function () {
+    return this.getWishlistForUser(window.currentUser || null);
+  },
+
+  isInWishlist: function (productId) {
+    let wishlist = this.getWishlist();
+    return (Array.isArray(wishlist) ? wishlist.map(String).includes(String(productId)) : false);
+  },
+
+  // Migration helper - converts legacy 'wishlists' or 'wishlist' keys into the
+  // new per-user storage under "wishlist_anonymous" so old data is preserved.
+  migrateOldWishlist: function () {
+    try {
+      // Old possible keys
+      let legacyKeys = ['wishlists', 'wishlist'];
+      legacyKeys.forEach(key => {
+        let raw = localStorage.getItem(key);
+        if (!raw) return;
+        try {
+          let arr = JSON.parse(raw);
+          if (!Array.isArray(arr)) return;
+          // Read current anonymous wishlist (if any)
+          let anon = this.getWishlistForUser(null) || [];
+          // Merge avoiding duplicates
+          let merged = Array.from(new Set([...anon.map(String), ...arr.map(String)])).map(String);
+          this.saveWishlistForUser(null, merged);
+          // Remove old key so migration is idempotent
+          localStorage.removeItem(key);
+          console.info(`Migrated legacy wishlist key "${key}" into anonymous wishlist.`);
+        } catch (e) {
+          // ignore parse errors
+        }
+      });
+    } catch (e) {
+      console.error('Wishlist migration failed:', e);
+    }
+  },
+
+
+
+};
+
+app.saveWishlistForUser = function (username = null, wishlist = []) {
+  let key = username ? 'wishlist_' + username : 'wishlist_anonymous';
+  let obj = { username: username || 'anonymous', wishlist: wishlist };
+  localStorage.setItem(key, JSON.stringify(obj));
+};
+
+
+
+app.getWishlistForUser = function (username = null) {
+  let key = username ? 'wishlist_' + username : 'wishlist_anonymous';
+  let obj = JSON.parse(localStorage.getItem(key) || '{}');
+  return obj.wishlist || [];
+};
+
+
+// add to wishlist for a user
+app.addToWishlistForUser = function (productId, username = null) {
+  let wishlist = this.getWishlistForUser(username);
+  if (!wishlist.includes(productId)) {
+    wishlist.push(productId);
+    this.saveWishlistForUser(username, wishlist);
+  }
+};
+
+// remove from wishlist for a user
+app.removeFromWishlistForUser = function (productId, username = null) {
+  let wishlist = this.getWishlistForUser(username);
+  wishlist = wishlist.filter(id => String(id) !== String(productId));
+  this.saveWishlistForUser(username, wishlist);
+};
+
+// check if a product is in a user's wishlist
+app.isInWishlistForUser = function (productId, username = null) {
+  let wishlist = this.getWishlistForUser(username);
+  return wishlist.map(String).includes(String(productId));
+};
+
+
+(function () {
+  document.addEventListener('DOMContentLoaded', function () {
+    try {
+      initNavbar();
+      updateLoginUI();
+      updateCartCount();
+      initNewsletterForm();
+      window.addEventListener('storage', function (e) { if (e.key === 'cart') updateCartCount(); });
+    } catch (err) { console.error('Boot error:', err); }
   });
 
-  /*================== NAVBAR ==================*/
   function initNavbar() {
     let siteNav = document.querySelector('.site-nav');
     let hamburger = document.getElementById('hamburger-btn');
@@ -17,233 +478,374 @@
     let mobileClose = document.getElementById('mobile-close');
     let mobileBackdrop = document.getElementById('mobile-backdrop');
 
+    // Guard: required elements
     if (!siteNav || !hamburger || !mobileMenu) return;
 
-    // ensure dataset initial state
+    // Prevent double-init
+    if (siteNav.dataset.inited === "true") return;
+    siteNav.dataset.inited = "true";
+
+    // Ensure initial dataset state and ARIA
     mobileMenu.dataset.open = mobileMenu.dataset.open || "false";
+    hamburger.setAttribute('aria-controls', mobileMenu.id || 'mobile-menu');
+    hamburger.setAttribute('aria-expanded', mobileMenu.dataset.open === "true" ? "true" : "false");
+    mobileMenu.setAttribute('aria-hidden', mobileMenu.dataset.open === "true" ? "false" : "true");
 
-    function openMenu() {
-      mobileMenu.dataset.open = "true";
-      // prevent background scrolling
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.overflow = 'hidden';
-      // focus first interactive item
-      let first = mobileMenu.querySelector('a, button');
-      if (first) first.focus();
+    function setMenuOpen(open) {
+      open = !!open;
+      mobileMenu.dataset.open = open ? "true" : "false";
+      mobileMenu.setAttribute('aria-hidden', open ? "false" : "true");
+      hamburger.setAttribute('aria-expanded', open ? "true" : "false");
+
+      if (open) {
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+        siteNav.classList.add('menu-open');
+
+        // focus first focusable element inside menu (accessibility)
+        let focusable = mobileMenu.querySelector('a, button, input, [tabindex]:not([tabindex="-1"])');
+        if (focusable && typeof focusable.focus === 'function') focusable.focus();
+      } else {
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+        siteNav.classList.remove('menu-open');
+        try { hamburger.focus(); } catch (e) { }
+      }
     }
 
-    function closeMenu() {
-      mobileMenu.dataset.open = "false";
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
-      // return focus to hamburger if it exists
-      if (hamburger.focus) hamburger.focus();
+    function toggleMenu() {
+      setMenuOpen(mobileMenu.dataset.open !== "true");
     }
 
-    // toggle on click
-    hamburger.addEventListener('click', (e) => {
-      let isOpen = mobileMenu.dataset.open === "true";
-      isOpen ? closeMenu() : openMenu(); // another if else notation
-      // > if isOpen is true then closeMenu; else openMenu
+    // Click handlers
+    hamburger.addEventListener('click', function (e) {
+      e.preventDefault();
+      toggleMenu();
     });
 
-    if (mobileClose) mobileClose.addEventListener('click', closeMenu); //close using X button
-    if (mobileBackdrop) mobileBackdrop.addEventListener('click', closeMenu); //close by clicking outside the menu
+    if (mobileClose) {
+      mobileClose.addEventListener('click', function (e) { e.preventDefault(); setMenuOpen(false); });
+    }
 
-    // close on Escape key
-    document.addEventListener('keydown', (e) => {
+    if (mobileBackdrop) {
+      mobileBackdrop.addEventListener('click', function () { setMenuOpen(false); });
+    }
+
+    // close on Escape
+    document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && mobileMenu.dataset.open === "true") {
-        closeMenu();
+        setMenuOpen(false);
       }
     });
 
-    // scroll behaviour: add class .scrolled when past threshold
-    // when scrolling past 60px -> add a CSS class .scrolled that changes styling
+    // close when clicking a link inside the mobile menu (common UX)
+    mobileMenu.addEventListener('click', function (e) {
+      let el = e.target;
+      if (el && (el.tagName === 'A' || (el.closest && el.closest('a')))) {
+        setMenuOpen(false);
+      }
+    });
+
+    // Add/remove "scrolled" class on scroll
     let threshold = 60;
-    window.addEventListener('scroll', () => {
+    window.addEventListener('scroll', function () {
       if (window.scrollY > threshold) siteNav.classList.add('scrolled');
       else siteNav.classList.remove('scrolled');
     });
   }
-/*================== CART COUNT ==================*/
-  // update cart count from localStorage
+
   function updateCartCount() {
     try {
       let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      let els = document.querySelectorAll('#cart-count, #mobile-cart-count');
-      els.forEach(e => { e.textContent = Array.isArray(cart) ? cart.length : 0; });
-      //update cart count for both full screen and mobile screen display
-    } catch (err) {
-      console.error('Failed to read cart from localStorage', err);
-    }
+      setTimeout(function () {
+        let els = document.querySelectorAll('#cart-count, #mobile-cart-count');
+        Array.prototype.forEach.call(els, function (e) {
+          let count = Array.isArray(cart) ? cart.length : 0;
+          e.textContent = count;
+        });
+      }, 300);
+    } catch (err) { console.error('Failed to update cart count', err); }
   }
+
+  // expose to global so other scripts can call them after nav injection
+  window.initNavbar = initNavbar;
+  window.updateCartCount = updateCartCount;
 
 })();
 
-document.addEventListener('DOMContentLoaded', async () => {
-  const navbarContainer = document.getElementById('navbar');
-
+/* load navbar/footer + app data */
+document.addEventListener('DOMContentLoaded', async function () {
+  let navbarContainer = document.getElementById('navbar');
   if (navbarContainer) {
     try {
-      const response = await fetch('nav.html');
-      const navbarHTML = await response.text();
+      let response = await fetch('html/nav.html');
+      if (response.ok) {
+        navbarContainer.innerHTML = await response.text();
 
-      navbarContainer.innerHTML = navbarHTML;
-    } catch (error) {
-      console.error('Error loading navbar:', error);
+        // after injecting the nav move the modal of login in nav.html to the body of the page ---
+        try {
+          // move any modal that was inside the injected nav into document.body so it behaves like a global modal
+          let injectedModal = document.querySelector('.login-modal-wrapper');
+          if (injectedModal && injectedModal.parentElement !== document.body) {
+            // move to body preserves the element and event listeners 
+            document.body.appendChild(injectedModal);
+          }
+
+          // ensure nav init functions are called (guarded as before)
+          if (typeof window.initNavbar === 'function') {
+            try { window.initNavbar(); } catch (e) { console.error('initNavbar() error after injecting nav.html', e); }
+          } else {
+            console.warn('initNavbar not available after nav injection — skipping.');
+          }
+
+          if (typeof window.updateCartCount === 'function') {
+            try { window.updateCartCount(); } catch (e) { console.error('updateCartCount() error after injecting nav.html', e); }
+          } else {
+            console.warn('updateCartCount not available after nav injection — skipping.');
+          }
+
+          // Make sure the login button in the injected nav has a trigger class or id we can listen to.
+          // Preferred: give the button class "open-login" in nav.html (or below we attach to #login-btn if present).
+          let loginTriggers = document.querySelectorAll('.open-login');
+          if (!loginTriggers.length) {
+            // fallback to #login-btn if you used that id
+            let btn = document.getElementById('login-btn');
+            if (btn) btn.classList.add('open-login'); // add class so your existing code finds it
+            loginTriggers = document.querySelectorAll('.open-login');
+          }
+          
+          // Wire the click => show modal (the rest of your modal handlers run later in the file)
+          let loginModal = document.querySelector('.login-modal-wrapper');
+          if (loginTriggers && loginTriggers.length && loginModal) {
+            loginTriggers.forEach(btn => {
+              btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                loginModal.style.display = 'flex';
+              });
+            });
+          }
+        } catch (err) {
+          console.error('Post-nav-inject setup error:', err);
+        }
+
+
+        // guarded calls: only call if functions are available globally
+        if (typeof window.initNavbar === 'function') {
+          try { window.initNavbar(); } catch (e) { console.error('initNavbar() error after injecting nav.html', e); }
+        } else {
+          console.warn('initNavbar not available after nav injection — skipping.');
+        }
+
+        if (typeof window.updateCartCount === 'function') {
+          try { window.updateCartCount(); } catch (e) { console.error('updateCartCount() error after injecting nav.html', e); }
+        } else {
+          console.warn('updateCartCount not available after nav injection — skipping.');
+        }
+
+        handleLoginUI();
+        // Attach logout for both desktop & mobile buttons
+        document.querySelector("#logout-btn")?.addEventListener('click', logout);
+        document.querySelector(".mobile-logout-btn")?.addEventListener('click', logout);
+
+
+      } else {
+        console.warn('nav.html fetch not ok', response.status);
+      }
+    } catch (err) {
+      console.error('Error loading navbar:', err);
     }
   }
 
-  const footerContainer = document.getElementById('footer');
 
+  // login modal handlers (guarded)
+  let loginModal = document.querySelector('.login-modal-wrapper');
+  let closeBtn = document.querySelector('.login-modal-close');
+  let loginTriggers = document.querySelectorAll('.open-login');
+  if (loginTriggers && loginTriggers.length && loginModal) {
+    Array.prototype.forEach.call(loginTriggers, function (btn) {
+      btn.addEventListener('click', function () { loginModal.style.display = 'flex'; });
+    });
+  }
+  if (closeBtn && loginModal) {
+    closeBtn.addEventListener('click', function () { loginModal.style.display = 'none'; });
+  }
+  window.addEventListener('click', function (e) { if (loginModal && e.target === loginModal) loginModal.style.display = 'none'; });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && loginModal && loginModal.style.display === 'flex') loginModal.style.display = 'none'; });
+
+  let footerContainer = document.getElementById('footer');
   if (footerContainer) {
     try {
-      const response = await fetch('footer.html'); // path to your footer HTML
-      const footerHTML = await response.text();
-      footerContainer.innerHTML = footerHTML;
-
-      // Optional: initialize footer JS (newsletter form)
-      initNewsletterForm();
-
-    } catch (error) {
-      console.error('Error loading footer:', error);
-    }
+      let response = await fetch('html/footer.html');
+      if (response.ok) {
+        footerContainer.innerHTML = await response.text();
+        initNewsletterForm();
+      } else console.warn('footer.html fetch not ok', response.status);
+    } catch (err) { console.error('Error loading footer:', err); }
   }
+
+  // finally, load data for customize page and others
+  await app.loadData();
+  app.migrateOldWishlist && app.migrateOldWishlist();
 });
 
-// fetch() loads footer.html and inserts it into the page
-fetch('footer.html')
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Footer not found');
-    }
-    return response.text();
-  })
-  .then(data => {
-    document.getElementById('footer-container').innerHTML = data;
-  })
-  .catch(error => {
-    console.error('Error loading footer:', error);
-  });
-
-
-/*================== NEWSLETTER in footer ==================*/
+/* newsletter init */
 function initNewsletterForm() {
   let form = document.getElementById('newsletter-form');
   if (!form) return;
-
   let input = document.getElementById('newsletter-email');
   let submitBtn = document.getElementById('newsletter-submit');
-  let msgRegion = document.getElementById('newsletter-msg-region'); // aria-live region for feedback messages
-
-  // Create aria-live region if not in DOM
+  let msgRegion = document.getElementById('newsletter-msg-region');
   if (!msgRegion) {
     msgRegion = document.createElement('div');
     msgRegion.id = 'newsletter-msg-region';
     msgRegion.setAttribute('aria-live', 'polite');
     msgRegion.setAttribute('aria-atomic', 'true');
-    msgRegion.style.marginTop = '0.5rem';
+    msgRegion.style.marginTop = '.5rem';
     form.parentNode.insertBefore(msgRegion, form.nextSibling);
   }
-
-  // Helper to show success or error messages
   function showMessage(type, text) {
     msgRegion.innerHTML = '';
     let d = document.createElement('div');
-    d.className = `newsletter-msg newsletter-msg--${type}`; // use backticks for template literal
+    d.className = 'newsletter-msg newsletter-msg--' + type;
     d.textContent = text;
     msgRegion.appendChild(d);
-
-    if (type === 'error') {
-      setTimeout(() => {
-        if (msgRegion.contains(d)) msgRegion.removeChild(d);
-      }, 4000);
-    }
+    if (type === 'error') setTimeout(function () { if (msgRegion.contains(d)) msgRegion.removeChild(d); }, 4000);
   }
+  function isValidEmail(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
 
-  // Email validation
-  function isValidEmail(email) {
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  }
-
-  // Handle form submission
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', function (e) {
     e.preventDefault();
     if (!input) return;
-
     let email = (input.value || '').trim();
-    if (!email) {
-      showMessage('error', 'Please enter your email address.');
-      input.focus();
-      return;
+    if (!email) { showMessage('error', 'Please enter your email address.'); input.focus(); return; }
+    if (!isValidEmail(email)) { showMessage('error', 'Please enter a valid email address.'); input.focus(); return; }
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      let prevText = submitBtn.textContent;
+      submitBtn.textContent = 'Sending...';
+      setTimeout(function () {
+        showMessage('success', 'Thank you for subscribing to our newsletter!');
+        submitBtn.textContent = prevText;
+        submitBtn.disabled = false;
+        input.value = '';
+        input.focus();
+      }, 800);
     }
-
-    if (!isValidEmail(email)) {
-      showMessage('error', 'Please enter a valid email address.');
-      input.focus();
-      return;
-    }
-
-    // Simulate sending
-    submitBtn.disabled = true;
-    submitBtn.setAttribute('aria-disabled', 'true');
-    let prevText = submitBtn.textContent;
-    submitBtn.textContent = 'Sending...';
-
-    // Short simulated delay
-    setTimeout(() => {
-      showMessage('success', 'Thank you for subscribing to our newsletter!');
-      submitBtn.textContent = prevText; // restore button text
-      submitBtn.disabled = false;
-      submitBtn.removeAttribute('aria-disabled');
-      input.value = '';
-      input.focus(); // ready for next entry
-    }, 800);
   });
 }
 
-class CandlesWeb {
 
 
-  // Quiz functionality
-  calculateQuizResults(answers) {
-    const scents = this.getScents();
-    const scores = scents.map(scent => ({
-      scent: scent,
-      score: 0
-    }));
+/* login form handler (if present) */
+async function attachLoginHandler() {
+  // Wait until navbar is loaded and modal moved
+  let loginModal = document.querySelector('.login-modal-wrapper');
+  let loginForm = document.getElementById('loginForm');
+  let closeBtn = document.querySelector('.login-modal-close');
 
-    // Score each scent based on quiz answers
-    answers.forEach((answer, questionIndex) => {
-      scores.forEach(item => {
-        const scent = item.scent;
-        
-        switch (questionIndex) {
-          case 0: // Mood question
-            if (scent.mood === answer) item.score += 3;
-            break;
-          case 1: // Scent family question
-            if (scent.category === answer) item.score += 3;
-            break;
-          case 2: // Strength question
-            const strengthDiff = Math.abs(scent.aggressiveness - parseInt(answer));
-            item.score += Math.max(3 - strengthDiff, 0);
-            break;
-          case 3: // Season question
-            if (scent.season === answer || scent.season === 'all-year') {
-              item.score += scent.season === answer ? 2 : 1;
-            }
-            break;
-        }
+  if (!loginModal || !loginForm) return;
+
+  let allowedUsers = [
+    { username: 'rama', password: '12345' },
+    { username: 'maryam', password: '6789' },
+    { username: 'rawan', password: '1011' }
+  ];
+
+  // Ensure all buttons have the correct trigger class
+  let loginTriggers = document.querySelectorAll('.open-login');
+  if (!loginTriggers.length) {
+    let btn = document.getElementById('login-btn');
+    if (btn) btn.classList.add('open-login');
+    loginTriggers = document.querySelectorAll('.open-login');
+  }
+
+  // Open modal on click
+  loginTriggers.forEach(btn => {
+    if (!btn.dataset.listenerAttached) {
+      btn.addEventListener('click', e => {
+        e.preventDefault();
+        loginModal.style.display = 'flex';
       });
-    });
+      btn.dataset.listenerAttached = "true";
+    }
+  });
 
-    // Sort by score and return top recommendations
-    return scores
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 3)
-      .map(item => item.scent);
+  if (closeBtn && !closeBtn.dataset.listenerAttached) {
+    closeBtn.addEventListener('click', () => loginModal.style.display = 'none');
+    closeBtn.dataset.listenerAttached = "true";
+  }
+  if (!window._loginWindowListener) {
+    window.addEventListener('click', e => {
+      if (e.target === loginModal) loginModal.style.display = 'none';
+    });
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && loginModal.style.display === 'flex') loginModal.style.display = 'none';
+    });
+    window._loginWindowListener = true;
+  }
+
+  // Handle login submit — attach only once
+  if (!loginForm.dataset.listenerAttached) {
+    loginForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      let username = loginForm.querySelector('#username')?.value.trim() || '';
+      let password = loginForm.querySelector('#password')?.value.trim() || '';
+
+      // Only allow exact matches
+      let user = allowedUsers.find(u => u.username === username && u.password === password);
+
+      if (!user) {
+        alert('Incorrect username or password.');
+        return;
+      }
+
+      // Login success
+      currentUser = user.username;
+      localStorage.setItem('currentUser', currentUser);
+      alert('Login successful! Welcome, ' + currentUser);
+      handleLoginUI()
+      // Merge anonymous wishlist
+      let anonWishlist = app.getWishlistForUser(null);
+      let userWishlist = app.getWishlistForUser(currentUser);
+      let mergedWishlist = Array.from(new Set([...anonWishlist.map(String), ...userWishlist.map(String)]));
+      app.saveWishlistForUser(currentUser, mergedWishlist);
+      app.saveWishlistForUser(null, []); // clear anonymous
+
+      if (typeof renderWishlist === 'function') renderWishlist();
+      if (typeof displayProducts === 'function') displayProducts();
+
+      loginModal.style.display = 'none';
+      loginForm.reset();
+      document.dispatchEvent(new Event('userChanged'));
+    });
+    loginForm.dataset.listenerAttached = "true";
   }
 }
+function updateLoginUI() {
+  let loginBtn = document.querySelector('#loginForm button[type="submit"]');
+  if (!loginBtn) return;
+
+  if (currentUser || localStorage.getItem('currentUser')) {
+    loginBtn.style.display = 'none'; // hide login button once logged in
+  } else {
+    loginBtn.style.display = 'inline-block'; // show if not logged in
+  }
+}
+
+
+/* call after navbar and modal are fully loaded */
+document.addEventListener('DOMContentLoaded', async function () {
+  // wait for nav injection
+  let checkNavLoaded = setInterval(() => {
+    let loginModal = document.querySelector('.login-modal-wrapper');
+    let loginForm = document.getElementById('loginForm');
+    if (loginModal && loginForm) {
+      clearInterval(checkNavLoaded);
+      attachLoginHandler();
+    }
+  }, 100); // check every 100ms
+});
+
 
 

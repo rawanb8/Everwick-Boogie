@@ -1,37 +1,47 @@
 // Contact page functionality
-document.addEventListener('DOMContentLoaded', async () => {
-    await app.loadData();
+$(document).ready(async function () {
     setupContactForm();
     animateStats();
+    setupPhoneInput()
 });
 
-
 function setupContactForm() {
-    const form = document.getElementById('contact-form');
-
-    form.addEventListener('submit', (e) => {
-
-        //By default, submitting a form refreshes the page or sends data to a new URL.
-        // this stops that behavior — it prevents the page reload
+    $('#contact-form').on('submit', function (e) {
         e.preventDefault();
+        handleContactSubmission();  // collect form data
+    });
+}
 
-        preventDefault()
-        handleContactSubmission();  //collect form data
+function setupPhoneInput() {
+    $('#contact-phone').on('input', function () {
+        let val = $(this).val();
+        // Remove all non-digits
+        val = val.replace(/\D/g, '');
+        // Limit to 10 digits
+        if (val.length > 10) val = val.slice(0, 10);
+        $(this).val(val);
     });
 }
 
 function handleContactSubmission() {
-    // Validate form
-    const requiredFields = ['contact-first-name', 'contact-last-name', 'contact-email', 'contact-subject', 'contact-message'];
+    let requiredFields = [
+        'contact-first-name',
+        'contact-last-name',
+        'contact-email',
+        'contact-subject',
+        'contact-message'
+    ];
+
     let isValid = true;
 
-    requiredFields.forEach(fieldId => {
-        const field = document.getElementById(fieldId);
-        if (!field.value.trim()) {
-            field.classList.add('error');
+    // Validate required fields
+    requiredFields.forEach(function (fieldId) {
+        let $field = $('#' + fieldId);
+        if (!$field.val().trim()) {
+            $field.addClass('error');
             isValid = false;
         } else {
-            field.classList.remove('error');
+            $field.removeClass('error');
         }
     });
 
@@ -41,103 +51,117 @@ function handleContactSubmission() {
     }
 
     // Collect form data
-    const formData = {
-        firstName: document.getElementById('contact-first-name').value,
-        lastName: document.getElementById('contact-last-name').value,
-        email: document.getElementById('contact-email').value,
-        phone: document.getElementById('contact-phone').value,
-        subject: document.getElementById('contact-subject').value,
-        message: document.getElementById('contact-message').value,
-        newsletter: document.getElementById('newsletter-signup').checked,
+    let formData = {
+        firstName: $('#contact-first-name').val(),
+        lastName: $('#contact-last-name').val(),
+        email: $('#contact-email').val(),
+        phone: $('#contact-phone').val(),
+        subject: $('#contact-subject').val(),
+        message: $('#contact-message').val(),
         timestamp: new Date().toISOString()
     };
 
-    // Simulate form submission
-    app.showNotification('Sending message...', 'info');
+    // --- CLEAR INPUTS IMMEDIATELY ---
+    $('#contact-form')[0].reset();
+    $('.error').removeClass('error');
 
+    // --- DISABLE BUTTON FOR A MOMENT ---
+    let $btn = $('#contact-form button[type="submit"]');
+    $btn.text('Sent!');
+    $btn.prop('disabled', true);
+
+    // --- REVERT BUTTON AFTER 2s ---
     setTimeout(() => {
-        // Save to local storage (simulate backend)
-        const messages = app.getFromStorage('contact-messages') || [];
-        messages.push(formData);
-        app.saveToStorage('contact-messages', messages);
+        $btn.text('Send Message');
+        $btn.prop('disabled', false);
+    }, 2000);
 
-        // Show success message
-        app.showNotification('Thank you! Your message has been sent. We\'ll get back to you within 24 hours.', 'success');
+    let messages = JSON.parse(localStorage.getItem('contact-messages') || '[]');
+    messages.push(formData);
+    localStorage.setItem('contact-messages', JSON.stringify(messages));
 
-        // Reset form
-        document.getElementById('contact-form').reset();
-
-        // Handle newsletter signup
-        if (formData.newsletter) {
-            setTimeout(() => {
-                app.showNotification('You\'ve been subscribed to our newsletter!', 'success');
-            }, 1000);
-        }
-    }, 1500);
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+    let elements = document.querySelectorAll('.reveal');
+
+    let observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add("show");
+                observer.unobserve(entry.target); // animate once
+            }
+        });
+    }, { threshold: 0.2 });
+
+    elements.forEach(el => observer.observe(el));
+});
+
+
 function toggleFAQ(questionElement) {
-    const faqItem = questionElement.parentElement;
-    const answer = faqItem.querySelector('.faq-answer');
-    const toggle = questionElement.querySelector('.faq-toggle');
+    let $faqItem = $(questionElement).parent();
+    let $answer = $faqItem.find('.faq-answer');
+    let $toggle = $faqItem.find('.faq-toggle');
 
     // Close other open FAQ items
-    document.querySelectorAll('.faq-item').forEach(item => {
-        if (item !== faqItem && item.classList.contains('active')) {
-            item.classList.remove('active');
-            item.querySelector('.faq-answer').style.maxHeight = '0';
-            item.querySelector('.faq-toggle').textContent = '+';
+    $('.faq-item').not($faqItem).each(function () {
+        let $item = $(this);
+        if ($item.hasClass('active')) {
+            $item.removeClass('active');
+            $item.find('.faq-answer').css('max-height', '0');
+            $item.find('.faq-toggle').text('+');
         }
     });
 
     // Toggle current FAQ item
-    if (faqItem.classList.contains('active')) {
-        faqItem.classList.remove('active');
-        answer.style.maxHeight = '0';
-        toggle.textContent = '+';
+    if ($faqItem.hasClass('active')) {
+        $faqItem.removeClass('active');
+        $answer.css('max-height', '0');
+        $toggle.text('+');
     } else {
-        faqItem.classList.add('active');
-        answer.style.maxHeight = answer.scrollHeight + 'px';
-        toggle.textContent = '−';
+        $faqItem.addClass('active');
+        $answer.css('max-height', $answer[0].scrollHeight + 'px');
+        $toggle.text('−');
     }
 }
 
 function animateStats() {
-    const stats = document.querySelectorAll('.stat-number');
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
+    let $stats = $('.stat-number');
+    let observer = new IntersectionObserver(function (entries, obs) {
+        entries.forEach(function (entry) {
             if (entry.isIntersecting) {
-                animateNumber(entry.target);
-                observer.unobserve(entry.target);
+                animateNumber($(entry.target));
+                obs.unobserve(entry.target);
             }
         });
     });
 
-    stats.forEach(stat => observer.observe(stat));
+    $stats.each(function () {
+        observer.observe(this);
+    });
 }
 
-function animateNumber(element) {
-    const text = element.textContent;
-    const isPercentage = text.includes('%');
-    const number = parseInt(text.replace(/[^0-9]/g, ''));
-    const duration = 2000;
-    const steps = 60;
-    const increment = number / steps;
+function animateNumber($element) {
+    let text = $element.text();
+    let isPercentage = text.includes('%');
+    let number = parseInt(text.replace(/[^0-9]/g, ''));
+    let duration = 2000;
+    let steps = 60;
+    let increment = number / steps;
     let current = 0;
 
-    const timer = setInterval(() => {
+    let timer = setInterval(function () {
         current += increment;
         if (current >= number) {
             current = number;
             clearInterval(timer);
         }
-
-        element.textContent = Math.floor(current) + (isPercentage ? '%' : text.includes('+') ? '+' : '');
+        $element.text(Math.floor(current) + (isPercentage ? '%' : text.includes('+') ? '+' : ''));
     }, duration / steps);
 }
 
 function scrollToFAQ() {
-    document.querySelector('.faq-section').scrollIntoView({ behavior: 'smooth' });
+    $('html, body').animate({ scrollTop: $('.faq-section').offset().top }, 600);
 }
 
 function openCartModal() {

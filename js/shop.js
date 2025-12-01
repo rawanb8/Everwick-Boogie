@@ -1,0 +1,583 @@
+// Shop page functionality
+let allProducts = [];
+let filteredProducts = [];
+let displayedProducts = [];
+let currentView = 'grid';
+let productsPerPage = 9;
+let currentPage = 1;
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await app.loadData();
+    initializeShop();
+    applyUrlFiltersFromQuery();
+    setupEventListeners();
+});
+
+// Initialize shop
+function initializeShop() {
+    allProducts = app.getProducts();
+    filteredProducts = [...allProducts];
+    setupFilters();
+    displayProducts();
+    updateResultsCount();
+}
+
+// Setup global event listeners
+function setupEventListeners() {
+    // Search input with debounce
+    let searchInput = document.getElementById('search-input');
+    if (searchInput) searchInput.addEventListener('input', app.debounce(searchProducts, 300));
+
+    // Price range sliders
+    let priceMin = document.getElementById('price-min');
+    let priceMax = document.getElementById('price-max');
+    if (priceMin && priceMax) {
+        priceMin.addEventListener('input', updatePriceLabels);
+        priceMax.addEventListener('input', updatePriceLabels);
+        priceMin.addEventListener('change', applyFilters);
+        priceMax.addEventListener('change', applyFilters);
+    }
+
+    // Close modal buttons
+    document.querySelectorAll('.modal-close').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            let modal = e.target.closest('.modal');
+            if (modal) {
+                modal.classList.remove('active');
+                document.body.classList.remove('modal-open');
+            }
+        });
+    });
+}
+
+// Setup all filters
+function setupFilters() {
+    setupScentCategoryFilters();
+    setupCollectionFilters();
+    setupSizeFilters();
+    setupColorFilters();
+    setupContainerFilters();
+    setupWickFilters();
+    setupMoodFilters();
+    updatePriceLabels();
+}
+
+// Filter population functions
+function setupScentCategoryFilters() {
+    let container = document.getElementById('scent-category-filters');
+    if (!container) return;
+    let families = [...new Set(app.getScents().map(s => s.family))];
+    container.innerHTML = families.map(f => `
+        <label class="filter-checkbox">
+            <input type="checkbox" value="${f}" onchange="applyFilters()">
+            <span>${f.charAt(0).toUpperCase() + f.slice(1)}</span>
+        </label>`).join('');
+}
+
+//filter collections!!
+function setupCollectionFilters() {
+    let container = document.getElementById('collection-filters');
+
+    // Collect unique collection slugs from products
+    let collSet = new Set();
+    allProducts.forEach(p => {
+        if (Array.isArray(p.collections)) {
+            p.collections.forEach(c => {
+                if (c && String(c).trim()) collSet.add(String(c).trim());
+            });
+        }
+    });
+
+    let collArr = Array.from(collSet).sort();
+    container.innerHTML = collArr.map(slug => {
+        let label = slug.replace(/[-_]/g, ' ').replace(/\b\w/g, ch => ch.toUpperCase());
+        return `<label class="filter-checkbox">
+                    <input type="checkbox" value="${slug}" onchange="applyFilters()">
+                    <span>${label}</span>
+                </label>`;
+    }).join('');
+}
+
+
+function setupSizeFilters() {
+    let container = document.getElementById('size-filters');
+    if (!container) return;
+    let sizes = app.getSizes();
+    container.innerHTML = sizes.map(size => `
+        <label class="filter-checkbox">
+            <input type="checkbox" value="${size.id}" onchange="applyFilters()">
+            <span>${size.name} (${size.volume})</span>
+        </label>`).join('');
+}
+
+function setupColorFilters() {
+    let container = document.getElementById('color-filters');
+    if (!container) {
+        let filtersSection = document.querySelector('.filters-sidebar');
+        if (filtersSection) {
+            filtersSection.insertAdjacentHTML('beforeend', `
+                <div class="filter-section">
+                    <h4>Color</h4>
+                    <div class="filter-options" id="color-filters"></div>
+                </div>`);
+            container = document.getElementById('color-filters');
+        }
+    }
+    if (!container) return;
+    let colors = app.getColors();
+    container.innerHTML = colors.map(color => `
+        <label class="filter-checkbox">
+            <input type="checkbox" value="${color.id}" onchange="applyFilters()">
+            <span>${color.name}</span>
+        </label>`).join('');
+}
+
+function setupContainerFilters() {
+    let container = document.getElementById('container-filters');
+    if (!container) {
+        let filtersSection = document.querySelector('.filters-sidebar');
+        if (filtersSection) {
+            filtersSection.insertAdjacentHTML('beforeend', `
+                <div class="filter-section">
+                    <h4>Container</h4>
+                    <div class="filter-options" id="container-filters"></div>
+                </div>`);
+            container = document.getElementById('container-filters');
+        }
+    }
+    if (!container) return;
+    let containers = app.getContainers();
+    container.innerHTML = containers.map(c => `
+        <label class="filter-checkbox">
+            <input type="checkbox" value="${c.id}" onchange="applyFilters()">
+            <span>${c.name}</span>
+        </label>`).join('');
+}
+
+function setupWickFilters() {
+    let container = document.getElementById('wick-filters');
+    if (!container) {
+        let filtersSection = document.querySelector('.filters-sidebar');
+        if (filtersSection) {
+            filtersSection.insertAdjacentHTML('beforeend', `
+                <div class="filter-section">
+                    <h4>Wick Type</h4>
+                    <div class="filter-options" id="wick-filters"></div>
+                </div>`);
+            container = document.getElementById('wick-filters');
+        }
+    }
+    if (!container) return;
+    let wicks = app.getWicks();
+    container.innerHTML = wicks.map(w => `
+        <label class="filter-checkbox">
+            <input type="checkbox" value="${w.id}" onchange="applyFilters()">
+            <span>${w.name}</span>
+        </label>`).join('');
+}
+
+function setupMoodFilters() {
+    let container = document.getElementById('mood-filters');
+    if (!container) return;
+    let moods = [...new Set(app.getScents().map(s => s.mood))];
+    container.innerHTML = moods.map(mood => `
+        <label class="filter-checkbox">
+            <input type="checkbox" value="${mood}" onchange="applyFilters()">
+            <span>${mood.charAt(0).toUpperCase() + mood.slice(1)}</span>
+        </label>`).join('');
+}
+
+// Price label update
+function updatePriceLabels() {
+    let minSlider = document.getElementById('price-min');
+    let maxSlider = document.getElementById('price-max');
+    let minLabel = document.getElementById('price-min-label');
+    let maxLabel = document.getElementById('price-max-label');
+    if (!minSlider || !maxSlider || !minLabel || !maxLabel) return;
+
+    let minValue = parseInt(minSlider.value);
+    let maxValue = parseInt(maxSlider.value);
+    if (minValue >= maxValue) minSlider.value = maxValue - 1;
+
+    minLabel.textContent = `$${minSlider.value}`;
+    maxLabel.textContent = `$${maxSlider.value}`;
+}
+
+// Apply filters
+function applyFilters() {
+    filteredProducts = allProducts.filter(product => {
+        let scentFilters = Array.from(document.querySelectorAll('#scent-category-filters input:checked')).map(cb => cb.value);
+        let collectionFilters = Array.from(document.querySelectorAll('#collection-filters input:checked')).map(cb => cb.value);
+        let sizeFilters = Array.from(document.querySelectorAll('#size-filters input:checked')).map(cb => parseInt(cb.value));
+        let colorFilters = Array.from(document.querySelectorAll('#color-filters input:checked')).map(cb => parseInt(cb.value));
+        let containerFilters = Array.from(document.querySelectorAll('#container-filters input:checked')).map(cb => parseInt(cb.value));
+        let wickFilters = Array.from(document.querySelectorAll('#wick-filters input:checked')).map(cb => parseInt(cb.value));
+        let moodFilters = Array.from(document.querySelectorAll('#mood-filters input:checked')).map(cb => cb.value);
+        let minPrice = parseInt(document.getElementById('price-min')?.value || 0);
+        let maxPrice = parseInt(document.getElementById('price-max')?.value || 100);
+        let inStockOnly = document.getElementById('in-stock-filter')?.checked;
+
+        let scent = app.getScentById(product.scentId);
+
+        if (scentFilters.length && (!scent || !scentFilters.includes(scent.family))) return false;
+        // collection filtering
+        if (collectionFilters.length) {
+            if (!Array.isArray(product.collections) || !product.collections.some(c => collectionFilters.includes(c))) {
+                return false;
+            }
+        }
+        if (moodFilters.length && (!scent || !moodFilters.includes(scent.mood))) return false;
+        if (sizeFilters.length && !sizeFilters.includes(product.sizeId)) return false;
+        if (colorFilters.length && !colorFilters.includes(product.colorId)) return false;
+        if (containerFilters.length && !containerFilters.includes(product.containerId)) return false;
+        if (wickFilters.length && !wickFilters.includes(product.wickId)) return false;
+        if (product.price < minPrice || product.price > maxPrice) return false;
+        if (inStockOnly && product.stock <= 0) return false;
+
+        return true;
+    });
+    currentPage = 1;
+    displayProducts();
+    updateResultsCount();
+}
+
+// Search products
+function searchProducts() {
+    let query = document.getElementById('search-input')?.value.trim();
+    filteredProducts = query ? app.searchProducts(query) : [...allProducts];
+    currentPage = 1;
+    displayProducts();
+    updateResultsCount();
+}
+
+// Sort products
+function sortProducts() {
+    let sortBy = document.getElementById('sort-select')?.value;
+    filteredProducts.sort((a, b) => {
+        switch (sortBy) {
+            case 'price-low': return a.price - b.price;
+            case 'price-high': return b.price - a.price;
+            case 'name': return a.name.localeCompare(b.name);
+            case 'popularity':
+            case 'featured':
+            default: return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+        }
+    });
+    displayProducts();
+}
+
+// Display products
+function displayProducts() {
+    let container = document.getElementById('products-grid');
+    if (!container) return;
+
+    let startIndex = 0;
+    let endIndex = currentPage * productsPerPage;
+    displayedProducts = filteredProducts.slice(startIndex, endIndex);
+
+    container.className = `products-grid ${currentView === 'grid' ? 'grid grid-3' : 'products-list'}`;
+    container.innerHTML = displayedProducts.map(product => {
+        let scent = app.getScentById(product.scentId);
+        let size = app.getSizeById(product.sizeId);
+        let color = app.getColorById(product.colorId);
+        let user = localStorage.getItem('currentUser') || null;
+
+        let isWishlisted = user ? app.isInWishlistForUser(product.id, user) : app.isInWishlist(product.id);
+        let wishlistIconClass = isWishlisted ? 'fa-solid fa-heart' : 'fa-regular fa-heart';
+        let wishlistBtnClass = isWishlisted ? 'wishlist-btn active' : 'wishlist-btn';
+
+        if (currentView === 'grid') {
+            return `
+            <div class="product-card" onclick="showProductDetails('${product.id}')">
+                <div class="product-image" style="background-image: url('${product.images[0]}')">
+                    ${product.featured ? '<div class="featured-badge">Featured</div>' : ''}
+                    ${product.stock <= 5 && product.stock > 0 ? '<div class="stock-badge">Low Stock</div>' : ''}
+                    ${product.stock <= 0 ? '<div class="stock-badge">Out of Stock</div>' : ''}
+                    <button class="${wishlistBtnClass}" onclick="event.stopPropagation(); toggleWishlist('${product.id}')">
+                        <i class="${wishlistIconClass}"></i>
+                    </button>
+                </div>
+                <div class="card-content">
+                    <h3 class="card-title">${product.name}</h3>
+                    <p class="card-description">${scent?.description || ''}</p>
+                    <div class="scent-details">
+                        <div class="scent-mood">Mood: ${scent?.mood || 'N/A'}</div>
+                        <div class="scent-strength">Strength: <span class="strength-bar">${'●'.repeat(Math.min(10, scent?.aggressiveness || 0)) + '○'.repeat(10 - Math.min(10, scent?.aggressiveness || 0))}</span></div>
+                        <div class="scent-price">${app.formatPrice(product.price)}</div>
+                    </div>
+                    <div class="product-actions">
+                        <button class="btn btn-outline btn-small" onclick="event.stopPropagation(); showProductDetails('${product.id}')">View</button>
+                        <button class="btn btn-primary btn-small open-login" onclick="event.stopPropagation(); addProductToCart('${product.id}')" ${product.stock <= 0 ? 'disabled' : ''}>Add</button>
+                    </div>
+                </div>
+            </div>`;
+        } else {
+            return `
+            <div class="product-list-item" onclick="showProductDetails('${product.id}')">
+                <div class="product-image" style="background-image: url('${product.images[0]}'); width:120px; height:80px; background-size:cover;"></div>
+                <div class="product-info">
+                    <h3>${product.name}</h3>
+                    <p>${scent?.description || ''}</p>
+                    <div class="product-specs">
+                        <span>Size: ${size?.name || 'N/A'}</span>
+                        <span>Family: ${scent?.family || 'N/A'}</span>
+                        <span>Stock: ${product.stock}</span>
+                    </div>
+                </div>
+                <div class="product-price">
+                    <span class="price">${app.formatPrice(product.price)}</span>
+                </div>
+                <div class="product-actions">
+                    <button class="btn btn-primary btn-small" onclick="event.stopPropagation(); addProductToCart('${product.id}')" ${product.stock <= 0 ? 'disabled' : ''}>${product.stock <= 0 ? 'Out of Stock' : 'Add to Cart'}</button>
+                </div>
+            </div>`;
+        }
+    }).join('');
+
+
+    container.querySelectorAll('.view-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showProductDetails(btn.dataset.id);
+        });
+    });
+
+
+    let loadMoreSection = document.getElementById('load-more-section');
+    if (loadMoreSection) loadMoreSection.style.display = filteredProducts.length > displayedProducts.length ? 'block' : 'none';
+}
+
+
+// Load more
+function loadMoreProducts() {
+    currentPage++;
+    displayProducts();
+}
+
+// Update results count
+function updateResultsCount() {
+    let container = document.getElementById('results-count');
+    if (!container) return;
+    let total = filteredProducts.length;
+    let showing = Math.min(displayedProducts.length, total);
+    container.textContent = `Showing ${showing} of ${total} products`;
+}
+
+// Set view (grid/list)
+function setView(viewType) {
+    currentView = viewType;
+    document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector(`[data-view="${viewType}"]`)?.classList.add('active');
+    displayProducts();
+}
+
+// Toggle filters sidebar
+function toggleFilters() {
+    let sidebar = document.getElementById('filters-sidebar');
+    if (sidebar) sidebar.classList.toggle('active');
+}
+
+// Clear all filters
+function clearAllFilters() {
+    document.querySelectorAll('.filter-checkbox input').forEach(cb => cb.checked = false);
+    let priceMin = document.getElementById('price-min');
+    let priceMax = document.getElementById('price-max');
+    if (priceMin) priceMin.value = 0;
+    if (priceMax) priceMax.value = 100;
+    updatePriceLabels();
+
+    let searchInput = document.getElementById('search-input');
+    if (searchInput) searchInput.value = '';
+
+    let sortSelect = document.getElementById('sort-select');
+    if (sortSelect) sortSelect.value = 'featured';
+
+    filteredProducts = [...allProducts];
+    currentPage = 1;
+    displayProducts();
+    updateResultsCount();
+}
+
+function showProductDetails(productId) {
+    let product = app.getProductById(productId);
+    if (!product) return;
+
+    let scent = app.getScentById(product.scentId);
+    let size = app.getSizeById(product.sizeId);
+    let container = app.getContainerById(product.containerId);
+    let wick = app.getWickById(product.wickId);
+    let isWishlisted = app.isInWishlist(product.id);
+
+    let modalBody = document.getElementById('product-modal-body');
+    let modalTitle = document.getElementById('product-modal-title');
+    if (modalTitle) modalTitle.style.display = 'none'; // Hide default title as we have custom layout
+
+    if (modalBody) {
+        modalBody.innerHTML = `
+            <div class="product-modal-layout">
+                <div class="modal-image-container">
+                    <img src="${product.images[0]}" alt="${product.name}">
+                </div>
+                <div class="modal-info-container">
+                    <button class="modal-close-custom" onclick="closeModal()">&times;</button>
+                    <h2 class="modal-product-title">${product.name}</h2>
+                    <div class="modal-product-price">${app.formatPrice(product.price)}</div>
+                    
+                    <div class="modal-section-title">Description</div>
+                    <p class="modal-description">${scent?.description || 'A premium handcrafted candle.'}</p>
+                    
+                    <div class="modal-specs-grid">
+                        <div class="spec-item"><strong>Mood</strong> <span>${scent?.mood || 'N/A'}</span></div>
+                        <div class="spec-item"><strong>Family</strong> <span>${scent?.family || 'N/A'}</span></div>
+                        <div class="spec-item"><strong>Size</strong> <span>${size?.name || 'Standard'}</span></div>
+                        <div class="spec-item"><strong>Burn Time</strong> <span>${size?.burnTime || '40+ hours'}</span></div>
+                        <div class="spec-item"><strong>Container</strong> <span>${container?.name || 'Glass'}</span></div>
+                        <div class="spec-item"><strong>Wick</strong> <span>${wick?.name || 'Cotton'}</span></div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button class="btn btn-primary" onclick="addProductToCart('${product.id}')" ${product.stock <= 0 ? 'disabled' : ''}>
+                            ${product.stock > 0 ? 'Add to Cart' : 'Out of Stock'}
+                        </button>
+                        <button class="btn-wishlist-modal ${isWishlisted ? 'active' : ''}" onclick="toggleWishlist('${product.id}')">
+                            <i class="${isWishlisted ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    let modal = document.getElementById('product-modal');
+    if (modal) {
+        modal.classList.add('active');
+        document.body.classList.add('modal-open');
+    }
+}
+
+function toggleWishlist(productId) {
+    // read current user from localStorage at click time
+    let user = localStorage.getItem('currentUser') || null;
+
+    // Toggle for anonymous OR current logged-in user
+    if (user) {
+        if (app.isInWishlistForUser(productId, user)) {
+            app.removeFromWishlistForUser(productId, user);
+        } else {
+            app.addToWishlistForUser(productId, user);
+        }
+    } else {
+        if (app.isInWishlist(productId, null)) {
+            app.removeFromWishlist(productId, null);
+        } else {
+            app.addToWishlist(productId, null);
+        }
+    }
+
+    // Refresh product grid icons
+    if (typeof displayProducts === 'function') displayProducts();
+
+    // Refresh wishlist page if visible
+    let wishlistGrid = document.getElementById('wishlist-grid');
+    if (wishlistGrid) renderWishlist();
+
+    // Refresh modal button if open
+    let modal = document.getElementById('product-modal');
+    if (modal && modal.classList.contains('active')) {
+        showProductDetails(productId);
+    }
+}
+
+
+// Close modal
+function closeModal() {
+    let modal = document.getElementById('product-modal');
+    if (modal) {
+        modal.classList.remove('active');
+        document.body.classList.remove('modal-open');
+    }
+}
+
+
+// Also attach modal close buttons
+document.querySelectorAll('.modal-close').forEach(btn => {
+    btn.addEventListener('click', closeModal);
+});
+
+// Close modal on click outside
+window.addEventListener('click', (e) => {
+    let modal = document.getElementById('product-modal');
+    if (modal && e.target === modal) closeModal();
+});
+
+// Add to cart
+function addProductToCart(productId, quantity = 1) {
+    let product = app.getProductById(productId);
+    if (!product) return alert('Product not found');
+    if (product.stock <= 0) return alert('Product is out of stock');
+
+    let qty = Math.min(parseInt(quantity) || 1, product.stock);
+    if (app.addToCart(productId, qty)) {
+        // Find the button that was clicked and update its text
+        let buttons = document.querySelectorAll(`button[onclick*="addProductToCart('${productId}')"]`);
+        buttons.forEach(btn => {
+            let originalText = btn.textContent;
+            btn.textContent = 'Added';
+            btn.disabled = true;
+
+            // Revert back after 2 seconds
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = product.stock <= 0;
+            }, 2000);
+        });
+
+        updateCartCountDisplay();
+    } else alert('Failed to add to cart');
+}
+
+// Update cart count
+function updateCartCountDisplay() {
+    try {
+        let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+        let count = Array.isArray(cart) ? cart.length : 0;
+        document.querySelectorAll('#cart-count, #mobile-cart-count').forEach(el => el.textContent = count);
+    } catch (err) {
+        console.error('Failed to update cart count:', err);
+    }
+}
+
+
+function applyUrlFiltersFromQuery() {
+    let params = new URLSearchParams(window.location.search);
+    let q = params.get('q');
+    let collectionParam = params.get('collections') || params.get('collection');
+
+    if (q) {
+        let searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            searchInput.value = decodeURIComponent(q);
+            if (typeof searchProducts === 'function') searchProducts();
+        }
+    }
+
+    if (collectionParam) {
+        // The param may contain multiple comma-separated values, normalize to array
+        let requested = String(collectionParam).split(',').map(s => s.trim()).filter(Boolean);
+
+        //check matching checkboxes
+        let anyChecked = false;
+        requested.forEach(req => {
+            let cb = document.querySelector('#collection-filters input[value="' + req + '"]');
+            if (cb) {
+                cb.checked = true;
+                anyChecked = true;
+            }
+        });
+
+        if (anyChecked) {
+            if (typeof applyFilters === 'function') applyFilters();
+            return;
+        }
+    }
+}

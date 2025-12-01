@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Everwick Boogee | Shop Candles</title>
+  <link rel="shortcut icon" href="/media/icons/icon.svg" type="image/x-icon">
+  <link rel="stylesheet" href="../css/shop.css">
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+</head>
+
+<body>
+
+  <!-- Include header/nav -->
+  <div id="navbar"></div>
+
+
+  <div class="container section">
+
+    <!-- Page Header -->
+    <section class="page-header">
+      <div class="container">
+        <h1>Shop Our Collection</h1>
+        <p>Discover handcrafted candles perfect for every mood and occasion.</p>
+      </div>
+    </section>
+
+    <!-- Shop Controls -->
+    <section class="shop-controls">
+      <div class="container">
+        <div class="controls-layout">
+
+          <!-- Search and Sort -->
+          <div class="search-sort">
+            <div class="search-box">
+              <input type="text" id="search-input" class="form-input" placeholder="Search candles...">
+              <button class="search-btn" onclick="searchProducts()">
+                <i class="fa fa-search"></i>
+
+              </button>
+            </div>
+            <div class="sort-controls">
+              <label for="sort-select">Sort by:</label>
+              <select id="sort-select" class="form-select" onchange="sortProducts()">
+                <option value="featured">Featured</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="name">Name A-Z</option>
+                <option value="popularity">Popularity</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Shop Layout -->
+    <section class="section">
+      <div class="container">
+        <div class="shop-layout">
+
+          <!-- Filters Sidebar -->
+          <div class="filters-sidebar" id="filters-sidebar">
+            <div class="filters-header">
+              <h3>Filters</h3>
+              <button class="clear-filters-btn" onclick="clearAllFilters()">Clear All</button>
+            </div>
+
+
+            <!-- Scent Category Filter -->
+            <div class="filter-section">
+              <h4>Scent Categories</h4>
+              <div class="filter-options" id="scent-category-filters">
+                <!-- Will be populated dynamically -->
+              </div>
+            </div>
+
+            <!--Collections filter-->
+            <div class="filter-section">
+              <h4>Collections</h4>
+              <div class="filter-options" id="collection-filters">
+                <!-- Will be populated dynamically -->
+              </div>
+            </div>
+
+            <!-- Price Range Filter -->
+            <div class="filter-section">
+              <h4>Price Range</h4>
+              <div class="price-range">
+                <input type="range" id="price-min" min="0" max="100" value="0" class="price-slider">
+                <input type="range" id="price-max" min="0" max="100" value="100" class="price-slider">
+                <div class="price-labels">
+                  <span id="price-min-label">$0</span>
+                  <span id="price-max-label">$100</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Size Filter -->
+            <div class="filter-section">
+              <h4>Size</h4>
+              <div class="filter-options" id="size-filters">
+                <!-- Will be populated dynamically -->
+              </div>
+            </div>
+
+
+            <!-- Mood Filter -->
+            <div class="filter-section">
+              <h4>Mood</h4>
+              <div class="filter-options" id="mood-filters">
+                <!-- Will be populated dynamically -->
+              </div>
+            </div>
+
+            <!-- In Stock Filter -->
+            <div class="filter-section">
+              <label class="filter-checkbox">
+                <input type="checkbox" id="in-stock-filter" onchange="applyFilters()">
+                <span>In Stock Only</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Products Grid -->
+          <div class="products-section">
+            <div class="products-header">
+              <div class="results-count" id="results-count">
+                Showing all products
+              </div>
+              <div class="view-toggle">
+                <button class="view-btn active" onclick="setView('grid')" data-view="grid">⊞</button>
+                <button class="view-btn" onclick="setView('list')" data-view="list">☰</button>
+              </div>
+            </div>
+
+            <div class="products-grid grid grid-3" id="products-grid">
+              <!-- Products will be loaded here -->
+            </div>
+
+            <!-- Load More -->
+            <div class="load-more text-center" id="load-more-section" style="display: none;">
+              <button class="btn btn-outline" onclick="loadMoreProducts()">Load More Products</button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- Product Detail Modal -->
+    <div id="product-modal" class="modal">
+      <div class="modal-content modal-large">
+        <div class="modal-header" style="display: none;">
+          <h3 id="product-modal-title">Product Details</h3>
+        </div>
+        <div id="product-modal-body">
+          <!-- Product details will be loaded here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cart-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Shopping Cart</h3>
+          <button class="modal-close">&times;</button>
+        </div>
+        <div id="cart-items">
+          <!-- Cart items will be loaded here -->
+        </div>
+        <div class="cart-footer">
+          <div class="cart-total">
+            <strong>Total: <span id="cart-total">$0.00</span></strong>
+          </div>
+          <div class="cart-actions">
+            <button class="btn btn-secondary" onclick="app.closeModal()">Continue Shopping</button>
+            <a href="checkout.html" class="btn btn-primary">Checkout</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- END of .container.section wrapper -->
+
+  <!-- Footer moved OUTSIDE the container -->
+  <div id="footer"></div>
+  <script src="../js/main.js"></script>
+  <script src="../js/shop.js"></script>
+
+
+</body>
+
+</html>

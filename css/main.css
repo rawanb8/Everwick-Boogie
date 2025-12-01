@@ -35,6 +35,10 @@
     font-display: swap;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 
 /* =================== COLOR PALETTE =================== */
 
@@ -47,6 +51,8 @@
     --accent-color: #8b4513;
     --brand-green: #cfd9cc;
     --accent: #bfb29d;
+    --olive-green: #8a9a5b;
+    --lighter-green: #a2b066;
 
     --text-dark: #2c1810;
     --deep: #382f32;
@@ -56,18 +62,19 @@
     --background-light: #fdfcfa;
     --white: #ffffff;
 
-    --gray-light: #f5f5f5;
     --gray-medium: #cccccc;
     --gray-dark: #666666;
     --nav-glass: rgba(255, 255, 255, 0.06);
 
     /* Alerts */
-    --error-color: #e74c3c;  /*forms alerts*/
-    --success-color: #27ae60; /*forms alerts*/
-    --warm: #f0db83; /*Highlight / cart badge / CTA*/
+    --error-color: #e74c3c;
+    /*forms alerts*/
+    --success-color: #27ae60;
+    /*forms alerts*/
+    --warm: #f0db83;
+    /*Highlight / cart badge / CTA*/
 
     /* Typography */
-    --font-primary: 'Georgia', serif;
     --font-secondary: 'Helvetica Neue', Arial, sans-serif;
 
     /* Font Sizes */
@@ -79,6 +86,7 @@
     --font-size-2xl: 1.5rem;
     --font-size-3xl: 2rem;
     --font-size-4xl: 2.5rem;
+    --font-size-5x1: 3rem;
 
     /* Spacing */
     --space-xs: 0.25rem;
@@ -106,10 +114,12 @@
     --transition-slow: 0.5s ease-in-out;
 
     /* Layout */
-     --max-width: 1200px;
+    --max-width: 1200px;
 
     /* Background Gradient */
-     --bg: linear-gradient(180deg, #fbf9f6, var(--secondary-color)); 
+    --bg: linear-gradient(180deg, #fbf9f6, var(--secondary-color));
+
+    --nav-height: 72px;
 
 
 }
@@ -148,8 +158,7 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: var(--font-primary);
-    font-weight: 400;
+    font-family: 'Poppins', 'Gill Sans' sans-serif;
     line-height: 1.2;
     margin-bottom: var(--space-md);
 }
@@ -222,38 +231,6 @@ a:hover {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
-.flex {
-    display: flex;
-    align-items: center;
-    gap: var(--space-md);
-}
-
-.flex-column {
-    flex-direction: column;
-}
-
-.flex-center {
-    justify-content: center;
-}
-
-.flex-between {
-    justify-content: space-between;
-}
-
-.flex-wrap {
-    flex-wrap: wrap;
-}
-
-/* Header */
-.header {
-    background: var(--white);
-    box-shadow: var(--shadow-sm);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-
 
 /* =================== BUTTONS =================== */
 .btn {
@@ -270,6 +247,9 @@ a:hover {
     letter-spacing: 0.02em;
     transition: all var(--transition-fast);
     gap: var(--space-sm);
+    border: none;
+    /* remove default border */
+    outline: none;
 }
 
 /* Variants */
@@ -280,27 +260,17 @@ a:hover {
 
 .btn-primary:hover {
     background: var(--primary-dark);
-    /* color: var(--white); */
+    color: var(--white);
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
 }
 
-.btn-secondary {
-    background: var(--secondary-color);
-    color: var(--text-dark);
-    border: 1px solid var(--gray-medium);
-}
-
-.btn-secondary:hover {
-    background: var(--white);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-}
 
 .btn-outline {
     background: transparent;
     color: var(--primary-color);
     border: 2px solid var(--primary-color);
+    font-size: var(--font-size-base);
 }
 
 .btn-outline:hover {
@@ -317,6 +287,7 @@ a:hover {
     padding: var(--space-xs) var(--space-md);
     font-size: var(--font-size-sm);
 }
+
 
 /* =================== FORMS =================== */
 .form-group {
@@ -370,37 +341,6 @@ a:hover {
     text-align: center;
 }
 
-.text-left {
-    text-align: left;
-}
-
-.text-right {
-    text-align: right;
-}
-
-
-/* Visibility */
-.hidden {
-    display: none;
-}
-
-.visible {
-    display: block;
-}
-
-
-/* Margin helpers */
-.mt-md {
-    margin-top: var(--space-md);
-}
-
-.mb-md {
-    margin-bottom: var(--space-md);
-}
-
-.p-lg {
-    padding: var(--space-lg);
-}
 
 /* =================== MODAL =================== */
 
@@ -420,23 +360,19 @@ a:hover {
     transition: all var(--transition-normal);
 }
 
-body.modal-open {
-    overflow: hidden;
-}
-
-
 .modal.active {
     opacity: 1;
     visibility: visible;
 }
 
+
 .modal-content {
     background: var(--white);
     border-radius: var(--radius-lg);
     padding: var(--space-xl);
-    max-width: 500px;
+    max-width: 800px;
     width: 90%;
-    max-height: 90vh;
+    max-height: 80vh;
     overflow-y: auto;
     transform: scale(0.7);
     transition: transform var(--transition-normal);
@@ -491,207 +427,315 @@ body.modal-open {
 }
 
 
-
-/*--------------will add later-------------*/
-/*.brand-text, .site-title, .product-title {
-  font-family: "TAN Meringue", "Amsterdam Two", serif;
-  letter-spacing: 0.01em;
-
-  .slogan, .hero-quote {
-  font-family: "Amsterdam Two", "TAN Meringue", serif;
-  color: var(--brand-dark);
-}
-h1, .hero-title { font-family: "TAN Meringue", "Amsterdam Two", serif; margin:0; }
-h2, h3, h4 { font-family: "Lora", Georgia, serif; margin: 0 0 .5rem 0; }
-
-.btn { font-family: "Lora", serif; font-weight:700; }
-.btn-ghost { background: transparent; border:1px solid rgba(0,0,0,0.06); }
-}*/
-
-/*====================NAVBAR STYLING====================*/
-
 .site-nav {
     position: fixed;
-    inset: 0 0 auto 0;
-    z-index: 1000;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--nav-height);
+    z-index: 1200;
     width: 100%;
+    pointer-events: auto;
+    display: block;
+    justify-content: center;
+    background: transparent;
 }
 
 .nav-inner-container.container {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: .6rem 1rem;
-    margin: 0;
-    backdrop-filter: blur(10px);
+    box-sizing: border-box;
+    width: calc(100%-10px);
+    max-width: none;
+    margin: 0 auto;
+    padding: 0.5rem 1rem;
     border-radius: 0 0 12px 12px;
     transition: background var(--transition), box-shadow var(--transition), transform var(--transition), color var(--transition);
     background: var(--nav-glass);
-    max-width: var(--max-width);
-    flex-wrap: wrap;
+    color: inherit;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: nowrap;
 }
 
 /* scrolled state */
 .site-nav.scrolled .nav-inner-container {
-    background: linear-gradient(180deg, rgba(62, 50, 56, 0.96), rgba(62, 50, 56, 0.96));
-    /* using brand-dark tint */
-    color: #c390f0;
+    backdrop-filter: blur(10px);
     box-shadow: 0 8px 30px rgba(20, 18, 16, 0.18);
 }
 
-/* Brand */
+/* ---------------- Brand ---------------- */
 .brand {
     display: inline-flex;
     align-items: center;
-    gap: .4rem;
+    gap: .6rem;
     color: inherit;
     text-decoration: none;
     font-weight: 700;
+    white-space: nowrap;
 }
 
 .brand-logo {
-    width: 36px;
-    height: 36px;
-    margin: 0;
-    padding: 0;
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    display: inline-block;
 }
 
 .brand-text {
     font-family: "TAN Meringue", "Amsterdam Two", serif;
     font-size: 1.05rem;
-    color: var(--brand-dark);
+    color: var(--text-dark);
+    line-height: 1;
+    display: inline-block;
+    transform-origin: left center;
+    padding-top: 10px;
 }
 
+/* hover */
 .brand-text:hover {
     color: var(--primary-color);
-    transition: color 0.3s ease;
+    transition: color 220ms;
 }
 
-
-/* links full screen desktop */
+/* ---------------- Links (desktop) ---------------- */
 .nav-links {
     display: flex;
     gap: 0.9rem;
     align-items: center;
     list-style: none;
     margin: 0;
-    padding: 0;
-    flex: 1 1 420px;
+    padding-top: 10px;
+    flex: 1 1 auto;
     justify-content: center;
-    flex-wrap: wrap;
     min-width: 0;
 }
 
+.nav-links li {
+    display: block;
+    font-family: "Lora";
+
+}
+
 .nav-links a {
-    padding: .35rem .5rem;
+    padding: .4rem .6rem;
     border-radius: 8px;
     color: inherit;
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: .96rem;
     transition: transform var(--transition), background var(--transition), color var(--transition);
+    display: inline-block;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
-.nav-links a:hover {
+/* active / hover */
+.nav-links a:hover,
+.nav-links a:focus {
     transform: translateY(-2px);
-    background: linear-gradient(90deg, rgba(207, 217, 204, 0.06), rgba(240, 219, 131, 0.04));
-    color: var(--deep);
+    background: var(--brand-green);
+    color: #493b42;
+    outline: none;
+    box-shadow: none;
 }
 
-/*nav actions*/
+/* ---------------- Actions (cart, hamburger) ---------------- */
 .nav-actions {
     display: flex;
-    gap: .5rem;
+    gap: .6rem;
     align-items: center;
     flex: 0 0 auto;
+    justify-self: end;
+    padding-top: 10px;
 }
 
-/* Search */
-.search-btn {
-    background: none;
-    border: 0;
-    padding: .4rem;
-    cursor: pointer;
-    font-size: 1rem;
-}
 
 /* Cart */
 .cart-btn {
     display: inline-flex;
     align-items: center;
-    gap: .45rem;
-    padding: .3rem .55rem;
+    gap: 0.5rem;
+    padding: 0.35rem 0.6rem;
     border-radius: 10px;
     text-decoration: none;
     color: inherit;
+    font-weight: 600;
+    transition: background var(--transition), transform var(--transition), color var(--transition);
 }
 
+.cart-btn .cart-icon {
+    font-size: 1.06rem;
+    line-height: 1;
+    display: inline-block;
+}
+
+/* cart badge */
 .cart-count {
     background: var(--warm);
     color: #111;
-    padding: 2px 7px;
+    padding: 2px 8px;
     border-radius: 999px;
-    font-weight: 700;
-    font-size: .8rem;
+    font-weight: 800;
+    font-size: .78rem;
+    display: inline-block;
+    min-width: 22px;
+    text-align: center;
 }
 
-.cart-btn:hover {
-    background: var(--primary-color);
-    color: var(--white);
+/* hover */
+.cart-btn:hover,
+.cart-btn:focus {
+    background: var(--brand-green);
+    color: #493b42;
     transform: translateY(-2px);
 }
 
+/*wishlist btn styling in desktop and mobile*/
 
-/* Hamburger */
-.hamburger,
-#hamburger-btn {
+/* Desktop: compact icon button that sits next to login and cart */
+.wishlist-nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    font-size: 1.05rem;
+    transition: background var(--transition), transform var(--transition), color var(--transition);
+    color: var(--text-dark);
+    padding: 0;
+    margin: 0 .15rem;
+}
+
+.wishlist-nav-btn .fa-heart {
+    line-height: 1;
+    display: inline-block;
+}
+
+.wishlist-nav-btn:hover,
+.wishlist-nav-btn:focus {
+    background: var(--brand-green);
+    color: #493b42;
+    transform: translateY(-2px);
+    outline: none;
+}
+
+.wishlist-nav-btn:focus-visible {
+    outline: 3px solid rgba(160, 120, 100, 0.18);
+    outline-offset: 2px;
+    border-radius: 10px;
+}
+
+/*mobile wishlit btn*/
+.mobile-wishlist-wrapper {
+    margin-top: .5rem;
+}
+
+.mobile-wishlist-link {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: 0.85rem 0.9rem;
+    border-radius: 10px;
+    color: var(--text-dark);
+    text-decoration: none;
+    font-weight: 700;
+    background: transparent;
+    transition: transform 140ms ease, background 160ms ease, color 140ms ease;
+    font-family: "Lora", serif;
+    border: 2px solid transparent;
+    /* default no visible border */
+}
+
+.mobile-wishlist-link {
+    border-color: var(--primary-color);
+    background: transparent;
+}
+
+/* On hover / focus: invert color a bit for affordance */
+.mobile-wishlist-link:hover,
+.mobile-wishlist-link:focus {
+    transform: translateY(-2px);
+    background: linear-gradient(90deg, rgba(207, 217, 204, 0.06), rgba(240, 219, 131, 0.03));
+    color: var(--primary-color);
+    outline: none;
+}
+
+.mobile-wishlist-link .fa-heart {
+    font-size: 1.05rem;
+}
+
+/* ---------------- Hamburger (desktop hidden, mobile visible) ---------------- */
+
+.hamburger {
     display: none;
     background: none;
     border: 0;
-    padding: .5rem;
+    padding: 0.45rem;
     cursor: pointer;
+    border-radius: 8px;
+    color: inherit;
 }
 
-.hamburger span,
-#hamburger-btn span {
-    display: block;
-    width: 22px;
-    height: 2px;
-    background: currentColor;
-    margin: 4px 0;
-    border-radius: 2px;
-    transition: transform 180ms ease;
+.hamburger i {
+    font-size: 1.15rem;
+    line-height: 1;
+    display: inline-block;
 }
 
-/* -------------------- Mobile menu / modal -------------------- */
+/* hamburger hover */
+.hamburger:hover,
+.hamburger:focus {
+    background: rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
+    outline: none;
+    color: var(--olive-green);
+}
+
+/* ---------------- Mobile menu / modal ---------------- */
+
 .mobile-menu {
     position: fixed;
     inset: 0;
-    z-index: 1100;
+    z-index: 1300;
     pointer-events: none;
+    -webkit-font-smoothing: subpixel-antialiased;
 }
 
 .mobile-menu[data-open="true"] {
     pointer-events: auto;
 }
 
-/* sliding panel */
-
+/* slide-in panel */
 .mobile-menu-inner {
     position: fixed;
     left: 0;
     top: 0;
     bottom: 0;
     width: 320px;
-    max-width: 86%;
-    background: linear-gradient(180deg, #efe6dd, #f7f2ea);
-    box-shadow: 10px 0 40px rgba(0, 0, 0, 0.18);
+    max-width: 92%;
+    background: linear-gradient(180deg, #fff6e9, #f4efe3);
+    box-shadow: 24px 30px 60px rgba(8, 8, 8, 0.18);
     padding: 1.25rem;
-    transform: translateX(-8%);
+    transform: translateX(-110%);
     opacity: 0;
-    transition: transform var(--transition), opacity var(--transition);
+    transition: transform 360ms cubic-bezier(.2, .9, .3, 1), opacity 240ms ease;
+    border-right: 1px solid rgba(0, 0, 0, 0.04);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    overflow-y: auto;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+    z-index: 1305;
 }
 
+/* reveal panel */
 .mobile-menu[data-open="true"] .mobile-menu-inner {
     transform: translateX(0);
     opacity: 1;
@@ -701,52 +745,188 @@ h2, h3, h4 { font-family: "Lora", Georgia, serif; margin: 0 0 .5rem 0; }
 .mobile-backdrop {
     position: fixed;
     inset: 0;
-    background: rgba(6, 4, 2, 0.48);
+    z-index: 1301;
+    background: rgba(0, 0, 0, 0.12);
     opacity: 0;
-    transition: opacity 220ms;
+    transition: opacity 220ms ease;
     pointer-events: none;
 }
 
 .mobile-menu[data-open="true"] .mobile-backdrop {
     opacity: 1;
     pointer-events: auto;
+
 }
 
-/* inner layout */
+.mobile-menu-inner .mobile-brand-row {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding-bottom: .25rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    margin-bottom: .5rem;
+}
+
+.mobile-brand-row .brand-logo,
+.mobile-brand img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+.mobile-brand .brand-text {
+    font-family: "TAN Meringue", "Amsterdam Two", serif;
+    font-size: 1.05rem;
+    color: var(--text-dark);
+    font-weight: 800;
+    line-height: 1;
+    text-decoration: none;
+}
+
+/* close button */
 .mobile-close {
-    background: none;
+    background: var(--white);
     border: 0;
-    font-size: 1.2rem;
-    display: block;
+    padding: 0.45rem;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     margin-left: auto;
     cursor: pointer;
+    box-shadow: 0 6px 18px rgba(10, 10, 12, 0.08);
+    transition: transform 150ms ease, box-shadow 150ms ease;
+    font-size: 1.05rem;
+    color: var(--deep);
+    z-index: 1310;
+}
+
+.mobile-close:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 22px rgba(10, 10, 12, 0.12);
+}
+
+.mobile-close:focus {
+    outline: 3px solid rgba(180, 110, 255, 0.18);
+    outline-offset: 3px;
+}
+
+/* mobile nav links */
+
+.mobile-nav {
+    margin-top: 0.25rem;
+}
+
+.mobile-brand span {
+    font-family: "TAN Meringue";
+    padding-top: 14px;
 }
 
 .mobile-nav ul {
     list-style: none;
     padding: 0;
-    margin: 1rem 0;
+    margin: 0.6rem 0 0;
     display: flex;
     flex-direction: column;
-    gap: .6rem;
+    gap: 0.35rem;
 }
+
 
 .mobile-nav a {
     display: block;
-    padding: .8rem 1rem;
+    padding: 0.85rem 0.9rem;
     border-radius: 10px;
-    color: var(--deep);
+    color: var(--text-dark);
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 700;
     background: transparent;
+    transition: transform 140ms ease, background 160ms ease, color 140ms ease;
+    font-family: "TAN Meringue";
 }
 
-/* mobile actions */
+
+.mobile-login-wrapper {
+    margin-top: 1.3rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.mobile-login-wrapper i {
+    padding-bottom: 6px;
+}
+
+
+.mobile-login-btn, .mobile-logout-btn {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    background: var(--primary-color);
+    border: 1.5px solid rgba(0, 0, 0, 0.12);
+    border-radius: 12px;
+    color: var(--text-dark);
+    font-size: 1.05rem;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+    font-family: "TAN Meringue";
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+
+    transition:
+        transform 140ms ease,
+        background 160ms ease,
+        color 140ms ease,
+        border-color 160ms ease;
+}
+
+.mobile-login-btn:hover, .mobile-logout-btn:hover,
+.mobile-login-btn:focus, .mobile-logout-btn:focus,
+.mobile-login-btn:active, .mobile-logout-btn:active {
+    transform: translateY(-2px);
+    background: linear-gradient(90deg, rgba(207, 217, 204, 0.06), rgba(240, 219, 131, 0.05));
+    border-color: rgba(0, 0, 0, 0.25);
+    color: var(--primary-color);
+    outline: none;
+}
+
+.mobile-login-btn:focus-visible, .mobile-logout-btn {
+    box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.12);
+    outline: none;
+}
+
+.mobile-login-btn {
+    -webkit-tap-highlight-color: transparent;
+}
+
+
+.mobile-nav a:hover,
+.mobile-nav a:active,
+.mobile-nav a:focus,
+.mobile-nav a:focus-visible {
+    transform: translateY(-2px);
+    background: linear-gradient(90deg, rgba(207, 217, 204, 0.06), rgba(240, 219, 131, 0.03));
+    color: var(--primary-color);
+    outline: none;
+    box-shadow: none;
+    border-radius: 10px;
+}
+
+.mobile-nav a:focus-visible {
+    box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.12);
+}
+
+.mobile-nav a,
+.mobile-nav a:link,
+.mobile-nav a:visited {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+}
+
 .mobile-actions {
     margin-top: 1rem;
-    display: flex;
-    gap: .6rem;
-    flex-direction: column;
+    display: none;
 }
 
 
@@ -756,20 +936,172 @@ h2, h3, h4 { font-family: "Lora", Georgia, serif; margin: 0 0 .5rem 0; }
     color: var(--deep);
 }
 
-/* -------------------- Responsive rules -------------------- */
-@media (max-width:600px) {
-    .nav-links {
-        display: none;
+.wishlist-nav-btn i {
+    font-size: 1.4rem;
+}
+.mobile-wishlist-link i{
+    font-size: 1.4rem;
+}
+
+/* responsive tweaks */
+@media (max-width: 420px) {
+    .mobile-menu-inner {
+        width: calc(100% - 16px);
+        padding: 0.85rem;
     }
 
-    .hamburger,
-    #hamburger-btn {
-        display: flex;
-        flex-direction: column;
+    .mobile-brand .brand-text {
+        font-size: 1rem;
+    }
+}
+
+/* ---------------- Responsive rules ------------------ */
+@media (max-width: 980px) {
+    .nav-inner-container.container {
+        padding: 0.6rem 0.85rem;
     }
 
     .brand-text {
         font-size: 1rem;
+    }
+
+    .nav-links {
+        gap: 0.6rem;
+        font-size: 0.95rem;
+    }
+
+}
+
+/* LOGIN BUTTON */
+.login-btn, .logout-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    margin-right: var(--font-size-xs);
+    color: #333;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s ease;
+}
+
+.login-btn span {
+    padding-left: 6px;
+    font-family: "Lora";
+}
+
+.login-btn:hover {
+    color: var(--primary-color);
+}
+
+.login-btn i {
+    font-size: 1.3rem;
+}
+
+@media (max-width: 900px) {
+
+    .nav-links {
+        display: none;
+    }
+
+    .hamburger {
+        display: inline-flex;
+    }
+
+    .nav-inner-container.container {
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
+
+    /* hide the visible "Login" text next to the user icon in the top nav */
+    .login-btn span {
+        display: none !important;
+        width: 0;
+        height: 0;
+        overflow: hidden;
+    }
+
+    /* tighten spacing between action icons (login, wishlist, cart, hamburger) */
+    .nav-actions {
+        gap: 0.35rem;
+    }
+
+    /* make wishlist icon slightly more compact */
+    .wishlist-nav-btn {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        margin: 0 .1rem;
+        padding: 0;
+    }
+
+    .cart-btn,
+    .login-btn {
+        padding: 0.25rem 0.5rem;
+    }
+
+    /* slightly reduce nav container padding so everything fits */
+    .nav-inner-container.container {
+        padding: 0.45rem 0.6rem;
+    }
+
+    /* keep brand text from growing too large */
+    .brand-text {
+        font-size: 0.95rem;
+        padding-top: 8px;
+    }
+
+
+}
+
+@media (max-width: 420px) {
+    .brand-text {
+        display: none;
+    }
+
+    .brand-logo {
+        width: 36px;
+        height: 36px;
+    }
+
+    .cart-count {
+        font-size: 0.68rem;
+        padding: 1px 6px;
+        min-width: 18px;
+    }
+
+    .mobile-menu-inner {
+        width: calc(100%-28px);
+        max-width: 100%;
+        padding: 1rem;
+        border-radius: 10px;
+    }
+
+    .mobile-close {
+        width: 36px;
+        height: 36px;
+    }
+
+    .wishlist-nav-btn {
+        width: 34px;
+        height: 34px;
+    }
+
+    .cart-btn,
+    .login-btn {
+        padding: 0.2rem 0.45rem;
+    }
+
+    .hamburger {
+        padding: 0.34rem;
+    }
+
+    .nav-inner-container.container {
+        padding: 0.35rem 0.5rem;
+    }
+
+    .login-btn span {
+        display: none !important;
     }
 }
 
@@ -781,9 +1113,31 @@ h2, h3, h4 { font-family: "Lora", Georgia, serif; margin: 0 0 .5rem 0; }
     }
 }
 
+@media (hover: hover) and (pointer: fine) {
+    .mobile-nav a:hover {
+        transform: translateY(-2px);
+        background: linear-gradient(90deg, rgba(207, 217, 204, 0.06), rgba(240, 219, 131, 0.03));
+        color: var(--primary-color);
+    }
+}
+
+
+/* utility: visually hide but keep accessible text */
+.visually-hidden {
+    position: absolute !important;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 /* page spacer helper so content doesn't hide under fixed nav */
 .page-spacer {
-    height: 72px;
+    height: 35px;
 }
 
 /*=================== FOOTER =======================*/
@@ -908,6 +1262,11 @@ h2, h3, h4 { font-family: "Lora", Georgia, serif; margin: 0 0 .5rem 0; }
     color: var(--text-dark);
 }
 
+.footer-contact>* {
+    margin-bottom: 0.7rem;
+}
+
+
 .footer-license {
     margin-top: 0.8rem;
     font-size: 0.85rem;
@@ -931,10 +1290,11 @@ h2, h3, h4 { font-family: "Lora", Georgia, serif; margin: 0 0 .5rem 0; }
 }
 
 .footer-copyright {
-    margin-top: 1.5rem;
+    margin-top: var(--space-xl);
     font-size: 0.85rem;
     color: var(--text-light);
     text-align: center;
+    width: 100%;
 }
 
 /* ----- Responsive ----- */
@@ -952,4 +1312,150 @@ h2, h3, h4 { font-family: "Lora", Georgia, serif; margin: 0 0 .5rem 0; }
     }
 }
 
+.footer-social-item i {
+    padding: 5px;
+}
+
 /*=================== END OF FOOTER STYLING=======================*/
+/* ========== LOGIN MODAL ========== */
+
+/* Modal wrapper */
+.login-modal-wrapper {
+    display: none;
+    /* hidden by default */
+    position: fixed;
+    inset: 0;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    font-family: 'TAN Meringue', serif;
+    backdrop-filter: blur(4px);
+    /* blur the page behind */
+    background: rgba(0, 0, 0, 0.4);
+}
+
+
+/* Modal content (centered login box) */
+.login-modal-content {
+    position: relative;
+    z-index: 2;
+    /* above overlay */
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+    padding: 3rem 2rem;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    border-radius: 1rem;
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+/* Modal heading */
+.login-modal-content h3 {
+    font-size: 2.5rem;
+    color: #fff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+/* Form */
+.login-modal-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Inputs */
+.login-modal-form input {
+    width: 100%;
+    padding: 1.2rem 1.5rem;
+    font-size: 1.2rem;
+    border-radius: 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.25);
+    color: #fff;
+    backdrop-filter: blur(6px);
+    transition: all 0.3s ease;
+}
+
+.login-modal-form input::placeholder {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.login-modal-form input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    background: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.2);
+}
+
+/* Button */
+.login-modal-form button {
+    width: 100%;
+    padding: 1.2rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    background: rgba(212, 165, 116, 0.85);
+    color: #fff;
+    border-radius: 0.8rem;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(5px);
+}
+
+.login-modal-form button:hover {
+    background: rgba(212, 165, 116, 1);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Close button */
+.login-modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.8rem;
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* Fade-in animation */
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+    .login-modal-content {
+        padding: 2rem 1.5rem;
+        gap: 1.5rem;
+    }
+
+    .login-modal-content h3 {
+        font-size: 2rem;
+    }
+
+    .login-modal-form input,
+    .login-modal-form button {
+        font-size: 1rem;
+        padding: 1rem 1.2rem;
+    }
+}
+
+;
