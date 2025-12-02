@@ -1,154 +1,102 @@
-// document.addEventListener('DOMContentLoaded', async function () {
-//   // try list of candidate paths and return first OK text
-//   async function fetchFirst(paths) {
-//     for (let i = 0; i < paths.length; i++) {
-//       let p = paths[i];
-//       try {
-//         let res = await fetch(p);
-//         if (res && res.ok) return await res.text();
-//       } catch (e) {
-//         // ignore and try next
-//       }
-//     }
-//     return null;
-//   }
+// Unified loader for nav + footer that works from root or /html/ pages
+document.addEventListener("DOMContentLoaded", async function () {
+  // helper to detect if current page is inside /html/ folder
+  let isInsideHtmlFolder = window.location.pathname.includes("/html/");
 
-//   // likely locations for nav/footer — adjust if your files live elsewhere
-//   let navCandidates = [
-//     '/html/nav.html',
-//     'html/nav.html',
-//     'nav.html',
-//     '../nav.html',
-//     '../html/nav.html',
-//     '/nav.html'
-//   ];
-//   let footerCandidates = [
-//     '/html/footer.html',
-//     'html/footer.html',
-//     'footer.html',
-//     '../footer.html',
-//     '../html/footer.html',
-//     '/footer.html'
-//   ];
+  // --- NAVBAR ---
+  let navbarContainer = document.getElementById("navbar");
+  if (navbarContainer) {
+    let navPath = isInsideHtmlFolder ? "nav.html" : "html/nav.html";
+    try {
+      let res = await fetch(navPath);
+      if (!res.ok) throw new Error("nav fetch not ok: " + res.status);
+      navbarContainer.innerHTML = await res.text();
 
-//   // Inject navbar
-//   let navbarContainer = document.getElementById('navbar');
-//   if (navbarContainer) {
-//     let navHtml = await fetchFirst(navCandidates);
-//     if (navHtml) {
-//       navbarContainer.innerHTML = navHtml;
+      // move login modal to body so it's global
+      let injectedModal = document.querySelector(".login-modal-wrapper");
+      if (injectedModal && injectedModal.parentElement !== document.body) {
+        document.body.appendChild(injectedModal);
+      }
 
-//       // move modal (if it was inside the injected nav) to document.body
-//       try {
-//         let injectedModal = document.querySelector('.login-modal-wrapper');
-//         if (injectedModal && injectedModal.parentElement !== document.body) {
-//           document.body.appendChild(injectedModal);
-//         }
-//       } catch (e) {
-//         console.error('Error moving injected modal:', e);
-//       }
+      // ensure login trigger buttons open the modal
+      let loginTriggers = document.querySelectorAll(".open-login");
+      let loginModal = document.querySelector(".login-modal-wrapper");
+      if (loginTriggers && loginTriggers.length && loginModal) {
+        loginTriggers.forEach(btn => {
+          // avoid attaching duplicate listeners
+          if (!btn.dataset.loginAttached) {
+            btn.addEventListener("click", function (e) {
+              e.preventDefault();
+              loginModal.style.display = "flex";
+            });
+            btn.dataset.loginAttached = "true";
+          }
+        });
+      }
 
-//       // call init functions if available (guarded)
-//       if (typeof window.initNavbar === 'function') {
-//         try { window.initNavbar(); } catch (e) { console.error('initNavbar() after inject:', e); }
-//       }
-//       if (typeof window.updateCartCount === 'function') {
-//         try { window.updateCartCount(); } catch (e) { console.error('updateCartCount() after inject:', e); }
-//       }
+      // call optional init functions if present
+      if (typeof window.initNavbar === "function") {
+        try { window.initNavbar(); } catch (e) { console.error("initNavbar() failed:", e); }
+      }
+      if (typeof window.updateCartCount === "function") {
+        try { window.updateCartCount(); } catch (e) { console.error("updateCartCount() failed:", e); }
+      }
+      if (typeof handleLoginUI === "function") {
+        try { handleLoginUI(); } catch (e) { console.error("handleLoginUI() failed:", e); }
+      }
 
-//       // ensure login trigger class exists
-//       try {
-//         let loginTriggers = document.querySelectorAll('.open-login');
-//         if (!loginTriggers.length) {
-//           let btn = document.getElementById('login-btn');
-//           if (btn) btn.classList.add('open-login');
-//           loginTriggers = document.querySelectorAll('.open-login');
-//         }
+      // attach logout handlers (guarded)
+      document.querySelector("#logout-btn")?.addEventListener("click", logout);
+      document.querySelector(".mobile-logout-btn")?.addEventListener("click", logout);
 
-//         let loginModal = document.querySelector('.login-modal-wrapper');
-//         if (loginTriggers && loginTriggers.length && loginModal) {
-//           for (let i = 0; i < loginTriggers.length; i++) {
-//             let btn = loginTriggers[i];
-//             if (!btn.dataset.listenerAttached) {
-//               btn.addEventListener('click', function (e) {
-//                 e.preventDefault();
-//                 loginModal.style.display = 'flex';
-//               });
-//               btn.dataset.listenerAttached = "true";
-//             }
-//           }
-//         }
-//       } catch (e) {
-//         console.error('Post-inject login wiring error:', e);
-//       }
+    } catch (err) {
+      console.error("Failed to load nav:", err);
+    }
+  }
 
-//       // attach logout handlers safely
-//       let logoutBtn = document.querySelector("#logout-btn");
-//       if (logoutBtn && !logoutBtn.dataset.listenerAttached) {
-//         logoutBtn.addEventListener('click', logout);
-//         logoutBtn.dataset.listenerAttached = "true";
-//       }
-//       let mobileLogout = document.querySelector(".mobile-logout-btn");
-//       if (mobileLogout && !mobileLogout.dataset.listenerAttached) {
-//         mobileLogout.addEventListener('click', logout);
-//         mobileLogout.dataset.listenerAttached = "true";
-//       }
-//     } else {
-//       console.warn('Could not load nav.html from any candidate path.');
-//     }
-//   }
+  // --- FOOTER ---
+  let footerContainer = document.getElementById("footer");
+  if (footerContainer) {
+    let footerPath = isInsideHtmlFolder ? "footer.html" : "html/footer.html";
+    try {
+      let res2 = await fetch(footerPath);
+      if (!res2.ok) throw new Error("footer fetch not ok: " + res2.status);
+      footerContainer.innerHTML = await res2.text();
 
-//   // local login modal wiring (works even if modal was injected earlier)
-//   let loginModal = document.querySelector('.login-modal-wrapper');
-//   let closeBtn = document.querySelector('.login-modal-close');
-//   let loginTriggersNow = document.querySelectorAll('.open-login');
-//   if (loginTriggersNow && loginTriggersNow.length && loginModal) {
-//     for (let i = 0; i < loginTriggersNow.length; i++) {
-//       let btn = loginTriggersNow[i];
-//       if (!btn.dataset.modalListener) {
-//         btn.addEventListener('click', function () { loginModal.style.display = 'flex'; });
-//         btn.dataset.modalListener = "1";
-//       }
-//     }
-//   }
-//   if (closeBtn && loginModal && !closeBtn.dataset.modalListener) {
-//     closeBtn.addEventListener('click', function () { loginModal.style.display = 'none'; });
-//     closeBtn.dataset.modalListener = "1";
-//   }
-//   if (!window._loginWindowClick) {
-//     window.addEventListener('click', function (e) { if (loginModal && e.target === loginModal) loginModal.style.display = 'none'; });
-//     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && loginModal && loginModal.style.display === 'flex') loginModal.style.display = 'none'; });
-//     window._loginWindowClick = true;
-//   }
+      // call newsletter init if available in your script
+      if (typeof initNewsletterForm === "function") {
+        try { initNewsletterForm(); } catch (e) { console.error("initNewsletterForm() failed:", e); }
+      }
+    } catch (err) {
+      console.error("Failed to load footer:", err);
+    }
+  }
 
-//   // Inject footer
-//   let footerContainer = document.getElementById('footer');
-//   if (footerContainer) {
-//     let footerHtml = await fetchFirst(footerCandidates);
-//     if (footerHtml) {
-//       footerContainer.innerHTML = footerHtml;
-//       // call newsletter init if present
-//       if (typeof initNewsletterForm === 'function') {
-//         try { initNewsletterForm(); } catch (e) { console.error('initNewsletterForm error:', e); }
-//       }
-//     } else {
-//       console.warn('Could not load footer.html from any candidate path.');
-//     }
-//   }
+  // --- Generic login modal handlers (only if modal exists after injection) ---
+  // Close button and escape/click-outside handlers
+  let loginModalAfter = document.querySelector(".login-modal-wrapper");
+  if (loginModalAfter) {
+    let closeBtn = document.querySelector(".login-modal-close");
+    if (closeBtn && !closeBtn.dataset.closeAttached) {
+      closeBtn.addEventListener("click", function () {
+        loginModalAfter.style.display = "none";
+      });
+      closeBtn.dataset.closeAttached = "true";
+    }
 
-//   // final data boot
-//   try {
-//     if (typeof app !== 'undefined' && typeof app.loadData === 'function') {
-//       await app.loadData();
-//       if (app.migrateOldWishlist) app.migrateOldWishlist();
-//     }
-//   } catch (e) {
-//     console.error('app.loadData error:', e);
-//   }
-
-//   // ensure UI login state reflects currentUser
-//   try { if (typeof handleLoginUI === 'function') handleLoginUI(); } catch (e) { /* ignore */ }
-// });
+    if (!window._loginWindowListener) {
+      window.addEventListener("click", function (e) {
+        if (e.target === loginModalAfter) loginModalAfter.style.display = "none";
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && loginModalAfter.style.display === "flex") {
+          loginModalAfter.style.display = "none";
+        }
+      });
+      window._loginWindowListener = true;
+    }
+  }
+});
 
 function handleLoginUI() {
   const loginBtn = document.querySelector("#login-btn");
