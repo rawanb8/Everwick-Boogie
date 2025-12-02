@@ -1,3 +1,49 @@
+// reem's edits 
+// ---- fix paths when we're on index.html (root) ----
+function isRootIndexPage() {
+  const path = window.location.pathname;
+  // works for /index.html, /Everwick-Boogee/index.html, or just "/"
+  return path === "/" || path.endsWith("/index.html");
+}
+function fixIndexHtmlLinks(rootEl) {
+  if (!rootEl || !isRootIndexPage()) return;
+
+  rootEl.querySelectorAll("a[href]").forEach((a) => {
+    const href = a.getAttribute("href");
+    if (!href) return;
+
+    // ignore external / special URLs
+    if (
+      href.startsWith("#") ||
+      href.startsWith("http://") ||
+      href.startsWith("https://") ||
+      href.startsWith("//") ||
+      href.startsWith("mailto:") ||
+      href.startsWith("tel:")
+    ) {
+      return;
+    }
+
+    // only touch .html files
+    if (!/\.html($|\?)/.test(href)) return;
+
+    // already has a folder prefix or absolute path → leave it
+    if (
+      href.startsWith("html/") ||
+      href.startsWith("../") ||
+      href.startsWith("/")
+    ) {
+      return;
+    }
+
+    // don't break the home link
+    if (href === "index.html" || href === "./index.html") return;
+
+    // final rewrite: "page.html" -> "html/page.html"
+    a.setAttribute("href", "html/" + href);
+  });
+}
+
 // Unified loader for nav + footer that works from root or /html/ pages
 document.addEventListener("DOMContentLoaded", async function () {
   // helper to detect if current page is inside /html/ folder
@@ -11,6 +57,9 @@ document.addEventListener("DOMContentLoaded", async function () {
       let res = await fetch(navPath);
       if (!res.ok) throw new Error("nav fetch not ok: " + res.status);
       navbarContainer.innerHTML = await res.text();
+      
+      // if we're on index.html, rewrite relative *.html links in the injected nav
+      fixIndexHtmlLinks(navbarContainer);
 
       // move login modal to body so it's global
       let injectedModal = document.querySelector(".login-modal-wrapper");
@@ -62,6 +111,9 @@ document.addEventListener("DOMContentLoaded", async function () {
       let res2 = await fetch(footerPath);
       if (!res2.ok) throw new Error("footer fetch not ok: " + res2.status);
       footerContainer.innerHTML = await res2.text();
+
+      // adjust paths only when footer is injected into index.html
+      fixIndexHtmlLinks(footerContainer);
 
       // call newsletter init if available in your script
       if (typeof initNewsletterForm === "function") {

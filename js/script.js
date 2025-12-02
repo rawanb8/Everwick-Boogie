@@ -96,7 +96,7 @@
       let a = document.createElement('article');
       a.className = 'product-card';
       a.innerHTML = `
-      <div class="product-image"><img src="${(Array.isArray(p.images) && p.images[0]) || ''}" alt="${p.name || ''}"></div>
+      <div class="product-image"><img src="../${(Array.isArray(p.images) && p.images[0]) || ''}" alt="${p.name || ''}"></div>
       <h3 class="product-title">${p.name || 'Untitled'}</h3>
       <p class="product-price">${typeof window.app?.formatPrice === 'function' ? window.app.formatPrice(p.price) : ('$' + (Number(p.price || 0).toFixed(2)))}</p>
     `;
