@@ -1,5 +1,5 @@
 // reem's edits 
-      console.log("test eza sar she")
+      console.log("test eza sar")
 // ---- fix paths when we're on index.html (root) ----
 function isRootIndexPage() {
   const path = window.location.pathname;
@@ -8,7 +8,7 @@ function isRootIndexPage() {
 }
 function fixIndexHtmlLinks(rootEl) {
   if (!rootEl || !isRootIndexPage()) return;
-
+  console.log("ne7na bl index")
   rootEl.querySelectorAll("a[href]").forEach((a) => {
     const href = a.getAttribute("href");
     if (!href) return;
@@ -26,7 +26,7 @@ function fixIndexHtmlLinks(rootEl) {
     }
 
     // only touch .html files
-    if (!/\.html($|\?)/.test(href)) return;
+    if (!/\.html($|[?#])/.test(href)) return;
 
     // already has a folder prefix or absolute path → leave it
     if (
@@ -42,6 +42,7 @@ function fixIndexHtmlLinks(rootEl) {
 
     // final rewrite: "page.html" -> "html/page.html"
     a.setAttribute("href", "html/" + href);
+    console.log("keef sar l link", "html/" + href)
   });
 }
 
@@ -575,118 +576,12 @@ app.isInWishlistForUser = function (productId, username = null) {
 })();
 
 /* load navbar/footer + app data */
+/* load app data + migrate wishlist */
 document.addEventListener('DOMContentLoaded', async function () {
-  let navbarContainer = document.getElementById('navbar');
-  if (navbarContainer) {
-    try {
-      let response = await fetch('html/nav.html');
-      if (response.ok) {
-        navbarContainer.innerHTML = await response.text();
-
-        // after injecting the nav move the modal of login in nav.html to the body of the page ---
-        try {
-          // move any modal that was inside the injected nav into document.body so it behaves like a global modal
-          let injectedModal = document.querySelector('.login-modal-wrapper');
-          if (injectedModal && injectedModal.parentElement !== document.body) {
-            // move to body preserves the element and event listeners 
-            document.body.appendChild(injectedModal);
-          }
-
-          // ensure nav init functions are called (guarded as before)
-          if (typeof window.initNavbar === 'function') {
-            try { window.initNavbar(); } catch (e) { console.error('initNavbar() error after injecting nav.html', e); }
-          } else {
-            console.warn('initNavbar not available after nav injection — skipping.');
-          }
-
-          if (typeof window.updateCartCount === 'function') {
-            try { window.updateCartCount(); } catch (e) { console.error('updateCartCount() error after injecting nav.html', e); }
-          } else {
-            console.warn('updateCartCount not available after nav injection — skipping.');
-          }
-
-          // Make sure the login button in the injected nav has a trigger class or id we can listen to.
-          // Preferred: give the button class "open-login" in nav.html (or below we attach to #login-btn if present).
-          let loginTriggers = document.querySelectorAll('.open-login');
-          if (!loginTriggers.length) {
-            // fallback to #login-btn if you used that id
-            let btn = document.getElementById('login-btn');
-            if (btn) btn.classList.add('open-login'); // add class so your existing code finds it
-            loginTriggers = document.querySelectorAll('.open-login');
-          }
-          
-          // Wire the click => show modal (the rest of your modal handlers run later in the file)
-          let loginModal = document.querySelector('.login-modal-wrapper');
-          if (loginTriggers && loginTriggers.length && loginModal) {
-            loginTriggers.forEach(btn => {
-              btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                loginModal.style.display = 'flex';
-              });
-            });
-          }
-        } catch (err) {
-          console.error('Post-nav-inject setup error:', err);
-        }
-
-
-        // guarded calls: only call if functions are available globally
-        if (typeof window.initNavbar === 'function') {
-          try { window.initNavbar(); } catch (e) { console.error('initNavbar() error after injecting nav.html', e); }
-        } else {
-          console.warn('initNavbar not available after nav injection — skipping.');
-        }
-
-        if (typeof window.updateCartCount === 'function') {
-          try { window.updateCartCount(); } catch (e) { console.error('updateCartCount() error after injecting nav.html', e); }
-        } else {
-          console.warn('updateCartCount not available after nav injection — skipping.');
-        }
-
-        handleLoginUI();
-        // Attach logout for both desktop & mobile buttons
-        document.querySelector("#logout-btn")?.addEventListener('click', logout);
-        document.querySelector(".mobile-logout-btn")?.addEventListener('click', logout);
-
-
-      } else {
-        console.warn('nav.html fetch not ok', response.status);
-      }
-    } catch (err) {
-      console.error('Error loading navbar:', err);
-    }
-  }
-
-
-  // login modal handlers (guarded)
-  let loginModal = document.querySelector('.login-modal-wrapper');
-  let closeBtn = document.querySelector('.login-modal-close');
-  let loginTriggers = document.querySelectorAll('.open-login');
-  if (loginTriggers && loginTriggers.length && loginModal) {
-    Array.prototype.forEach.call(loginTriggers, function (btn) {
-      btn.addEventListener('click', function () { loginModal.style.display = 'flex'; });
-    });
-  }
-  if (closeBtn && loginModal) {
-    closeBtn.addEventListener('click', function () { loginModal.style.display = 'none'; });
-  }
-  window.addEventListener('click', function (e) { if (loginModal && e.target === loginModal) loginModal.style.display = 'none'; });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && loginModal && loginModal.style.display === 'flex') loginModal.style.display = 'none'; });
-
-  let footerContainer = document.getElementById('footer');
-  if (footerContainer) {
-    try {
-      let response = await fetch('html/footer.html');
-      if (response.ok) {
-        footerContainer.innerHTML = await response.text();
-        initNewsletterForm();
-      } else console.warn('footer.html fetch not ok', response.status);
-    } catch (err) { console.error('Error loading footer:', err); }
-  }
-
-  // finally, load data for customize page and others
   await app.loadData();
-  app.migrateOldWishlist && app.migrateOldWishlist();
+  if (typeof app.migrateOldWishlist === 'function') {
+    app.migrateOldWishlist();
+  }
 });
 
 /* newsletter init */
