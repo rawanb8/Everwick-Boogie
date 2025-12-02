@@ -181,7 +181,7 @@ let app = {
     try {
       if (!this.scents.length || !this.products.length) {
         // adjust path if necessary
-        let response = await fetch('../json/products.json');
+        let response = await fetch('/Everwick-Boogee/json/products.json');
         if (!response.ok) throw new Error("Fetch failed: " + response.status);
         let data = await response.json();
 
