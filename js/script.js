@@ -71,7 +71,13 @@
       container.innerHTML = '<p class="text-center">No featured products.</p>';
       return;
     }
-
+    if(isRootIndexPage()){
+      featuredItems.forEach(item => {
+        if (item && typeof item.name === 'string' && item.name.length > 0) {
+          item.name = item.name.slice(1);
+        }
+      });
+    }
     // Clear and build track
     container.innerHTML = '';
     container.style.position = 'relative';
