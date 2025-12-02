@@ -236,7 +236,7 @@ let app = {
     try {
       if (!this.scents.length || !this.products.length) {
         // adjust path if necessary
-        if (isRootIndexPage()) {response = await fetch('json/products.json'); }
+        if (isRootIndexPage()) {response = await fetch('./json/products.json'); }
         else {response = await fetch('../json/products.json');}
         console.log(response)
         if (!response.ok) throw new Error("Fetch failed: " + response.status);
