@@ -1,9 +1,4 @@
-
-function isRootIndexPage() {
-  let path = window.location.pathname;
-  // works for /index.html, /Everwick-Boogee/index.html, or just "/"
-  return path === "/" || path.endsWith("/");
-}
+ 
 (async () => {
   // wait for DOM ready
   if (document.readyState === 'loading') {

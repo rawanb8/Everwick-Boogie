@@ -4,7 +4,7 @@
 function isRootIndexPage() {
   let path = window.location.pathname;
   // works for /index.html, /Everwick-Boogee/index.html, or just "/"
-  return path === "/" || path.endsWith("/");
+  return path === "/" || path.endsWith("/") || path.includes("index.html");
 }
 function fixIndexHtmlLinks(rootEl) {
   if (!rootEl || !isRootIndexPage()) return;
@@ -12,7 +12,9 @@ function fixIndexHtmlLinks(rootEl) {
   rootEl.querySelectorAll("a[href]").forEach((a) => {
     let href = a.getAttribute("href");
     if (!href) return;
-
+    if(href=="../"){
+      return a.setAttribute("href", "./")
+    }
     // ignore external / special URLs
     if (
       href.startsWith("#") ||

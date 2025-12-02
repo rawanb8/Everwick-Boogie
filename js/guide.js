@@ -111,7 +111,6 @@ function displayScents(scents) {
     let displayCategory = scent.category || scent.season || '';
     let strengthDots = '●'.repeat(Math.min(10, scent.aggressiveness)) + '○'.repeat(10 - Math.min(10, scent.aggressiveness));
    let product = app.products?.find(p => p.scentId === scent.id);
-    let priceHtml = product ? app.formatPrice(product.price) : '$0.00';
 
     return `
       <div class="scent-card card" role="button" tabindex="0" onclick="showScentDetails(${scent.id})"
@@ -126,7 +125,7 @@ function displayScents(scents) {
           <div class="scent-details">
             <div class="scent-mood">Mood: ${escapeHtml(scent.mood)}</div>
             <div class="scent-strength">Strength: <span class="strength-bar">${strengthDots}</span></div>
-            <div class="scent-price">${priceHtml}</div>
+            
           </div>
           <div class="scent-notes">
             ${(Array.isArray(scent.notes) ? scent.notes.map(n => `<span class="note-tag">${escapeHtml(n)}</span>`).join('') : '')}
