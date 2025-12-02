@@ -1,4 +1,5 @@
 // reem's edits 
+      console.log("test eza sar she")
 // ---- fix paths when we're on index.html (root) ----
 function isRootIndexPage() {
   const path = window.location.pathname;
@@ -114,7 +115,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       // adjust paths only when footer is injected into index.html
       fixIndexHtmlLinks(footerContainer);
-
+      console.log("test eza zabat")
       // call newsletter init if available in your script
       if (typeof initNewsletterForm === "function") {
         try { initNewsletterForm(); } catch (e) { console.error("initNewsletterForm() failed:", e); }
