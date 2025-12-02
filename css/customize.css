@@ -20,9 +20,9 @@
 .custom-controls {
   background: var(--card-bg, #fff);
   padding: 1rem;
-  border-radius: 12px;
+  border-radius: 12px; 
   box-shadow: var(--card-shadow, 0 6px 20px rgba(0, 0, 0, 0.06));
-}
+} 
 
 .custom-title {
   font-family: "TAN Meringue";
@@ -162,6 +162,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  position: relative;
   /* justify-content: center; */
   gap: 0.35rem;
   padding: 0.65rem;

@@ -4,14 +4,17 @@
         /*overrides width: 100% in main.css*/
     }
 }
+
 .nav-links *:nth-child(4) {
     transition-delay: 0s !important;
     padding-top: 0 !important;
 }
-.category-list *:nth-child(4){
+
+.category-list *:nth-child(4) {
     transition: 0 !important;
     padding-top: 0 !important;
 }
+
 /* -------- page baseline -------- */
 .home-page {
     background: var(--bg);
@@ -130,21 +133,21 @@
 }
 
 @media (max-width: 544px) {
-  .brand-slogan {
-    font-size: clamp(1.1rem, 6.5vw, 1.6rem);
-    line-height: 3; 
-    white-space: normal;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-    letter-spacing: 0.01em;
-  }
-
-  @media (max-width: 360px) {
     .brand-slogan {
-      font-size: 1.15rem;
-      line-height: 3.5;
+        font-size: clamp(1.1rem, 6.5vw, 1.6rem);
+        line-height: 3;
+        white-space: normal;
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+        letter-spacing: 0.01em;
     }
-  }
+
+    @media (max-width: 360px) {
+        .brand-slogan {
+            font-size: 1.15rem;
+            line-height: 3.5;
+        }
+    }
 }
 
 /* small subtitle under the slogan */
@@ -792,7 +795,8 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.5rem;
     align-items: center;
-    padding: 4rem 2rem 4rem 2rem;;
+    padding: 4rem 2rem 4rem 2rem;
+    ;
 }
 
 .about-media {
@@ -1599,27 +1603,29 @@
         min-width: 200px;
     }
 }
+
 @media (max-width: 420px) {
-  .quiz-media img {
-    max-width: 280px;
-    width: 88%;
-  }
+    .quiz-media img {
+        max-width: 280px;
+        width: 88%;
+    }
 
-  .quiz-content .section-title {
-    font-size: 1.25rem;
-  }
+    .quiz-content .section-title {
+        font-size: 1.25rem;
+    }
 
-  .quiz-content p {
-    font-size: 0.98rem;
-  }
+    .quiz-content p {
+        font-size: 0.98rem;
+    }
 }
 
 @media (max-width: 480px) {
-  .quiz-content {
-    text-align: center;
-  }
-  .quiz-content .btn {
-    margin-left: auto;
-    margin-right: auto;
-  }
+    .quiz-content {
+        text-align: center;
+    }
+
+    .quiz-content .btn {
+        margin-left: auto;
+        margin-right: auto;
+    }
 }

@@ -451,7 +451,7 @@ a:hover {
     transition: background var(--transition), box-shadow var(--transition), transform var(--transition), color var(--transition);
     background: var(--nav-glass);
     color: inherit;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -866,7 +866,9 @@ a:hover {
 }
 
 
-.mobile-login-btn, .mobile-logout-btn {
+
+.mobile-login-btn,
+.mobile-logout-btn {
     width: 100%;
     padding: 0.9rem 1rem;
     background: var(--primary-color);
@@ -889,9 +891,13 @@ a:hover {
         border-color 160ms ease;
 }
 
-.mobile-login-btn:hover, .mobile-logout-btn:hover,
-.mobile-login-btn:focus, .mobile-logout-btn:focus,
-.mobile-login-btn:active, .mobile-logout-btn:active {
+
+.mobile-login-btn:hover,
+.mobile-logout-btn:hover,
+.mobile-login-btn:focus,
+.mobile-logout-btn:focus,
+.mobile-login-btn:active,
+.mobile-logout-btn:active {
     transform: translateY(-2px);
     background: linear-gradient(90deg, rgba(207, 217, 204, 0.06), rgba(240, 219, 131, 0.05));
     border-color: rgba(0, 0, 0, 0.25);
@@ -899,12 +905,12 @@ a:hover {
     outline: none;
 }
 
-.mobile-login-btn:focus-visible, .mobile-logout-btn {
+.mobile-login-btn:focus-visible, .mobile-logout-btn:focus-visible {
     box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.12);
     outline: none;
 }
 
-.mobile-login-btn {
+.mobile-login-btn, .mobile-logout-btn {
     -webkit-tap-highlight-color: transparent;
 }
 
@@ -946,7 +952,8 @@ a:hover {
 .wishlist-nav-btn i {
     font-size: 1.4rem;
 }
-.mobile-wishlist-link i{
+
+.mobile-wishlist-link i {
     font-size: 1.4rem;
 }
 
@@ -979,8 +986,10 @@ a:hover {
 
 }
 
+
 /* LOGIN BUTTON */
-.login-btn, .logout-btn {
+.login-btn,
+.logout-btn {
     background: none;
     border: none;
     cursor: pointer;
@@ -1316,6 +1325,15 @@ a:hover {
 
     .footer-newsletter {
         flex-direction: column;
+    }
+
+     .nav-actions {
+        flex-wrap: nowrap;
+        white-space: nowrap;
+    }
+
+    .nav-actions > * {
+        flex-shrink: 0;
     }
 }
 

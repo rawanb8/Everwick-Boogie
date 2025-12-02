@@ -5,6 +5,7 @@ $('document').ready(async function () {
     renderWishlist();
 });
 
+// Renders the wishlist grid for the current user
 function renderWishlist() {
     let user = localStorage.getItem('currentUser') || null;
     let $container = $('#wishlist-grid');
@@ -52,6 +53,7 @@ function renderWishlist() {
     $container.html(html);
 }
 
+// Remove a product from the wishlist of the current user
 function removeFromWishlistPage(productId) {
     let user = localStorage.getItem('currentUser') || localStorage.getItem('currentUser') || null;
     app.removeFromWishlistForUser(productId, user);
@@ -78,3 +80,7 @@ function addToCartFromWishlist(btnElement, productId) {
         }
     }
 }
+
+
+document.addEventListener('userChanged', renderWishlist);
+
