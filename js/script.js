@@ -1,3 +1,9 @@
+
+function isRootIndexPage() {
+  let path = window.location.pathname;
+  // works for /index.html, /Everwick-Boogee/index.html, or just "/"
+  return path === "/" || path.endsWith("/");
+}
 (async () => {
   // wait for DOM ready
   if (document.readyState === 'loading') {
@@ -71,13 +77,19 @@
       container.innerHTML = '<p class="text-center">No featured products.</p>';
       return;
     }
-    if(isRootIndexPage()){
+  if (isRootIndexPage()) {
       featuredItems.forEach(item => {
-        if (item && typeof item.name === 'string' && item.name.length > 0) {
-          item.name = item.name.slice(1);
-        }
+          if (item.images && Array.isArray(item.images)) {
+              item.images = item.images.map(img => {
+                  if (typeof img === "string" && img.length > 0) {
+                      return img.slice(1);   // remove first character
+                  }
+                  return img;
+              });
+          }
       });
-    }
+  }
+
     // Clear and build track
     container.innerHTML = '';
     container.style.position = 'relative';
