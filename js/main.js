@@ -38,7 +38,7 @@ function fixIndexHtmlLinks(rootEl) {
     }
 
     // don't break the home link
-    if (href === "/" || href === "./") return;
+    if (a.textContent == "Home") {console.log("hader"); return};
 
     // final rewrite: "page.html" -> "html/page.html"
     a.setAttribute("href", "html/" + href);
