@@ -384,7 +384,7 @@
     let shopLink = document.createElement('a');
     shopLink.className = 'btn btn-primary';
     let searchQuery = encodeURIComponent(String(p.name || '').trim());
-    shopLink.href = `/html/shop.html?q=${searchQuery}`;
+    shopLink.href = `./html/shop.html?q=${searchQuery}`;
     shopLink.textContent = 'Go to shop';
 
     actions.appendChild(shopLink);
