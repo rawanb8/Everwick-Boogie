@@ -42,7 +42,7 @@ function fixIndexHtmlLinks(rootEl) {
 
     // final rewrite: "page.html" -> "html/page.html"
     a.setAttribute("href", "html/" + href);
-    console.log("keef sar l link", "html/" + href)
+    // console.log("keef sar l link", "html/" + href)
   });
 }
 
@@ -232,12 +232,16 @@ let app = {
   },
 
   async loadData() {
+    let response;
     try {
       if (!this.scents.length || !this.products.length) {
         // adjust path if necessary
-        let response = await fetch('../json/products.json');
+        if (isRootIndexPage()) {response = await fetch('json/products.json'); }
+        else {response = await fetch('../json/products.json');}
+        console.log(response)
         if (!response.ok) throw new Error("Fetch failed: " + response.status);
         let data = await response.json();
+        console.log(data)
 
         this.scents = Array.isArray(data.scents) ? data.scents.map(function (s) {
           return Object.assign({}, s, { aggressiveness: s.aggressiveness || 2 });
