@@ -1,5 +1,3 @@
-// reem's edits 
-      console.log("test eza sar")
 // ---- fix paths when we're on index.html (root) ----
 function isRootIndexPage() {
   let path = window.location.pathname;
@@ -10,13 +8,11 @@ let isalreadyrunned = false;
 function fixIndexHtmlLinks(rootEl) {
   if (!rootEl || !isRootIndexPage()) return;
   
-  console.log("ne7na bl index")
   if(document.querySelector(".brand-logo") && !isalreadyrunned){
     isalreadyrunned=true
     document.querySelector(".brand-logo").setAttribute('src',document.querySelector(".brand-logo").getAttribute('src').slice(1))
-  }else{
-    console.log("ma fi logo")
   }
+
 
   rootEl.querySelectorAll("a[href]").forEach((a) => {
     let href = a.getAttribute("href");
@@ -49,11 +45,10 @@ function fixIndexHtmlLinks(rootEl) {
     }
     if(href=='./' && isRootIndexPage()){return alert("homeee")}
     // don't break the home link
-    if (a.textContent == "Home") {console.log("hader"); return};
+    if (a.textContent == "Home")  return;
 
     // final rewrite: "page.html" -> "html/page.html"
     a.setAttribute("href", "html/" + href);
-    // console.log("keef sar l link", "html/" + href)
   });
 }
 
@@ -127,7 +122,6 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       // adjust paths only when footer is injected into index.html
       fixIndexHtmlLinks(footerContainer);
-      console.log("test eza zabat")
       // call newsletter init if available in your script
       if (typeof initNewsletterForm === "function") {
         try { initNewsletterForm(); } catch (e) { console.error("initNewsletterForm() failed:", e); }
@@ -249,10 +243,8 @@ let app = {
         // adjust path if necessary
         if (isRootIndexPage()) {response = await fetch('./json/products.json'); }
         else {response = await fetch('../json/products.json');}
-        console.log(response)
         if (!response.ok) throw new Error("Fetch failed: " + response.status);
         let data = await response.json();
-        console.log(data)
 
         this.scents = Array.isArray(data.scents) ? data.scents.map(function (s) {
           return Object.assign({}, s, { aggressiveness: s.aggressiveness || 2 });
@@ -324,7 +316,7 @@ let app = {
     if (!product) return false;
 
     cart.push({
-      id: Date.now() + '-' + productId, // ✅ unique id
+      id: Date.now() + '-' + productId, 
       productId: productId,
       quantity: quantity,
       price: product.price
