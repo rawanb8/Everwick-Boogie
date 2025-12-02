@@ -25,7 +25,7 @@
 
     // fallback fetch (absolute path)
     try {
-      let res = await fetch('/Everwick-Boogee/json/products.json');
+      let res = await fetch('/json/products.json');
       if (!res.ok) throw new Error(`Failed to fetch products.json (${res.status})`);
       let data = await res.json();
       app.data = data || {};
