@@ -36,7 +36,7 @@ function fixIndexHtmlLinks(rootEl) {
     ) {
       return;
     }
-
+    if(href=='./' && isRootIndexPage()){return}
     // don't break the home link
     if (a.textContent == "Home") {console.log("hader"); return};
 
