@@ -1192,9 +1192,34 @@
 }
 
 
+.btn-wishlist-modal {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 45px;
+    height: 45px;
+
+    border: 2px solid #ccc;
+    border-radius: 25%;
+    background: white;
+    color: #444;
+    cursor: pointer;
+
+    font-size: 20px;
+    transition: 0.2s ease;
+}
+
 .btn-wishlist-modal:hover {
-  border-color: #e57373;
-  color: #e57373;
+    border-color: #e57373;
+    color: #e57373;
+}
+
+/* When active (wishlisted) */
+.btn-wishlist-modal.active {
+    background: #e57373;
+    border-color: #e57373;
+    color: white;
 }
 
 .scent-detail-image {
@@ -1366,7 +1391,6 @@
   padding: var(--space-2xl);
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
   max-height: 80vh;
   position: relative;
 }
