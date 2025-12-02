@@ -25,14 +25,14 @@
 
     // fallback fetch (absolute path)
     try {
-      let res = await fetch('/json/products.json');
+      let res = await fetch('./json/products.json');
       if (!res.ok) throw new Error(`Failed to fetch products.json (${res.status})`);
       let data = await res.json();
       app.data = data || {};
       app.products = Array.isArray(data.products) ? data.products : [];
       app.scents = Array.isArray(data.scents) ? data.scents : [];
     } catch (err) {
-      console.error('Could not load /json/products.json:', err);
+      console.error('Could not load ./json/products.json:', err);
       app.products = app.products || [];
       app.scents = app.scents || [];
     }
