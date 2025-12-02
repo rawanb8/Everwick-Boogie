@@ -6,9 +6,18 @@ function isRootIndexPage() {
   // works for /index.html, /Everwick-Boogee/index.html, or just "/"
   return path === "/" || path.endsWith("/") || path.includes("index.html");
 }
+let isalreadyrunned = false;
 function fixIndexHtmlLinks(rootEl) {
   if (!rootEl || !isRootIndexPage()) return;
+  
   console.log("ne7na bl index")
+  if(document.querySelector(".brand-logo") && !isalreadyrunned){
+    isalreadyrunned=true
+    document.querySelector(".brand-logo").setAttribute('src',document.querySelector(".brand-logo").getAttribute('src').slice(1))
+  }else{
+    console.log("ma fi logo")
+  }
+
   rootEl.querySelectorAll("a[href]").forEach((a) => {
     let href = a.getAttribute("href");
     if (!href) return;
