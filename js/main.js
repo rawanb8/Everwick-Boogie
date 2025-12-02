@@ -2,15 +2,15 @@
       console.log("test eza sar")
 // ---- fix paths when we're on index.html (root) ----
 function isRootIndexPage() {
-  const path = window.location.pathname;
+  let path = window.location.pathname;
   // works for /index.html, /Everwick-Boogee/index.html, or just "/"
-  return path === "/" || path.endsWith("/index.html");
+  return path === "/" || path.endsWith("/");
 }
 function fixIndexHtmlLinks(rootEl) {
   if (!rootEl || !isRootIndexPage()) return;
   console.log("ne7na bl index")
   rootEl.querySelectorAll("a[href]").forEach((a) => {
-    const href = a.getAttribute("href");
+    let href = a.getAttribute("href");
     if (!href) return;
 
     // ignore external / special URLs
@@ -38,7 +38,7 @@ function fixIndexHtmlLinks(rootEl) {
     }
 
     // don't break the home link
-    if (href === "index.html" || href === "./index.html") return;
+    if (href === "/" || href === "./") return;
 
     // final rewrite: "page.html" -> "html/page.html"
     a.setAttribute("href", "html/" + href);
@@ -153,10 +153,10 @@ document.addEventListener("DOMContentLoaded", async function () {
 });
 
 function handleLoginUI() {
-  const loginBtn = document.querySelector("#login-btn");
-  const mobileLoginBtn = document.querySelector(".mobile-login-btn");
-  const logoutBtn = document.querySelector("#logout-btn");
-  const mobileLogoutBtn = document.querySelector(".mobile-logout-btn");
+  let loginBtn = document.querySelector("#login-btn");
+  let mobileLoginBtn = document.querySelector(".mobile-login-btn");
+  let logoutBtn = document.querySelector("#logout-btn");
+  let mobileLogoutBtn = document.querySelector(".mobile-logout-btn");
 
   if (localStorage.getItem("currentUser")) {
     // User logged in → show logout

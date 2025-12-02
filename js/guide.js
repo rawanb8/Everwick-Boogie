@@ -99,7 +99,7 @@ function loadScentsLibrary() {
 function getScentImage(scentId) {
   // Main.js already has product images handling; just ensure fallback here
   let product = app.products?.find(p => p.scentId === scentId);
-  return product ? product.images[0] : '/media/products/placeholder.png';
+  return product ? product.images[0] : '../media/products/placeholder.png';
 }
 
 

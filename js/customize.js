@@ -1,7 +1,7 @@
 (function ($) {
     'use strict';
 
-    // --- Config / constants ---
+    // --- Config / letants ---
     let COLORS = [
         { slug: 'pure-white', name: 'Pure White', hex: '#FFFFFF' },
         { slug: 'soft-pink', name: 'Soft Pink', hex: '#FFB6C1' },
@@ -26,10 +26,10 @@
     function candleImagePath(colorSlug, labelSlug) {
         colorSlug = (colorSlug || 'pure-white').toString();
         labelSlug = (labelSlug || 'no-label').toString();
-        return '/media/custom/candles/' + colorSlug + '-' + labelSlug + '.png';
+        return '../media/custom/candles/' + colorSlug + '-' + labelSlug + '.png';
     }
 
-    let BASE_IMAGE = '/media/custom/base-candle.png';
+    let BASE_IMAGE = '../media/custom/base-candle.png';
 
     // --- State ---
     let state = {
@@ -65,7 +65,7 @@
             $base.addClass('hidden');
         };
         testImg.onerror = function () {
-            let fallback = '/media/custom/candles/' + state.color + '-no-label.png';
+            let fallback = '../media/custom/candles/' + state.color + '-no-label.png';
             let fb = new Image();
             fb.onload = function () {
                 $combined.attr('src', fallback).removeClass('hidden').fadeIn(120);
@@ -172,9 +172,9 @@
             let $btn = $('<button type="button" class="addition-toggle" aria-pressed="false"></button>');
             $btn.attr('data-key', a.key).attr('data-price', a.price).attr('title', a.name + ' (+$' + toNumber(a.price).toFixed(2) + ')');
 
-            let svgPath = '/media/custom/additions/' + a.key + '.svg';
+            let svgPath = '../media/custom/additions/' + a.key + '.svg';
             let $img = $('<img class="addition-icon" alt="">').attr('src', svgPath).on('error', function () {
-                let png = '/media/custom/additions/' + a.key + '.png';
+                let png = '../media/custom/additions/' + a.key + '.png';
                 if ($(this).attr('src') !== png) $(this).attr('src', png);
             });
 
@@ -407,7 +407,7 @@
         }
 
         //font awsome triangle warning
-        const html = '<i class="fa-solid fa-triangle-exclamation warn-icon" aria-hidden="true"></i>' +
+        let html = '<i class="fa-solid fa-triangle-exclamation warn-icon" aria-hidden="true"></i>' +
             '<span class="warn-text"></span>' +
             '<button class="warn-close" aria-label="Close warning">&times;</button>';
 
