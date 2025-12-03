@@ -167,3 +167,22 @@ function scrollToFAQ() {
 function openCartModal() {
     // Implementation if needed
 }
+
+  //scroll animations
+  function observeScrollAnimations() {
+  let elements = document.querySelectorAll('.animate-on-scroll');
+
+  if (!elements.length) return;
+
+  let scrollObserver = new IntersectionObserver(function (entries, obs) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+
+  elements.forEach(function (el) { scrollObserver.observe(el); });
+}
+observeScrollAnimations();

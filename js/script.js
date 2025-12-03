@@ -412,13 +412,14 @@
     }, 160);
   });
 
+  //scroll animations
   function observeScrollAnimations() {
-  const elements = document.querySelectorAll('.animate-on-scroll');
+  let elements = document.querySelectorAll('.animate-on-scroll');
 
   if (!elements.length) return;
 
-  const scrollObserver = new IntersectionObserver((entries, obs) => {
-    entries.forEach(entry => {
+  let scrollObserver = new IntersectionObserver(function (entries, obs) {
+    entries.forEach(function (entry) {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
         obs.unobserve(entry.target);
@@ -426,7 +427,7 @@
     });
   }, { threshold: 0.2 });
 
-  elements.forEach(el => scrollObserver.observe(el));
+  elements.forEach(function (el) { scrollObserver.observe(el); });
 }
 observeScrollAnimations();
 })();
