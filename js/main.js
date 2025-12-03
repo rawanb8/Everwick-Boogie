@@ -8,34 +8,10 @@ let isalreadyrunned = false;
 function fixIndexHtmlLinks(rootEl) {
   if (!rootEl || !isRootIndexPage()) return;
   
-  // if(document.querySelectorAll(".brand-logo") && !isalreadyrunned){
-  //   isalreadyrunned=true
-  //   document.querySelector(".brand-logo").setAttribute('src',document.querySelector(".brand-logo").getAttribute('src').slice(1))
-  // }
-
-  
-  let isalreadyrunned = false;
-
-function fixBrandLogoSrc() {
-  if (isalreadyrunned) return;
-  let logo = document.querySelector('.brand-logo');
-  if (!logo) return;
-
-  let src = logo.getAttribute('src') || '';
-  // If src points up a level ("../..."), convert to a safe relative path that works from the site root page.
-  // Convert "../media/..."  => "./media/..."
-  // Convert "/media/..."   => "./media/..."  (avoid creating absolute paths)
-  // Leave already-relative "./..." or "media/..." alone.
-  if (src.startsWith('../')) {
-    src = src.replace(/^\.\.\//, './');
-  } else if (src.startsWith('/')) {
-    src = src.replace(/^\//, './');
+  if(document.querySelectorAll(".brand-logo") && !isalreadyrunned){
+    isalreadyrunned=true
+    document.querySelectorAll(".brand-logo").setAttribute('src',document.querySelectorAll(".brand-logo").getAttribute('src').slice(1))
   }
-  // finally set it once
-  logo.setAttribute('src', src);
-  isalreadyrunned = true;
-}
-
 
 
   rootEl.querySelectorAll("a[href]").forEach((a) => {
