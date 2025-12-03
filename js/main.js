@@ -7,17 +7,23 @@ function isRootIndexPage() {
 let isalreadyrunned = false;
 function fixIndexHtmlLinks(rootEl) {
   if (!rootEl || !isRootIndexPage()) return;
-  
-  if(document.querySelector(".brand-logo") && !isalreadyrunned){
-    isalreadyrunned=true
-    document.querySelector(".brand-logo").setAttribute('src',document.querySelector(".brand-logo").getAttribute('src').slice(1))
+
+  if (document.querySelectorAll(".brand-logo").length > 0 && !isalreadyrunned) {
+    isalreadyrunned = true;
+
+    document.querySelectorAll(".brand-logo").forEach(logo => {
+      const src = logo.getAttribute('src');
+      if (src) {
+        logo.setAttribute('src', src.slice(1));
+      }
+    });
   }
 
 
   rootEl.querySelectorAll("a[href]").forEach((a) => {
     let href = a.getAttribute("href");
     if (!href) return;
-    if(href=="../"){
+    if (href == "../") {
       return a.setAttribute("href", "./")
     }
     // ignore external / special URLs
@@ -43,9 +49,9 @@ function fixIndexHtmlLinks(rootEl) {
     ) {
       return;
     }
-    if(href=='./' && isRootIndexPage()){return alert("homeee")}
+    if (href == './' && isRootIndexPage()) { return alert("homeee") }
     // don't break the home link
-    if (a.textContent == "Home")  return;
+    if (a.textContent == "Home") return;
 
     // final rewrite: "page.html" -> "html/page.html"
     a.setAttribute("href", "html/" + href);
@@ -65,7 +71,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       let res = await fetch(navPath);
       if (!res.ok) throw new Error("nav fetch not ok: " + res.status);
       navbarContainer.innerHTML = await res.text();
-      
+
       // if we're on index.html, rewrite relative *.html links in the injected nav
       fixIndexHtmlLinks(navbarContainer);
 
@@ -236,13 +242,14 @@ let app = {
     };
   },
 
+
   async loadData() {
     let response;
     try {
       if (!this.scents.length || !this.products.length) {
         // adjust path if necessary
-        if (isRootIndexPage()) {response = await fetch('./json/products.json'); }
-        else {response = await fetch('../json/products.json');}
+        if (isRootIndexPage()) { response = await fetch('./json/products.json'); }
+        else { response = await fetch('../json/products.json'); }
         if (!response.ok) throw new Error("Fetch failed: " + response.status);
         let data = await response.json();
 
@@ -316,7 +323,7 @@ let app = {
     if (!product) return false;
 
     cart.push({
-      id: Date.now() + '-' + productId, 
+      id: Date.now() + '-' + productId,
       productId: productId,
       quantity: quantity,
       price: product.price
@@ -327,10 +334,37 @@ let app = {
   },
 
   removeFromCart: function (itemId) {
-    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    cart = cart.filter(item => String(item.id) !== String(itemId));
-    localStorage.setItem('cart', JSON.stringify(cart));
-    return cart;
+    try {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (!Array.isArray(cart)) cart = [];
+
+      cart = cart.filter(item => String(item.id) !== String(itemId));
+      localStorage.setItem('cart', JSON.stringify(cart));
+      // return updated cart for callers that expect it
+      return cart;
+    } catch (err) {
+      console.error('Failed to remove from cart:', err);
+      return [];
+    }
+  },
+
+  updateCartQuantity: function (itemId, quantity) {
+    try {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (!Array.isArray(cart)) cart = [];
+
+      const item = cart.find(i => String(i.id) === String(itemId));
+      if (item) {
+        item.quantity = Math.max(1, parseInt(quantity, 10) || 1);
+        localStorage.setItem('cart', JSON.stringify(cart));
+        return true;
+      }
+      // item not found — nothing changed
+      return false;
+    } catch (err) {
+      console.error('Failed to update cart quantity:', err);
+      return false;
+    }
   },
 
   clearCart: function () {
@@ -342,9 +376,22 @@ let app = {
     try {
       let cart = JSON.parse(localStorage.getItem('cart') || '[]');
       if (!Array.isArray(cart)) cart = [];
-      return cart;
+
+      return cart.map(item => {
+        return {
+          id: item.id || ('item_' + (Date.now()) + '_' + Math.floor(Math.random() * 1000)),
+          productId: (typeof item.productId !== 'undefined') ? item.productId : null,
+          quantity: Number(item.quantity || 1),
+          price: (typeof item.price !== 'undefined' && item.price !== null && !isNaN(Number(item.price))) ? Number(item.price) : 0,
+          // preserve custom payload if exists (important for customized items)
+          custom: item.custom || null,
+          image: item.image || null,
+          name: item.name || null,
+          addedAt: item.addedAt || (new Date()).toISOString()
+        };
+      });
     } catch (err) {
-      console.error(err);
+      console.error('Failed to get cart:', err);
       return [];
     }
   },
@@ -353,19 +400,33 @@ let app = {
     try {
       let cart = JSON.parse(localStorage.getItem('cart') || '[]');
       if (!Array.isArray(cart)) cart = [];
+
       let total = 0;
       cart.forEach(function (item) {
-        let product = app.getProductById(item.productId);
-        if (product) total += (Number(product.price || 0) * (item.quantity || 1));
+        let qty = Number(item.quantity || 1) || 1;
+
+        // If the item has an explicit price (custom item or saved item), use it.
+        // Otherwise, try to look up the product and use its price.
+        let itemPrice = 0;
+
+        if (typeof item.price !== 'undefined' && item.price !== null && !isNaN(Number(item.price))) {
+          itemPrice = Number(item.price);
+        } else if (item.productId) {
+          let product = app.getProductById(item.productId);
+          if (product && !isNaN(Number(product.price))) {
+            itemPrice = Number(product.price);
+          }
+        }
+
+        total += itemPrice * qty;
       });
+
       return total;
     } catch (err) {
       console.error('Failed to calculate cart total:', err);
       return 0;
     }
   },
-
-
 
   // small storage helpers
   getFromStorage: function (key) {
@@ -426,9 +487,6 @@ let app = {
       console.error('Wishlist migration failed:', e);
     }
   },
-
-
-
 };
 
 app.saveWishlistForUser = function (username = null, wishlist = []) {
@@ -436,8 +494,6 @@ app.saveWishlistForUser = function (username = null, wishlist = []) {
   let obj = { username: username || 'anonymous', wishlist: wishlist };
   localStorage.setItem(key, JSON.stringify(obj));
 };
-
-
 
 app.getWishlistForUser = function (username = null) {
   let key = username ? 'wishlist_' + username : 'wishlist_anonymous';
@@ -467,7 +523,6 @@ app.isInWishlistForUser = function (productId, username = null) {
   let wishlist = this.getWishlistForUser(username);
   return wishlist.map(String).includes(String(productId));
 };
-
 
 (function () {
   document.addEventListener('DOMContentLoaded', function () {
@@ -637,8 +692,6 @@ function initNewsletterForm() {
   });
 }
 
-
-
 /* login form handler (if present) */
 async function attachLoginHandler() {
   // Wait until navbar is loaded and modal moved
@@ -749,6 +802,5 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
   }, 100); // check every 100ms
 });
-
 
 

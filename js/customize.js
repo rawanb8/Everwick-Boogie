@@ -380,7 +380,7 @@
             id: 'custom-' + Date.now(),
             name: name,
             price: price,
-            qty: 1,
+            quantity: 1,
             image: img,
             custom: {
                 color: state.color,
