@@ -297,7 +297,7 @@
 
 /* Icon grows + changes color */
 .feature-item:hover i {
-    transform: scale(180%);
+    transform: scale(175%);
     color: var(--accent-color);
     /* deeper warm tone */
 }
@@ -315,10 +315,6 @@
 }
 
 .candle-media {
-    /* flex: 0 1 44%;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -381,7 +377,6 @@
 }
 
 /*======================= Featured carousel layout============================= */
-/* ================= FEATURED PRODUCTS (Clean, responsive, carousel -> wrap) ================= */
 
 /* Container */
 #featured.featured,
@@ -453,7 +448,7 @@
 }
 
 /* ---------- DESKTOP CAROUSEL (single-row) ---------- */
-/* Track is a single row of cards; the JS carousel shifts it by pixel amounts */
+/*track is a single row of cards => it shifts in js by pixles*/
 .featured-track {
     display: flex;
     gap: 1rem;
@@ -464,7 +459,6 @@
     padding: 0.25rem 0;
 }
 
-/* Each slide wrapper (optional per your JS; cards can be direct children too) */
 .featured-slide {
     display: flex;
     gap: 1rem;
@@ -494,20 +488,19 @@
     max-width: 220px;
 }
 
-/* Prevent product-card from growing unexpectedly */
 .featured-track .product-card {
     flex-shrink: 0;
+    max-width: 260px;
+    box-sizing: border-box;
 }
 
-/* Image area: fixed aspect, image covers but preserves center focus */
+/* focus centered cover image */
 .product-image {
     width: 100%;
     aspect-ratio: 1 / 1;
-    /* square thumbnail */
     border-radius: calc(var(--card-radius) - 2px);
     overflow: hidden;
-    background: linear-gradient(180deg, #f6f4f2, #efeae4);
-    /* gentle fallback */
+    background: linear-gradient(180deg, #f6f4f2, #efeae4); /*fallback when image isnt loading*/
     display: flex;
     align-items: center;
     justify-content: center;
@@ -518,7 +511,6 @@
     height: 100%;
     display: block;
     object-fit: cover;
-    /* fill area nicely, crop if needed */
     object-position: center;
     transition: transform 300ms ease;
 }
@@ -649,8 +641,7 @@
     }
 }
 
-/* Small screens: STOP carousel behavior and allow wrap like your category cards.
-   This guarantees cards keep their fixed size and will wrap into rows instead of expanding. */
+/*for smaller screens stop the carousel and wrap the cards */
 @media (max-width: 780px) {
     #featured-grid {
         overflow: visible;
@@ -662,12 +653,7 @@
         flex-wrap: wrap;
 
         gap: 1rem;
-        /* transform: none !important; */
-
-        /* transition: none !important; */
     }
-
-    /* Each card keeps size and wraps — two across on most phones/tablets */
     .featured-track .product-card {
         flex: 0 0 calc(50% - 0.5rem);
         max-width: calc(50% - 0.5rem);
@@ -679,8 +665,7 @@
     }
 
     .product-card {
-        flex: 0 0 calc((100% - 1.2rem)/2);
-        /* two cards visible */
+        flex: 0 0 calc((100% - 1.2rem)/2); /* two cards visible */
         max-width: calc((100% - 1.2rem)/2);
         padding: 0.6rem;
     }
@@ -695,7 +680,7 @@
     }
 }
 
-/* Very small phones: one card per row (keeps consistent card size, image stays same) */
+/*on very small screens (phone) show only one card*/
 @media (max-width: 420px) {
     .product-card {
         flex: 0 0 90%;
@@ -752,7 +737,6 @@
     }
 }
 
-/* ---------- ACCESSIBILITY & SMALL HELPERS ---------- */
 /* Prevent accidental horizontal scroll caused by images or long text */
 #featured-grid,
 .featured-track,
@@ -768,14 +752,12 @@
     position: relative;
 }
 
-/* subtle entrance animation for cards (stagger when JS adds them) */
 .product-card {
     opacity: 0;
     transform: translateY(8px);
     transition: transform 360ms cubic-bezier(.2, .9, .3, 1), opacity 360ms ease;
 }
 
-/* class to mark visible cards (you can add with JS when inserted) */
 .product-card.visible {
     opacity: 1;
     transform: translateY(0);
@@ -863,6 +845,7 @@
 }
 
 /* Apply staggered delays for children inside a container */
+/*NOTEEEEEEE!!!!!!!!!!: REMEBER TO OVERRRID FOR SOME ELEMENTSS!!!!!!!*/
 .container *:nth-child(1) {
     transition-delay: 0.1s;
 }
@@ -878,27 +861,20 @@
 .container *:nth-child(4) {
     transition-delay: 0.4s;
     padding-top: 10px;
-    /* margin-left: auto;
-    margin-right: auto;
-    text-align: center; */
 }
 
 .container *:nth-child(5) {
     transition-delay: 0.5s;
 }
 
-.candle-content a {
-    padding-top: 10px;
-}
-
-/* Add as many as needed, or use a loop in JS to auto-assign */
-
 /* The active state when element comes into view */
 .animate-on-scroll.visible {
     opacity: 1;
     transform: translateY(0);
 }
-
+.candle-content a {
+    padding-top: 10px;
+}
 
 .btn.clear:hover {
     background-color: #a4b69e;
@@ -1143,7 +1119,6 @@
     height: 100%;
     object-fit: cover;
     object-position: center 40%;
-    /* tweak vertical focus if needed */
     display: block;
     pointer-events: none;
 }
@@ -1180,7 +1155,6 @@
 .category-list {
     display: flex;
     flex-wrap: wrap;
-    /* cards wrap to new lines */
     gap: 1.5rem;
     justify-content: center;
 }
@@ -1229,30 +1203,11 @@
     margin-top: 2rem;
 }
 
-.featured-track {
-    display: flex;
-    gap: 1rem;
-    align-items: stretch;
-    flex-wrap: nowrap;
-    /* important: single row on desktop */
-    transition: transform 420ms cubic-bezier(.2, .9, .3, 1);
-    will-change: transform;
-}
-
-/* Card default fixed size (desktop) */
-.featured-track .product-card {
-    flex: 0 0 260px;
-    /* fixed width (won't grow/shrink) */
-    max-width: 260px;
-    box-sizing: border-box;
-}
-
 /* Image behavior inside fixed card */
 .featured-track .product-card .product-image img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    /* keep image filling card without distortion */
     display: block;
 }
 
