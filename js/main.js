@@ -8,10 +8,16 @@ let isalreadyrunned = false;
 function fixIndexHtmlLinks(rootEl) {
   if (!rootEl || !isRootIndexPage()) return;
   
-  if(document.querySelectorAll(".brand-logo") && !isalreadyrunned){
-    isalreadyrunned=true
-    document.querySelectorAll(".brand-logo").setAttribute('src',document.querySelectorAll(".brand-logo").getAttribute('src').slice(1))
-  }
+if (document.querySelectorAll(".brand-logo").length > 0 && !isalreadyrunned) {
+    isalreadyrunned = true;
+
+    document.querySelectorAll(".brand-logo").forEach(logo => {
+        const src = logo.getAttribute('src');
+        if (src && src.startsWith("/")) {
+            logo.setAttribute('src', src.slice(1));
+        }
+    });
+}
 
 
   rootEl.querySelectorAll("a[href]").forEach((a) => {
