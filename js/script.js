@@ -412,4 +412,21 @@
     }, 160);
   });
 
+  function observeScrollAnimations() {
+  const elements = document.querySelectorAll('.animate-on-scroll');
+
+  if (!elements.length) return;
+
+  const scrollObserver = new IntersectionObserver((entries, obs) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.2 });
+
+  elements.forEach(el => scrollObserver.observe(el));
+}
+observeScrollAnimations();
 })();
