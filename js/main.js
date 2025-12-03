@@ -76,6 +76,58 @@ let app = {
       timeout = setTimeout(function () { fn.apply(this, args); }.bind(this), delay);
     };
   },
+  removeFromCart(itemId) {
+    try {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (!Array.isArray(cart)) cart = [];
+
+      cart = cart.filter(item => item.id !== itemId);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      return true;
+    } catch (err) {
+      console.error('Failed to remove from cart:', err);
+      return false;
+    }
+  },
+
+  updateCartQuantity(itemId, quantity) {
+    try {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (!Array.isArray(cart)) cart = [];
+
+      const item = cart.find(i => i.id === itemId);
+      if (item) {
+        item.quantity = Math.max(1, parseInt(quantity) || 1);
+      }
+
+      localStorage.setItem('cart', JSON.stringify(cart));
+      return true;
+    } catch (err) {
+      console.error('Failed to update cart:', err);
+      return false;
+    }
+  },
+
+  getCart() {
+    try {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (!Array.isArray(cart)) return [];
+
+      // Ensure all cart items have required properties with proper types
+      return cart.map(item => ({
+        id: item.id || 'item_' + Date.now(),
+        productId: item.productId,
+        quantity: parseInt(item.quantity) || 1,
+        price: parseFloat(item.price) || 0,
+        addedAt: item.addedAt || new Date().toISOString()
+      }));
+    } catch (err) {
+      console.error('Failed to get cart:', err);
+      return [];
+    }
+  },
+
+
 
   async loadData() {
     try {

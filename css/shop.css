@@ -1,4 +1,7 @@
 /* Shop page specific styles */
+html {
+  overflow-x: hidden;
+}
 
 /* Wishlist Icon on Product Cards */
 .wishlist-btn {
@@ -1416,5 +1419,22 @@
 
   .modal-info-container {
     padding: var(--space-lg);
+  }
+}
+
+
+
+@media (max-width: 768px) {
+  .sort-controls {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .product-card {
+    margin-inline: auto;
+    width: 300px;
+    max-width: 300px;
   }
 }
