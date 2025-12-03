@@ -8,7 +8,7 @@ let isalreadyrunned = false;
 function fixIndexHtmlLinks(rootEl) {
   if (!rootEl || !isRootIndexPage()) return;
   
-  if(document.querySelector(".brand-logo") && !isalreadyrunned){
+  if(document.querySelectorAll(".brand-logo") && !isalreadyrunned){
     isalreadyrunned=true
     document.querySelector(".brand-logo").setAttribute('src',document.querySelector(".brand-logo").getAttribute('src').slice(1))
   }
