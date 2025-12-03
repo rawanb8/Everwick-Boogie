@@ -17,10 +17,9 @@
   margin-bottom: var(--space-md);
   text-transform: uppercase;
   letter-spacing: 1px;
-  letter-spacing: 1px;
 }
 
-.page-spacer1{
+.page-spacer1 {
   height: 60px;
 }
 
@@ -28,25 +27,16 @@
 
 .quote {
   font-size: 1.25rem;
-  /* slightly larger than normal for emphasis */
   font-weight: 400;
-  /* normal weight, not bold */
   color: var(--text-light);
-  /* softer text color */
   font-style: italic;
-  /* adds elegance */
   margin-top: var(--space-sm);
-  /* spacing below header */
   line-height: 1.6;
-  /* improves readability */
   max-width: 800px;
-  /* keeps text in readable width */
   margin-left: auto;
   margin-right: auto;
-  /* center the paragraph */
   text-align: center;
-  /* centered under header */
-   font-family: "Lora";
+  font-family: "Lora";
 }
 
 .tabs-section {
@@ -69,6 +59,7 @@
   transition: all var(--transition-fast);
   font-weight: 500;
 }
+
 .tab-btn.active {
   border-bottom-color: var(--primary-color);
   color: var(--primary-color);
@@ -213,8 +204,6 @@
 
 }
 
-
-@media (max-width: 768px) {}
 
 .scent-card {
   position: relative;
@@ -390,9 +379,9 @@
 }
 
 .quiz-question h3 {
-    color: var(--text-light);
-   font-family: "Lora";
-   text-align: center;
+  color: var(--text-light);
+  font-family: "Lora";
+  text-align: center;
 }
 
 .quiz-question.active {
@@ -421,7 +410,7 @@
 
 .quiz-header h2 {
   color: #7e894c;
-  font: "Lora";
+  font-family: "Lora";
   text-align: center;
 }
 
@@ -443,7 +432,7 @@ input[type="range"] {
 }
 
 .quiz-options:has(input[type="radio"]:checked) .quiz-option:has(input[type="radio"]:checked) {
-  border: 2px solid var(--accent-color)
+  border: 2px solid var(--accent-color);
 }
 
 /* Chrome / Safari track */
@@ -529,7 +518,7 @@ input[type="range"]::-ms-thumb {
   font-weight: 600;
   letter-spacing: 3px;
   color: #444;
-  background:#f7f6ec;
+  background: #f7f6ec;
   border-radius: 18px;
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
   opacity: 0;
@@ -670,13 +659,20 @@ input[type="range"]::-ms-thumb {
   display: flex;
   flex-direction: column;
   height: 100%;
-  /* make the grid rows equal height */
+  justify-content: space-between;
+  cursor: pointer;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--white);
+
 }
 
 /* FIX image height so all cards start equal */
 .recommendation-card .card-image img {
   height: 180px;
-  /* fixed height */
   width: 100%;
   object-fit: cover;
   display: block;
@@ -695,26 +691,12 @@ input[type="range"]::-ms-thumb {
 /* Make the description area flexible */
 .recommendation-card p {
   flex: 1;
-  /* fills vertical space equally */
+
 }
 
 /* Button at bottom */
 .recommendation-card .btn {
   margin-top: auto;
-}
-
-.recommendation-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  cursor: pointer;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background: var(--white);
-  height: 100%;
 }
 
 .recommendation-card:hover {

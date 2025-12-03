@@ -110,7 +110,7 @@ function displayScents(scents) {
   container.innerHTML = scents.map(scent => {
     let displayCategory = scent.category || scent.season || '';
     let strengthDots = '●'.repeat(Math.min(10, scent.aggressiveness)) + '○'.repeat(10 - Math.min(10, scent.aggressiveness));
-   let product = app.products?.find(p => p.scentId === scent.id);
+    let product = app.products?.find(p => p.scentId === scent.id);
 
     return `
       <div class="scent-card card" role="button" tabindex="0" onclick="showScentDetails(${scent.id})"
@@ -173,7 +173,7 @@ function applyFilters() {
   if (mood) filtered = filtered.filter(s => s.mood === mood);
   if (season) filtered = filtered.filter(s => s.season === season);
   if (strength) {
-    let [min,max] = strength.split('-').map(Number);
+    let [min, max] = strength.split('-').map(Number);
     if (!isNaN(min) && !isNaN(max)) filtered = filtered.filter(s => s.aggressiveness >= min && s.aggressiveness <= max);
   }
 
@@ -199,7 +199,7 @@ function clearFilters() {
   });
   loadScentsLibrary();
 
-   document.getElementById("no-results").style.display = "none";
+  document.getElementById("no-results").style.display = "none";
 }
 
 function showScentDetails(scentId) {
@@ -369,7 +369,7 @@ function updateQuizButtons() {
   let nextBtn = document.getElementById('next-btn');
   let submitBtn = document.getElementById('submit-btn');
 
-   if (prevBtn) {
+  if (prevBtn) {
     // Hide on first question, show otherwise
     if (currentQuizQuestion === 0) {
       prevBtn.style.visibility = 'hidden';

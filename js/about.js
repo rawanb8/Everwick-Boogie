@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add("show");
-                observer.unobserve(entry.target); // animate once
+                observer.unobserve(entry.target);
             }
         });
     }, { threshold: 0.2 });
@@ -164,25 +164,23 @@ function scrollToFAQ() {
     $('html, body').animate({ scrollTop: $('.faq-section').offset().top }, 600);
 }
 
-function openCartModal() {
-    // Implementation if needed
-}
 
-  //scroll animations
-  function observeScrollAnimations() {
-  let elements = document.querySelectorAll('.animate-on-scroll');
 
-  if (!elements.length) return;
+//scroll animations
+function observeScrollAnimations() {
+    let elements = document.querySelectorAll('.animate-on-scroll');
 
-  let scrollObserver = new IntersectionObserver(function (entries, obs) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        obs.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.2 });
+    if (!elements.length) return;
 
-  elements.forEach(function (el) { scrollObserver.observe(el); });
+    let scrollObserver = new IntersectionObserver(function (entries, obs) {
+        entries.forEach(function (entry) {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                obs.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.2 });
+
+    elements.forEach(function (el) { scrollObserver.observe(el); });
 }
 observeScrollAnimations();
