@@ -480,8 +480,9 @@
   }
 
   .order-summary {
-    order: -1;
+    /* order: -1; */
     position: static;
+    margin-top: var(--space-xl);
   }
 
   .form-row {
@@ -503,8 +504,20 @@
 
   .cart-review-item {
     flex-direction: column;
-    text-align: center;
+    /* text-align: center; */
+    text-align: left;
+    align-items: flex-start;
     gap: var(--space-md);
+  }
+
+  .cart-review-item .item-image {
+    width: 100%;
+    height: 200px;
+  }
+
+  .cart-review-item .item-quantity {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .shipping-option {
