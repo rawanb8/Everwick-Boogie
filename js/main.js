@@ -349,23 +349,53 @@ let app = {
     }
   },
 
-  getCartTotal: function () {
-    try {
-      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-      if (!Array.isArray(cart)) cart = [];
-      let total = 0;
-      cart.forEach(function (item) {
+  // getCartTotal: function () {
+  //   try {
+  //     let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+  //     if (!Array.isArray(cart)) cart = [];
+  //     let total = 0;
+  //     cart.forEach(function (item) {
+  //       let product = app.getProductById(item.productId);
+  //       if (product) total += (Number(product.price || 0) * (item.quantity || 1));
+  //     });
+  //     return total;
+  //   } catch (err) {
+  //     console.error('Failed to calculate cart total:', err);
+  //     return 0;
+  //   }
+  // },
+// rawan's edited getCartTotal to for customized candles
+getCartTotal: function () {
+  try {
+    let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+    if (!Array.isArray(cart)) cart = [];
+
+    let total = 0;
+    cart.forEach(function (item) {
+      let qty = Number(item.quantity || 1) || 1;
+
+      // If the item has an explicit price (custom item or saved item), use it.
+      // Otherwise, try to look up the product and use its price.
+      let itemPrice = 0;
+
+      if (typeof item.price !== 'undefined' && item.price !== null && !isNaN(Number(item.price))) {
+        itemPrice = Number(item.price);
+      } else if (item.productId) {
         let product = app.getProductById(item.productId);
-        if (product) total += (Number(product.price || 0) * (item.quantity || 1));
-      });
-      return total;
-    } catch (err) {
-      console.error('Failed to calculate cart total:', err);
-      return 0;
-    }
-  },
+        if (product && !isNaN(Number(product.price))) {
+          itemPrice = Number(product.price);
+        }
+      }
 
+      total += itemPrice * qty;
+    });
 
+    return total;
+  } catch (err) {
+    console.error('Failed to calculate cart total:', err);
+    return 0;
+  }
+},
 
   // small storage helpers
   getFromStorage: function (key) {

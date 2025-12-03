@@ -39,9 +39,54 @@ function initializeCheckout() {
   updateCheckoutProgress();
 }
 
+// function loadCartReview() {
+//   let container = document.getElementById('cart-review');
+//   let cart = app.getCart();
+
+//   if (cart.length === 0) {
+//     container.innerHTML = '<p class="text-center">Your cart is empty.</p>';
+//     return;
+//   }
+
+//   container.innerHTML = cart.map(item => {
+//     let product = app.getProductById(item.productId);
+//     if (!product) return '';
+
+//     let scent = app.getScentById(product.scentId);
+//     let itemQuantity = parseInt(item.quantity) || 1;
+//     // Use product price if item price is 0 or missing
+//     let itemPrice = parseFloat(item.price) || parseFloat(product.price) || 0;
+//     let itemTotal = itemPrice * itemQuantity;
+
+//     return `
+//       <div class="cart-review-item">
+//         <div class="item-image">
+//           <img src="${product.images?.[0] || 'https://images.unsplash.com/photo-1602574968595-52bdc47de83c?w=100&h=100&fit=crop'}" 
+//                alt="${product.name}">
+//         </div>
+//         <div class="item-details">
+//           <h4>${product.name}</h4>
+//           <p>${scent?.name || 'Custom scent'}</p>
+//         </div>
+//         <div class="item-quantity">
+//           <label>Qty:</label>
+//           <input type="number" value="${itemQuantity}" min="1" max="10" 
+//                  onchange="updateCartItemQuantity('${item.id}', this.value)">
+//         </div>
+//         <div class="item-price">
+//           ${app.formatPrice(itemTotal)}
+//         </div>
+//         <button class="remove-item-btn" onclick="removeCartItem('${item.id}')">×</button>
+//       </div>
+//     `;
+//   }).join('');
+// }
+//rawan:edited loadCartReview for customize products
 function loadCartReview() {
   let container = document.getElementById('cart-review');
   let cart = app.getCart();
+
+  if (!container) return;
 
   if (cart.length === 0) {
     container.innerHTML = '<p class="text-center">Your cart is empty.</p>';
@@ -49,24 +94,42 @@ function loadCartReview() {
   }
 
   container.innerHTML = cart.map(item => {
-    let product = app.getProductById(item.productId);
-    if (!product) return '';
-
-    let scent = app.getScentById(product.scentId);
-    let itemQuantity = parseInt(item.quantity) || 1;
-    // Use product price if item price is 0 or missing
-    let itemPrice = parseFloat(item.price) || parseFloat(product.price) || 0;
+    // determine display values (support custom items and normal products)
+    let isCustom = !!item.custom || !item.productId;
+    let name = item.name || '';
+    let image = item.image || '';
+    let itemPrice = Number(item.price || 0);
+    let itemQuantity = parseInt(item.quantity || item.qty) || 1;
     let itemTotal = itemPrice * itemQuantity;
+    let scentName = '';
+
+    if (!isCustom && item.productId) {
+      let product = app.getProductById(item.productId);
+      if (product) {
+        name = name || product.name;
+        image = image || (product.images && product.images[0]) || '';
+        // if item.price missing, derive from product
+        if (!itemPrice) {
+          itemPrice = Number(product.price || 0);
+          itemTotal = itemPrice * itemQuantity;
+        }
+        scentName = app.getScentById(product.scentId)?.name || '';
+      }
+    } else {
+      // custom item: try to get scent display from custom payload
+      if (item.custom && item.custom.scentId) {
+        scentName = app.getScentById(item.custom.scentId)?.name || '';
+      }
+    }
 
     return `
-      <div class="cart-review-item">
+      <div class="cart-review-item" data-cart-id="${item.id}">
         <div class="item-image">
-          <img src="${product.images?.[0] || 'https://images.unsplash.com/photo-1602574968595-52bdc47de83c?w=100&h=100&fit=crop'}" 
-               alt="${product.name}">
+          <img src="${image}" alt="${escapeHtml(name)}">
         </div>
         <div class="item-details">
-          <h4>${product.name}</h4>
-          <p>${scent?.name || 'Custom scent'}</p>
+          <h4>${escapeHtml(name)}</h4>
+          <p>${escapeHtml(scentName || (isCustom ? 'Custom scent' : '—'))}</p>
         </div>
         <div class="item-quantity">
           <label>Qty:</label>
@@ -82,25 +145,67 @@ function loadCartReview() {
   }).join('');
 }
 
+// function loadOrderSummary() {
+//   let itemsContainer = document.getElementById('summary-items');
+//   let cart = app.getCart();
+
+//   if (!itemsContainer) return;
+
+//   itemsContainer.innerHTML = cart.map(item => {
+//     let product = app.getProductById(item.productId);
+//     if (!product) return '';
+
+//     let itemQuantity = parseInt(item.quantity) || 1;
+//     // Use product price if item price is 0 or missing
+//     let itemPrice = parseFloat(item.price) || parseFloat(product.price) || 0;
+//     let itemTotal = itemPrice * itemQuantity;
+
+//     return `
+//       <div class="summary-item">
+//         <div class="item-info">
+//           <span class="item-name">${product.name}</span>
+//           <span class="item-qty">Qty: ${itemQuantity}</span>
+//         </div>
+//         <span class="item-total">${app.formatPrice(itemTotal)}</span>
+//       </div>
+//     `;
+//   }).join('');
+
+//   updateOrderTotals();
+// }
+
+//rawan: edited loadOrderSummary for customized candles
 function loadOrderSummary() {
   let itemsContainer = document.getElementById('summary-items');
   let cart = app.getCart();
 
   if (!itemsContainer) return;
 
-  itemsContainer.innerHTML = cart.map(item => {
-    let product = app.getProductById(item.productId);
-    if (!product) return '';
+  if (!cart.length) {
+    itemsContainer.innerHTML = '<p class="text-center">No items in summary.</p>';
+    return;
+  }
 
-    let itemQuantity = parseInt(item.quantity) || 1;
-    // Use product price if item price is 0 or missing
-    let itemPrice = parseFloat(item.price) || parseFloat(product.price) || 0;
+  itemsContainer.innerHTML = cart.map(item => {
+    let isCustom = !!item.custom || !item.productId;
+    let name = item.name || '';
+    let itemQuantity = parseInt(item.quantity || item.qty) || 1;
+    let itemPrice = Number(item.price || 0);
+
+    if (!isCustom && item.productId) {
+      let product = app.getProductById(item.productId);
+      if (product) {
+        name = name || product.name;
+        if (!itemPrice) itemPrice = Number(product.price || 0);
+      }
+    }
+
     let itemTotal = itemPrice * itemQuantity;
 
     return `
       <div class="summary-item">
         <div class="item-info">
-          <span class="item-name">${product.name}</span>
+          <span class="item-name">${escapeHtml(name)}</span>
           <span class="item-qty">Qty: ${itemQuantity}</span>
         </div>
         <span class="item-total">${app.formatPrice(itemTotal)}</span>
@@ -110,6 +215,7 @@ function loadOrderSummary() {
 
   updateOrderTotals();
 }
+
 
 function updateOrderTotals() {
   let totalsContainer = document.getElementById('summary-totals');
@@ -169,7 +275,17 @@ function loadShippingOptions() {
 
   selectedShippingMethod = 1;
 }
-
+//rawan's edits:
+// small helper to safely escape user-provided strings used in templates
+function escapeHtml(str) {
+  if (str === null || typeof str === 'undefined') return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
 function loadCartShippingOptions() {
   let container = document.getElementById('cart-shipping-options');
   if (!container) return;
@@ -479,10 +595,60 @@ function getShippingAddress() {
   };
 }
 
+// function displayOrderConfirmation() {
+//   let container = document.getElementById('order-confirmation-details');
+
+//   if (!container) return;
+
+//   container.innerHTML = `
+//     <div class="order-summary-final">
+//       <div class="order-number">
+//         <strong>Order #${orderData.orderId}</strong>
+//       </div>
+      
+//       <div class="order-items">
+//         <h4>Items Ordered:</h4>
+//         ${orderData.items.map(item => {
+//     let product = app.getProductById(item.productId);
+//     if (!product) return '';
+//     let itemQuantity = parseInt(item.quantity) || 1;
+//     return `<div class="confirmation-item">${product.name} (Qty: ${itemQuantity})</div>`;
+//   }).join('')}
+//       </div>
+      
+//       <div class="order-total">
+//         <strong>Total: ${app.formatPrice(orderData.total)}</strong>
+//       </div>
+      
+//       <div class="shipping-info">
+//         <h4>Shipping To:</h4>
+//         <p>${orderData.shippingAddress.firstName} ${orderData.shippingAddress.lastName}</p>
+//         <p>${orderData.shippingAddress.address}</p>
+//         <p>${orderData.shippingAddress.city}, ${orderData.shippingAddress.state} ${orderData.shippingAddress.zip}</p>
+//       </div>
+      
+//       <div class="order-date">
+//         <p>Order Date: ${orderData.orderDate}</p>
+//       </div>
+//     </div>
+//   `;
+// }
+//rawan:edited display order for custumize candle
 function displayOrderConfirmation() {
   let container = document.getElementById('order-confirmation-details');
 
   if (!container) return;
+
+  let itemsHtml = (orderData.items || []).map(item => {
+    // try to find product name, fallback to item.name (custom)
+    let productName = item.name || '';
+    if (item.productId && !productName) {
+      let product = app.getProductById(item.productId);
+      if (product) productName = product.name;
+    }
+    let qty = parseInt(item.quantity || item.qty) || 1;
+    return `<div class="confirmation-item">${escapeHtml(productName || 'Item')} (Qty: ${qty})</div>`;
+  }).join('');
 
   container.innerHTML = `
     <div class="order-summary-final">
@@ -492,12 +658,7 @@ function displayOrderConfirmation() {
       
       <div class="order-items">
         <h4>Items Ordered:</h4>
-        ${orderData.items.map(item => {
-    let product = app.getProductById(item.productId);
-    if (!product) return '';
-    let itemQuantity = parseInt(item.quantity) || 1;
-    return `<div class="confirmation-item">${product.name} (Qty: ${itemQuantity})</div>`;
-  }).join('')}
+        ${itemsHtml}
       </div>
       
       <div class="order-total">
@@ -506,17 +667,18 @@ function displayOrderConfirmation() {
       
       <div class="shipping-info">
         <h4>Shipping To:</h4>
-        <p>${orderData.shippingAddress.firstName} ${orderData.shippingAddress.lastName}</p>
-        <p>${orderData.shippingAddress.address}</p>
-        <p>${orderData.shippingAddress.city}, ${orderData.shippingAddress.state} ${orderData.shippingAddress.zip}</p>
+        <p>${escapeHtml(orderData.shippingAddress.firstName)} ${escapeHtml(orderData.shippingAddress.lastName)}</p>
+        <p>${escapeHtml(orderData.shippingAddress.address)}</p>
+        <p>${escapeHtml(orderData.shippingAddress.city)}, ${escapeHtml(orderData.shippingAddress.state)} ${escapeHtml(orderData.shippingAddress.zip)}</p>
       </div>
       
       <div class="order-date">
-        <p>Order Date: ${orderData.orderDate}</p>
+        <p>Order Date: ${escapeHtml(orderData.orderDate)}</p>
       </div>
     </div>
   `;
 }
+
 
 function updateCartItemQuantity(itemId, quantity) {
   app.updateCartQuantity(itemId, parseInt(quantity));
