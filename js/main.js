@@ -12,7 +12,7 @@ function fixIndexHtmlLinks(rootEl) {
     isalreadyrunned = true;
 
     document.querySelectorAll(".brand-logo").forEach(logo => {
-      const src = logo.getAttribute('src');
+      let src = logo.getAttribute('src');
       if (src) {
         logo.setAttribute('src', src.slice(1));
       }
@@ -49,7 +49,7 @@ function fixIndexHtmlLinks(rootEl) {
     ) {
       return;
     }
-    if (href == './' && isRootIndexPage()) { return alert("homeee") }
+    if (href == './' && isRootIndexPage()) { return }
     // don't break the home link
     if (a.textContent == "Home") return;
 
@@ -200,6 +200,9 @@ function logout() {
   // Update UI
   handleLoginUI();
 
+  //Show notification only when logged out
+  app.showNotification('You have been logged out.', 'info');
+
   // Trigger event so wishlist re-renders for anonymous
   document.dispatchEvent(new Event('userChanged'));
 }
@@ -304,7 +307,111 @@ let app = {
 
   openModal: function (id) { let el = document.getElementById(id); if (el) el.style.display = 'block'; },
   closeModal: function (id) { let el = document.getElementById(id); if (el) el.style.display = 'none'; },
-  showNotification: function (msg, type) { alert(msg); },
+  showNotification(msg, type = 'info') {
+
+    // Simple top-right toast system done by rama :)
+    let container = document.getElementById('notification-container');
+    if (!container) {
+      container = document.createElement('div');
+      container.id = 'notification-container';
+      Object.assign(container.style, {
+        position: 'fixed',
+        top: '1rem',
+        right: '1rem',
+        zIndex: 9999,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '0.5rem',
+        maxWidth: '320px',
+        pointerEvents: 'none' // allow clicks to pass through gaps
+      });
+      document.body.appendChild(container);
+    }
+
+    // limit number of toasts
+    while (container.children.length >= 4) {
+      container.removeChild(container.firstChild);
+    }
+
+    let toast = document.createElement('div');
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
+    toast.className = `notification notification--${type}`;
+    Object.assign(toast.style, {
+      pointerEvents: 'auto',
+      opacity: '0',
+      transform: 'translateX(12px)',
+      transition: 'opacity 220ms ease, transform 220ms ease',
+      padding: '0.6rem 0.9rem',
+      borderRadius: '8px',
+      color: '#fff',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '0.6rem',
+      boxShadow: '0 6px 20px rgba(0,0,0,0.12)',
+      fontSize: '0.95rem',
+      lineHeight: '1.2',
+      cursor: 'pointer'
+    });
+
+    // background by type
+    switch (type) {
+      case 'success':
+        toast.style.background = '#2d8a4d';
+        break;
+      case 'error':
+        toast.style.background = '#bf2f2f';
+        break;
+      case 'warning':
+        toast.style.background = '#b36b00';
+        break;
+      default:
+        toast.style.background = '#1f6feb'; // info / default
+    }
+
+    // content
+    let text = document.createElement('div');
+    text.textContent = msg;
+    toast.appendChild(text);
+
+    // small close X
+    let close = document.createElement('button');
+    close.innerHTML = '&times;';
+    Object.assign(close.style, {
+      background: 'transparent',
+      border: 'none',
+      color: 'rgba(255,255,255,0.9)',
+      fontSize: '1.1rem',
+      lineHeight: '1',
+      padding: '0',
+      marginLeft: 'auto',
+      cursor: 'pointer'
+    });
+    close.setAttribute('aria-label', 'Dismiss notification');
+    toast.appendChild(close);
+
+    // add and animate in
+    container.appendChild(toast);
+    requestAnimationFrame(() => {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(0)';
+    });
+
+    // remove helper
+    let remove = () => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(12px)';
+      setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 260);
+    };
+
+    // auto dismiss
+    let timeout = setTimeout(remove, 4200);
+
+    // interactions
+    close.addEventListener('click', (e) => { e.stopPropagation(); clearTimeout(timeout); remove(); });
+    toast.addEventListener('click', () => { clearTimeout(timeout); remove(); });
+    toast.addEventListener('keydown', (e) => { if (e.key === 'Escape') { clearTimeout(timeout); remove(); } });
+  },
 
   getProducts: function () { return this.products || []; },
   getProductById: function (id) { return this.products.find(function (p) { return p.id === id; }) || null; },
@@ -353,7 +460,7 @@ let app = {
       let cart = JSON.parse(localStorage.getItem('cart') || '[]');
       if (!Array.isArray(cart)) cart = [];
 
-      const item = cart.find(i => String(i.id) === String(itemId));
+      let item = cart.find(i => String(i.id) === String(itemId));
       if (item) {
         item.quantity = Math.max(1, parseInt(quantity, 10) || 1);
         localStorage.setItem('cart', JSON.stringify(cart));
@@ -752,14 +859,14 @@ async function attachLoginHandler() {
       let user = allowedUsers.find(u => u.username === username && u.password === password);
 
       if (!user) {
-        alert('Incorrect username or password.');
+         app.showNotification('Incorrect username or password.', 'error');
         return;
       }
 
       // Login success
       currentUser = user.username;
       localStorage.setItem('currentUser', currentUser);
-      alert('Login successful! Welcome, ' + currentUser);
+      app.showNotification('Login successful! Welcome, ' + currentUser, 'success');
       handleLoginUI()
       // Merge anonymous wishlist
       let anonWishlist = app.getWishlistForUser(null);

@@ -430,13 +430,15 @@ function displayQuizResults(recommendations) {
   let productGrid = document.createElement('div');
   productGrid.className = 'recommendations grid grid-3';
 
-  recommendations.forEach(scent => {
+  recommendations.forEach((scent, rankIndex) => {
     let matchingProducts = app.products.filter(p => p.scentId === scent.id);
     matchingProducts.forEach(product => {
       let card = document.createElement('div');
       card.className = 'recommendation-card card';
+      let rank = rankIndex + 1;
+      let ordinal = ['st','nd','rd'][rank - 1] || 'th';
       card.innerHTML = `
-        <div class="recommendation-rank">#${scent.id}</div>
+        <div class="recommendation-rank">${rank}${ordinal}</div>
         <img src="${product.images[0]}" alt="${product.name}" class="card-image">
         <div class="card-content">
           <h3 class="card-title">${product.name}</h3>

@@ -563,7 +563,7 @@ input[type="range"]::-ms-thumb {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: bold;
+ font-family: "Lora";
   z-index: 1;
 }
 
@@ -706,4 +706,5 @@ input[type="range"]::-ms-thumb {
 
 .quiz-results-header h2 {
   font-family: "Lora";
+  color: var(--olive-green);
 }
