@@ -1,20 +1,16 @@
- 
+
 (async () => {
   // wait for DOM ready
   if (document.readyState === 'loading') {
     await new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve));
   }
 
-  // ensure global app exists (main.js should create it); if missing, create minimal shell
   window.app = window.app || {};
   let app = window.app;
 
-  // safe loader: call existing app.loadData if present; otherwise fetch JSON ourselves
   async function ensureDataLoaded() {
-    // if app already has products array with items, skip
     if (Array.isArray(app.products) && app.products.length) return;
 
-    // if main offered loadData, use it (it should populate app.products)
     if (typeof app.loadData === 'function') {
       try {
         await app.loadData();
@@ -30,12 +26,135 @@
       if (!res.ok) throw new Error(`Failed to fetch products.json (${res.status})`);
       let data = await res.json();
       app.data = data || {};
-      app.products = Array.isArray(data.products) ? data.products : [];
       app.scents = Array.isArray(data.scents) ? data.scents : [];
+      app.sizes = Array.isArray(data.size) ? data.size : [];
+      app.colors = Array.isArray(data.color) ? data.color : [];
+      app.containers = Array.isArray(data.container) ? data.container : [];
+      app.wicks = Array.isArray(data.wick) ? data.wick : [];
+      app.products = Array.isArray(data.products) ? data.products : [];
+
+      initAppHelpers();
+
+      function initAppHelpers() {
+
+
+
+        // formatPrice fallback
+        if (!app.formatPrice) {
+          app.formatPrice = function (n) {
+            n = Number(n || 0);
+            if (isNaN(n)) n = 0;
+            return '$' + n.toFixed(2);
+          };
+        }
+
+        // lookup helpers (no typeof used — use presence check)
+        if (!app.getScentById) {
+          app.getScentById = function (id) {
+            let num = Number(id);
+            if (isNaN(num)) return null;
+            if (!Array.isArray(app.scents)) return null;
+            for (let i = 0; i < app.scents.length; i++) {
+              if (app.scents[i] && app.scents[i].id === num) return app.scents[i];
+            }
+            return null;
+          };
+        }
+
+        if (!app.getSizeById) {
+          app.getSizeById = function (id) {
+            let num = Number(id);
+            if (isNaN(num)) return null;
+            if (!Array.isArray(app.sizes)) return null;
+            for (let i = 0; i < app.sizes.length; i++) {
+              if (app.sizes[i] && app.sizes[i].id === num) return app.sizes[i];
+            }
+            return null;
+          };
+        }
+
+        if (!app.getColorById) {
+          app.getColorById = function (id) {
+            let num = Number(id);
+            if (isNaN(num)) return null;
+            if (!Array.isArray(app.colors)) return null;
+            for (let i = 0; i < app.colors.length; i++) {
+              if (app.colors[i] && app.colors[i].id === num) return app.colors[i];
+            }
+            return null;
+          };
+        }
+
+        if (!app.getContainerById) {
+          app.getContainerById = function (id) {
+            let num = Number(id);
+            if (isNaN(num)) return null;
+            if (!Array.isArray(app.containers)) return null;
+            for (let i = 0; i < app.containers.length; i++) {
+              if (app.containers[i] && app.containers[i].id === num) return app.containers[i];
+            }
+            return null;
+          };
+        }
+
+        if (!app.getWickById) {
+          app.getWickById = function (id) {
+            let num = Number(id);
+            if (isNaN(num)) return null;
+            if (!Array.isArray(app.wicks)) return null;
+            for (let i = 0; i < app.wicks.length; i++) {
+              if (app.wicks[i] && app.wicks[i].id === num) return app.wicks[i];
+            }
+            return null;
+          };
+        }
+
+        if (!app.getProductById) {
+          app.getProductById = function (id) {
+            if (!Array.isArray(app.products)) return null;
+            let sid = String(id);
+            for (let i = 0; i < app.products.length; i++) {
+              if (String(app.products[i].id) === sid) return app.products[i];
+            }
+            return null;
+          };
+        }
+
+        // basic cart & wishlist fallbacks
+        if (!app.addToCart) {
+          app.addToCart = function (productId, qty) {
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            cart.push({ id: Date.now() + '-' + productId, productId: productId, quantity: qty || 1 });
+            localStorage.setItem('cart', JSON.stringify(cart));
+            return true;
+          };
+        }
+
+        if (!app.isInWishlist) {
+          app.isInWishlist = function (productId) {
+            let wl = JSON.parse(localStorage.getItem('wishlist') || '[]');
+            for (let i = 0; i < wl.length; i++) if (String(wl[i]) === String(productId)) return true;
+            return false;
+          };
+        }
+        if (!app.addToWishlist) {
+          app.addToWishlist = function (productId) {
+            let wl = JSON.parse(localStorage.getItem('wishlist') || '[]');
+            if (!app.isInWishlist(productId)) wl.push(productId);
+            localStorage.setItem('wishlist', JSON.stringify(wl));
+          };
+        }
+        if (!app.removeFromWishlist) {
+          app.removeFromWishlist = function (productId) {
+            let wl = JSON.parse(localStorage.getItem('wishlist') || '[]');
+            wl = wl.filter(function (x) { return String(x) !== String(productId); });
+            localStorage.setItem('wishlist', JSON.stringify(wl));
+          };
+        }
+      }
     } catch (err) {
       console.error('Could not load ./json/products.json:', err);
-      app.products = app.products || [];
-      app.scents = app.scents || [];
+
     }
   }
 
@@ -56,15 +175,13 @@
 
   let products = Array.isArray(app.products) ? app.products : [];
 
-  /* ========== FEATURED PRODUCTS (pagination) ========== */
+  /* ========== FEATURED PRODUCTS========== */
   (function initFeatured() {
     let container = document.getElementById('featured-grid');
     if (!container) {
       console.warn('initFeatured: #featured-grid not found');
       return;
     }
-
-    // Use outer-scoped 'products' (already defined above from app.products)
     let featuredItems = products.filter(p => p && p.featured === true);
 
     // Nothing to show
@@ -72,18 +189,18 @@
       container.innerHTML = '<p class="text-center">No featured products.</p>';
       return;
     }
-  if (isRootIndexPage()) {
+    if (isRootIndexPage()) {
       featuredItems.forEach(item => {
-          if (item.images && Array.isArray(item.images)) {
-              item.images = item.images.map(img => {
-                  if (typeof img === "string" && img.length > 0) {
-                      return img.slice(1);   // remove first character
-                  }
-                  return img;
-              });
-          }
+        if (item.images && Array.isArray(item.images)) {
+          item.images = item.images.map(img => {
+            if (typeof img === "string" && img.length > 0) {
+              return img.slice(1);   // remove first character
+            }
+            return img;
+          });
+        }
       });
-  }
+    }
 
     // Clear and build track
     container.innerHTML = '';
@@ -380,14 +497,17 @@
     let actions = document.createElement('div');
     actions.className = 'product-actions';
 
-    // "Go to product" now navigates to shop page and pre-fills search query with the product name
-    let shopLink = document.createElement('a');
-    shopLink.className = 'btn btn-primary';
-    let searchQuery = encodeURIComponent(String(p.name || '').trim());
-    shopLink.href = `./html/shop.html?q=${searchQuery}`;
-    shopLink.textContent = 'Go to shop';
+    // NEW EDITTTTT: "View" button opens the modal 
+    let viewBtn = document.createElement('button');
+    viewBtn.className = 'btn btn-outline btn-small';
+    viewBtn.type = 'button';
+    viewBtn.textContent = 'View';
+    viewBtn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      showProductModalById(p.id);
+    });
+    actions.appendChild(viewBtn);
 
-    actions.appendChild(shopLink);
 
     imgWrap.appendChild(img);
     article.appendChild(imgWrap);
@@ -412,22 +532,190 @@
     }, 160);
   });
 
-  //scroll animations
-  function observeScrollAnimations() {
-  let elements = document.querySelectorAll('.animate-on-scroll');
+  function ensureProductModal() {
+    let overlay = document.querySelector('.product-modal-overlay');
+    if (overlay) return overlay;
 
-  if (!elements.length) return;
+    overlay = document.createElement('div');
+    overlay.className = 'product-modal-overlay';
+    overlay.style.display = 'none';
+    document.body.classList.remove('modal-open');
+    overlay.innerHTML = `
+    <div class="product-modal" role="dialog" aria-modal="true" aria-labelledby="modal-product-title">
+      <div class="modal-image-container"><img src="" alt=""></div>
+      <div class="modal-info-container">
+        <button class="modal-close-custom" aria-label="Close product modal">×</button>
+        <h2 id="modal-product-title" class="modal-product-title"></h2>
+        <div class="modal-product-price"></div>
+        <div class="modal-section-title">Description</div>
+        <p class="modal-description"></p>
+        <div class="modal-specs-grid"></div>
+        <div class="modal-actions">
+          <button class="btn btn-primary modal-add-btn">Add to Cart</button>
+          <button class="btn-wishlist-modal modal-wishlist-btn" aria-pressed="false"><i class="fa-regular fa-heart"></i></button>
+        </div>
+      </div>
+    </div>
+  `;
+    document.body.appendChild(overlay);
 
-  let scrollObserver = new IntersectionObserver(function (entries, obs) {
-    entries.forEach(function (entry) {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        obs.unobserve(entry.target);
+    // Close handlers
+    overlay.querySelector('.modal-close-custom').addEventListener('click', () => {
+      overlay.style.display = 'none';
+      document.body.classList.remove('modal-open'); // re-enable body scroll
+    });
+
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        overlay.style.display = 'none';
+        document.body.classList.remove('modal-open'); // re-enable body scroll
       }
     });
-  }, { threshold: 0.2 });
 
-  elements.forEach(function (el) { scrollObserver.observe(el); });
-}
-observeScrollAnimations();
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.style.display !== 'none') {
+        overlay.style.display = 'none';
+        document.body.classList.remove('modal-open'); // re-enable body scroll
+      }
+    });
+
+    return overlay;
+  }
+
+  function showProductModalById(productId) {
+
+    let product = (app.getProductById ? app.getProductById(productId) : (app.products || []).find(p => String(p.id) === String(productId)));
+    if (!product) return console.warn('No product found for modal:', productId);
+
+    // Create modal overlay if it doesn't exist
+    let overlay = document.querySelector('.product-modal-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.className = 'product-modal-overlay';
+      overlay.style.display = 'none';
+      overlay.innerHTML = `
+      <div class="product-modal" role="dialog" aria-modal="true" aria-labelledby="modal-product-title">
+        <div class="modal-image-container"><img src="" alt=""></div>
+        <div class="modal-info-container">
+          <button class="modal-close-custom" aria-label="Close product modal">×</button>
+          <h2 id="modal-product-title" class="modal-product-title"></h2>
+          <div class="modal-product-price"></div>
+          <div class="modal-section-title">Description</div>
+          <p class="modal-description"></p>
+          <div class="modal-specs-grid"></div>
+          <div class="modal-actions">
+            <button class="btn btn-primary modal-add-btn">Add to Cart</button>
+            <button class="btn-wishlist-modal modal-wishlist-btn" aria-pressed="false"><i class="fa-regular fa-heart"></i></button>
+          </div>
+        </div>
+      </div>
+    `;
+      document.body.appendChild(overlay);
+
+      // Close handlers
+      overlay.querySelector('.modal-close-custom').addEventListener('click', () => overlay.style.display = 'none');
+      overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.style.display = 'none'; });
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.style.display !== 'none') overlay.style.display = 'none'; });
+    }
+
+    // Populate modal content
+    let img = overlay.querySelector('.modal-image-container img');
+    let title = overlay.querySelector('#modal-product-title');
+    let price = overlay.querySelector('.modal-product-price');
+    let desc = overlay.querySelector('.modal-description');
+    let specs = overlay.querySelector('.modal-specs-grid');
+    let addBtn = overlay.querySelector('.modal-add-btn');
+    let wishBtn = overlay.querySelector('.modal-wishlist-btn');
+
+    // Image — match carousel style
+    img.src = Array.isArray(product.images) && product.images.length ? `../${product.images[0]}` : '';
+    img.alt = product.name || 'Product image';
+
+    // Basic info
+    title.textContent = product.name || '';
+    price.textContent = (app.formatPrice ? app.formatPrice(product.price) : `$${Number(product.price || 0).toFixed(2)}`);
+    desc.textContent = product.shortDescription || '';
+
+    // Specs (example: size, container, wick, scent)
+    specs.innerHTML = '';
+    let scent = app.getScentById ? app.getScentById(product.scentId) : null;
+    let size = app.getSizeById ? app.getSizeById(product.sizeId) : null;
+    let containerObj = app.getContainerById ? app.getContainerById(product.containerId) : null;
+    let wickObj = app.getWickById ? app.getWickById(product.wickId) : null;
+
+    let rows = [
+      ['Mood', (scent && scent.mood) ? scent.mood : '—'],
+      ['Family', (scent && scent.family) ? scent.family : '—'],
+      ['Size', size ? (size.name || size.volume) : '—'],
+      ['Burn Time', size ? (size.burn_time || size.burnTime) || '—' : '—'],
+      ['Container', containerObj ? (containerObj.name || containerObj.description) : '—'],
+      ['Wick', wickObj ? (wickObj.name || wickObj.description) : '—']
+    ];
+
+    rows.forEach(([k, v]) => {
+      let el = document.createElement('div');
+      el.className = 'spec-item';
+      el.innerHTML = `<strong>${k}</strong> <span>${v}</span>`;
+      specs.appendChild(el);
+    });
+
+    // Wishlist button
+    let wishlisted = app.isInWishlist ? app.isInWishlist(product.id) : false;
+    wishBtn.setAttribute('aria-pressed', wishlisted ? 'true' : 'false');
+    wishBtn.innerHTML = wishlisted ? '<i class="fa-solid fa-heart"></i>' : '<i class="fa-regular fa-heart"></i>';
+
+    // Add to cart button
+    addBtn.disabled = product.stock <= 0;
+    addBtn.classList.remove('btn--added');
+    addBtn.innerHTML = product.stock <= 0 ? 'Out of Stock' : 'Add to Cart';
+
+    addBtn.onclick = (e) => {
+      e.stopPropagation();
+      if (app.addToCart) app.addToCart(product.id, 1);
+      addBtn.classList.add('btn--added');
+      addBtn.innerHTML = 'Added <i class="fa fa-check"></i>';
+      document.dispatchEvent(new Event('cartChanged'));
+    };
+
+    wishBtn.onclick = (e) => {
+      e.stopPropagation();
+      if (wishlisted) {
+        if (app.removeFromWishlist) app.removeFromWishlist(product.id);
+        wishBtn.innerHTML = '<i class="fa-regular fa-heart"></i>';
+        wishBtn.setAttribute('aria-pressed', 'false');
+      } else {
+        if (app.addToWishlist) app.addToWishlist(product.id);
+        wishBtn.innerHTML = '<i class="fa-solid fa-heart"></i>';
+        wishBtn.setAttribute('aria-pressed', 'true');
+      }
+      document.dispatchEvent(new Event('wishlistChanged'));
+    };
+
+    // Show modal
+    overlay.style.display = 'flex';
+    overlay.querySelector('.modal-close-custom').focus();
+
+    document.body.classList.add('modal-open');
+  }
+
+
+
+  //scroll animations
+  function observeScrollAnimations() {
+    let elements = document.querySelectorAll('.animate-on-scroll');
+
+    if (!elements.length) return;
+
+    let scrollObserver = new IntersectionObserver(function (entries, obs) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          obs.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.2 });
+
+    elements.forEach(function (el) { scrollObserver.observe(el); });
+  }
+  observeScrollAnimations();
 })();
