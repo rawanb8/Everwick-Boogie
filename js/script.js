@@ -532,55 +532,7 @@
     }, 160);
   });
 
-  function ensureProductModal() {
-    let overlay = document.querySelector('.product-modal-overlay');
-    if (overlay) return overlay;
 
-    overlay = document.createElement('div');
-    overlay.className = 'product-modal-overlay';
-    overlay.style.display = 'none';
-    document.body.classList.remove('modal-open');
-    overlay.innerHTML = `
-    <div class="product-modal" role="dialog" aria-modal="true" aria-labelledby="modal-product-title">
-      <div class="modal-image-container"><img src="" alt=""></div>
-      <div class="modal-info-container">
-        <button class="modal-close-custom" aria-label="Close product modal">×</button>
-        <h2 id="modal-product-title" class="modal-product-title"></h2>
-        <div class="modal-product-price"></div>
-        <div class="modal-section-title">Description</div>
-        <p class="modal-description"></p>
-        <div class="modal-specs-grid"></div>
-        <div class="modal-actions">
-          <button class="btn btn-primary modal-add-btn">Add to Cart</button>
-          <button class="btn-wishlist-modal modal-wishlist-btn" aria-pressed="false"><i class="fa-regular fa-heart"></i></button>
-        </div>
-      </div>
-    </div>
-  `;
-    document.body.appendChild(overlay);
-
-    // Close handlers
-    overlay.querySelector('.modal-close-custom').addEventListener('click', () => {
-      overlay.style.display = 'none';
-      document.body.classList.remove('modal-open'); // re-enable body scroll
-    });
-
-    overlay.addEventListener('click', (e) => {
-      if (e.target === overlay) {
-        overlay.style.display = 'none';
-        document.body.classList.remove('modal-open'); // re-enable body scroll
-      }
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && overlay.style.display !== 'none') {
-        overlay.style.display = 'none';
-        document.body.classList.remove('modal-open'); // re-enable body scroll
-      }
-    });
-
-    return overlay;
-  }
 
   function showProductModalById(productId) {
 
@@ -613,9 +565,24 @@
       document.body.appendChild(overlay);
 
       // Close handlers
-      overlay.querySelector('.modal-close-custom').addEventListener('click', () => overlay.style.display = 'none');
-      overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.style.display = 'none'; });
-      document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && overlay.style.display !== 'none') overlay.style.display = 'none'; });
+      overlay.querySelector('.modal-close-custom').addEventListener('click', () => {
+        overlay.style.display = 'none';
+        document.body.classList.remove('modal-open'); //remove the class no scroll
+      });
+
+      overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) {
+          overlay.style.display = 'none';
+          document.body.classList.remove('modal-open'); 
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay.style.display !== 'none') {
+          overlay.style.display = 'none';
+          document.body.classList.remove('modal-open'); 
+        }
+      });
     }
 
     // Populate modal content
