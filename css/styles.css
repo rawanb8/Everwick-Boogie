@@ -671,12 +671,13 @@
 .product-modal .modal-info-container {
     flex: 1 1 auto;
     padding: 1.25rem;
+    padding-top: 2rem;
     position: relative;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
 }
-
+.modal-description{font-family: "Lora";}
 .modal-close-custom {
     position: absolute;
     right: 12px;
@@ -689,6 +690,7 @@
 }
 
 .modal-product-title {
+    font-family: "TAN Meringue";
     margin: 0;
     font-size: 1.35rem;
     font-weight: 700;
@@ -701,11 +703,13 @@
 }
 
 .modal-section-title {
+    font-family: "Lora";
     font-weight: 700;
     margin-top: .5rem;
 }
 
 .modal-specs-grid {
+    font-family: "Lora";
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: .5rem;
@@ -1126,6 +1130,12 @@
     font-weight: 700;
     color: var(--text-dark);
     text-align: right;
+}
+
+.star-rating i {
+  color: #FFD700; /* gold */
+  font-size: 20px;
+  margin-right: 2px;
 }
 
 /* ========== QUIZ CTA ========== */
