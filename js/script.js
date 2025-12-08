@@ -595,7 +595,11 @@
     let wishBtn = overlay.querySelector('.modal-wishlist-btn');
 
     // Image — match carousel style
-    img.src = Array.isArray(product.images) && product.images.length ? `../${product.images[0]}` : '';
+    // img.src = Array.isArray(product.images) && product.images.length ? `../${product.images[0]}` : '';
+    //trying to fix host link issue
+    img.src = Array.isArray(product.images) && product.images.length
+      ? (isRootIndexPage() ? product.images[0] : `../${product.images[0]}`)
+      : '';
     img.alt = product.name || 'Product image';
 
     // Basic info
