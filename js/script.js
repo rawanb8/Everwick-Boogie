@@ -573,14 +573,14 @@
       overlay.addEventListener('click', (e) => {
         if (e.target === overlay) {
           overlay.style.display = 'none';
-          document.body.classList.remove('modal-open'); 
+          document.body.classList.remove('modal-open');
         }
       });
 
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && overlay.style.display !== 'none') {
           overlay.style.display = 'none';
-          document.body.classList.remove('modal-open'); 
+          document.body.classList.remove('modal-open');
         }
       });
     }
@@ -653,6 +653,7 @@
       } else {
         if (app.addToWishlist) app.addToWishlist(product.id);
         wishBtn.innerHTML = '<i class="fa-solid fa-heart"></i>';
+        wishBtn.style.color = "red";
         wishBtn.setAttribute('aria-pressed', 'true');
       }
       document.dispatchEvent(new Event('wishlistChanged'));

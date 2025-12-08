@@ -634,9 +634,10 @@
     padding: 1.25rem;
     backdrop-filter: blur(3px);
 }
+
 .modal-open {
-  overflow: hidden;
-  height: 100%;
+    overflow: hidden;
+    height: 100%;
 }
 
 .product-modal {
@@ -677,7 +678,11 @@
     flex-direction: column;
     gap: 0.75rem;
 }
-.modal-description{font-family: "Lora";}
+
+.modal-description {
+    font-family: "Lora";
+}
+
 .modal-close-custom {
     position: absolute;
     right: 12px;
@@ -756,6 +761,7 @@
     .product-modal {
         flex-direction: column;
         max-width: 92%;
+        transform: scale(0.5);
     }
 
     .product-modal .modal-image-container {
@@ -770,6 +776,87 @@
 
     .modal-specs-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 680px) {
+    .product-modal {
+        max-width: 95%;
+        transform: scale(0.55);
+        border-radius: 10px;
+        gap: 0.75rem;
+    }
+
+    .product-modal .modal-image-container {
+        padding: .5rem;
+    }
+
+    .modal-product-title {
+        font-size: 1.2rem;
+    }
+
+    .modal-info-container {
+        padding: 1rem;
+    }
+
+    .modal-specs-grid {
+        font-size: .9rem;
+    }
+}
+
+/* Large Phones (max-width: 500px) */
+@media (max-width: 500px) {
+    .product-modal {
+        max-width: 96%;
+        transform: scale(0.7);
+        /* slight shrink */
+    }
+
+    .modal-product-title {
+        font-size: 1.1rem;
+    }
+
+    .modal-product-price {
+        font-size: 1rem;
+    }
+
+    .modal-description {
+        font-size: .95rem;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+        gap: .75rem;
+    }
+
+    .btn-wishlist-modal {
+        width: 100%;
+    }
+}
+
+@media (max-width: 390px) {
+    .product-modal {
+        max-width: 98%;
+        transform: scale(0.70);
+    }
+
+    .modal-info-container,
+    .modal-image-container {
+        padding: .5rem !important;
+    }
+
+    .modal-product-title {
+        font-size: 1rem;
+    }
+
+    .modal-description {
+        font-size: .85rem;
+    }
+
+    .modal-actions .btn-primary,
+    .modal-actions .btn-outline {
+        width: 100%;
+        padding: .65rem;
     }
 }
 
@@ -1133,9 +1220,10 @@
 }
 
 .star-rating i {
-  color: #FFD700; /* gold */
-  font-size: 20px;
-  margin-right: 2px;
+    color: #FFD700;
+    /* gold */
+    font-size: 20px;
+    margin-right: 2px;
 }
 
 /* ========== QUIZ CTA ========== */
