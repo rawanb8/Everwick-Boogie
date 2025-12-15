@@ -808,11 +808,12 @@ async function attachLoginHandler() {
 
   if (!loginModal || !loginForm) return;
 
-  let allowedUsers = [
-    { username: 'rama', password: '12345' },
-    { username: 'maryam', password: '6789' },
-    { username: 'rawan', password: '1011' }
-  ];
+ // Example user data
+let allowedUsers = [
+  { username: 'rama', password: '12345', firstName: 'Rama', lastName: 'Mohamad', email: 'rama@example.com' },
+  { username: 'maryam', password: '6789', firstName: 'Maryam', lastName: 'Ali', email: 'maryam@example.com' },
+];
+
 
   // Ensure all buttons have the correct trigger class
   let loginTriggers = document.querySelectorAll('.open-login');
@@ -867,7 +868,7 @@ async function attachLoginHandler() {
       currentUser = user.username;
       localStorage.setItem('currentUser', currentUser);
       app.showNotification('Login successful! Welcome, ' + currentUser, 'success');
-      handleLoginUI()
+      handleLoginUI();
       // Merge anonymous wishlist
       let anonWishlist = app.getWishlistForUser(null);
       let userWishlist = app.getWishlistForUser(currentUser);

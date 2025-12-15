@@ -200,7 +200,8 @@ h3 {
 
 /* =================== MISSION SECTION =================== */
 .mission-section {
-    background-color: var(--brand-green);
+    background-color: #e9e3da;
+    margin: 50px 0;
 }
 
 .mission-section h2,
@@ -223,7 +224,7 @@ h3 {
 .founding-story p {
     font-size: var(--font-size-lg);
     font-style: italic;
-    color: #54602f;
+    color: #5a4636;
     margin-bottom: var(--space-xl);
 }
 

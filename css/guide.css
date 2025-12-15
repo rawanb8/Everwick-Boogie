@@ -75,8 +75,8 @@
 }
 
 .filters-section {
-  background-color: var(--brand-green);
-  padding: var(--space-xl) 0;
+  background-color: #e9e3da;
+  padding: calc(var(--space-xl)*1.4) 0;
   box-shadow: var(--shadow-sm);
   margin-bottom: var(--space-xl);
 }
@@ -85,31 +85,38 @@
   font-family: 'Lora', serif;
   font-size: 1.75rem;
   font-weight: 700;
-  color: #5a5a3f;
+  color: #5a4636;
   /* dark olive for elegance */
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-xl);
   text-align: center;
 }
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
 
 .filter-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--space-md);
-  margin: var(--space-md) 0;
+  gap: var(--space-xl);
+  margin: var(--space-xl) 0;
   align-items: stretch;
 }
 
 .filter-group label {
   font-weight: 600;
   font-size: var(--font-size-sm);
-  color: #6e6e5c;
+  color: #6b5f52;
   /* subtle text color */
 }
 
 .filter-group select {
-  padding: var(--space-sm);
+  padding: var(--space-md);
   border-radius: var(--radius-md);
-  border: 1px solid #c4c4b0;
+  border: 1px solid #807569;
   background-color: #ffffff;
   font-size: var(--font-size-base);
   color: #333333;
@@ -118,14 +125,14 @@
 
 .filter-group select:focus {
   outline: none;
-  border-color: var(--olive-green);
+  border-color: #6b5f52;
   box-shadow: 0 0 5px rgba(138, 154, 91, 0.5);
 }
 
 /* Specific styling for the Clear button */
 .btn.clear {
   display: block;
-  background-color: #a9c593;
+  background-color: #884c34;
   /* olive-green */
   margin: var(--space-lg) auto 0 auto;
   /* top margin, horizontal auto centers it */
@@ -137,25 +144,25 @@
   cursor: pointer;
   transition: all 0.3s ease;
   text-align: center;
-  font-size: var(--font-size-base);
+  font-size: 1.05rem;
   line-height: 1.4;
 
 }
 
 .btn.clear:hover {
-  background-color: #829871;
+  background-color: #7f3f24;
   /* lighter green on hover */
   transform: translateY(-2px);
 }
 
 .btn.clear:focus {
-  outline: 2px solid #a9c593;
+  outline: 2px solid #b77051;
   /* visible focus for accessibility */
   outline-offset: 2px;
 }
 
 .btn.clear:disabled {
-  background-color: #c4c4b0;
+  background-color: #8b5239;
   cursor: not-allowed;
   opacity: 0.7;
 }
@@ -279,6 +286,7 @@
 
 .card-content {
   padding: var(--space-md);
+  text-align: center;
 }
 
 .card-title {
@@ -328,6 +336,7 @@
   flex-wrap: wrap;
   gap: var(--space-xs);
   margin-top: var(--space-sm);
+  align-self: center;
 }
 
 .note-tag {
@@ -409,7 +418,7 @@
 }
 
 .quiz-header h2 {
-  color: #7e894c;
+  color: #5a4636;;
   font-family: "Lora";
   text-align: center;
 }
@@ -558,8 +567,8 @@ input[type="range"]::-ms-thumb {
   background: var(--accent-color);
   color: var(--white);
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -570,7 +579,7 @@ input[type="range"]::-ms-thumb {
 .scent-match {
   background: var(--secondary-color);
   padding: var(--space-sm);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   margin: var(--space-md) 0;
   font-size: var(--font-size-sm);
 }
@@ -702,6 +711,10 @@ input[type="range"]::-ms-thumb {
 .recommendation-card:hover {
   transform: translateY(-4px) scale(1.02);
   box-shadow: var(--shadow-lg);
+}
+
+.quiz-results-header{
+  margin-bottom: 80px;
 }
 
 .quiz-results-header h2 {
