@@ -719,5 +719,5 @@ input[type="range"]::-ms-thumb {
 
 .quiz-results-header h2 {
   font-family: "Lora";
-  color: var(--olive-green);
+  color: #5a4636;;
 }
