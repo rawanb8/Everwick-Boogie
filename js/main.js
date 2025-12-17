@@ -440,6 +440,22 @@ let app = {
     return true;
   },
 
+  //EDITSSS RAWAN: ADDING CUSTOMIZED ITEMS TO THE SAME PRODUCTS CART
+  addCustomToCart: function (customItem) {
+    try {
+      let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (!Array.isArray(cart)) cart = [];
+
+      // Add the custom item to cart
+      cart.push(customItem);
+      localStorage.setItem('cart', JSON.stringify(cart));
+      return true;
+    } catch (err) {
+      console.error('Failed to add custom item to cart:', err);
+      return false;
+    }
+  },
+
   removeFromCart: function (itemId) {
     try {
       let cart = JSON.parse(localStorage.getItem('cart') || '[]');
@@ -808,11 +824,12 @@ async function attachLoginHandler() {
 
   if (!loginModal || !loginForm) return;
 
- // Example user data
-let allowedUsers = [
-  { username: 'rama', password: '12345', firstName: 'Rama', lastName: 'Mohamad', email: 'rama@example.com' },
-  { username: 'maryam', password: '6789', firstName: 'Maryam', lastName: 'Ali', email: 'maryam@example.com' },
-];
+  // Example user data
+  let allowedUsers = [
+    { username: 'rama', password: '12345'},
+    { username: 'maryam', password: '6789'},
+    { username: 'rawan', password: '1011'}
+  ];
 
 
   // Ensure all buttons have the correct trigger class
@@ -860,7 +877,7 @@ let allowedUsers = [
       let user = allowedUsers.find(u => u.username === username && u.password === password);
 
       if (!user) {
-         app.showNotification('Incorrect username or password.', 'error');
+        app.showNotification('Incorrect username or password.', 'error');
         return;
       }
 

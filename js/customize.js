@@ -1,7 +1,6 @@
 (function ($) {
     'use strict';
 
-    // --- Config / letants ---
     let COLORS = [
         { slug: 'pure-white', name: 'Pure White', hex: '#FFFFFF' },
         { slug: 'soft-pink', name: 'Soft Pink', hex: '#FFB6C1' },
@@ -31,8 +30,6 @@
 
     let BASE_IMAGE = '../media/custom/base-candle.png';
 
-        // --- State ---
-
     // Parse the query parameters
     const urlParams = new URLSearchParams(window.location.search);
     const scentFromQuery = urlParams.get('scent'); // e.g., ?scent=lavender
@@ -47,8 +44,8 @@
         containerId: null,
         wickId: null,
         additions: new Set()
-    };  
-    
+    };
+
     console.log(state);
 
     // Data lists (filled from app.data)
@@ -56,6 +53,15 @@
     let containersList = [];
     let wicksList = [];
     let scentsList = [];
+
+    //making sure app is availabe !!!
+    if (typeof app === 'undefined') { // Wait for app to be available
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof app !== 'undefined') {
+                console.log('app loaded in customize.js');
+            }
+        });
+    }
 
     function toNumber(v) {
         let n = Number(v);
@@ -286,7 +292,7 @@
         setActiveColorButton();
         updatePreviewImage();
     });
-    
+
 
     $(document).on('click', '#additions .addition-toggle', function () {
         let key = $(this).data('key');
@@ -327,7 +333,7 @@
         state.scentId = v ? Number(v) : null;
         updatePreviewImage();
     });
-     
+
     //compute total price
     function computeTotalPrice() {
         state.sizeId = $('input[name="size-select"]:checked').val() || state.sizeId;
@@ -393,16 +399,30 @@
             }
         };
 
-        let cart = [];
-        try { cart = JSON.parse(localStorage.getItem('cart') || '[]'); if (!Array.isArray(cart)) cart = []; } catch (err) { cart = []; }
-        cart.push(cartItem);
-        localStorage.setItem('cart', JSON.stringify(cart));
+        //EDITSSS: CART ITEMS FROM CART FUNCTION IN MAINNN
+        if (typeof app !== 'undefined' && typeof app.addCustomToCart === 'function') {
+            app.addCustomToCart(cartItem);
+        } else {
+            // Fallback to localStorage if app isn't available
+            let cart = [];
+            try { cart = JSON.parse(localStorage.getItem('cart') || '[]'); if (!Array.isArray(cart)) cart = []; } catch (err) { cart = []; }
+            cart.push(cartItem);
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
 
         showAddToCartToast(name, price);
         setAddedButtonState($(this));
         $('#add-to-cart, #add-to-cart-bottom').not(this).each(function () { setAddedButtonState($(this)); });
 
-        try { $(document).trigger('cart:updated'); } catch (e) { }
+        try {
+            $(document).trigger('cart:updated');
+            // Also update cart count if app.updateCartCount exists
+            if (typeof app !== 'undefined' && typeof app.updateCartCount === 'function') {
+                app.updateCartCount();
+            } else if (typeof updateCartCount === 'function') {
+                updateCartCount();
+            }
+        } catch (e) { }
     });
 
     // show a left-column red warning using Font Awesome icon
