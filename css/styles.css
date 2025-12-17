@@ -323,7 +323,9 @@
     flex: 0 0 44%;
     max-width: 520px;
     box-sizing: border-box;
-    padding: 0.5rem;
+    /* padding: 0.5rem;
+    padding-top:50px; */
+    padding: 5.3125rem 0.5rem 0.5rem;
 }
 
 .candle-media img,
